@@ -24,7 +24,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import com.gunit.spacecrack.R;
+import com.gunit.spacecrack.activity.HomeActivity;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.model.Profile;
 import com.gunit.spacecrack.restservice.RestService;
@@ -34,6 +37,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 
 /**
@@ -166,6 +170,7 @@ public class EditProfileFragment extends Fragment {
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                 byte[] byteArray = stream.toByteArray();
                 byte64Img = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
             } else {
                 byte64Img = SpaceCrackApplication.profile.image;
             }
@@ -202,13 +207,47 @@ public class EditProfileFragment extends Fragment {
 
             if (result) {
                 SpaceCrackApplication.profilePicture = BitmapFactory.decodeFile(picturePath);
-                //Return to the Profile
-                getActivity().getFragmentManager().beginTransaction()
-                        .replace(R.id.container, new ProfileFragment())
-                        .commit();
+                new GetProfile().execute(SpaceCrackApplication.URL_PROFILE);
             }
 
             save.setEnabled(true);
+        }
+    }
+
+    //POST request to edit the profile
+    private class GetProfile extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground (String...url)
+        {
+            return RestService.getRequest(url[0]);
+        }
+
+        @Override
+        protected void onPostExecute (String result)
+        {
+            if (result != null) {
+                try {
+                    Gson gson = new Gson();
+                    SpaceCrackApplication.profile = gson.fromJson(result, Profile.class);
+
+                    if (SpaceCrackApplication.profile.image != null) {
+                        //Get the image from the Data URI
+                        String image = SpaceCrackApplication.profile.image.substring(SpaceCrackApplication.profile.image.indexOf(",") + 1);
+                        byte[] decodedString = Base64.decode(image, 0);
+                        SpaceCrackApplication.profilePicture = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    }
+
+                    //Return to the Profile
+                    getActivity().getFragmentManager().beginTransaction()
+                            .replace(R.id.container, new ProfileFragment())
+                            .commit();
+                } catch (JsonParseException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Toast.makeText(getActivity(), getResources().getText(R.string.profile_fail), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }
