@@ -1,6 +1,7 @@
 package com.gunit.spacecrack.activity;
 
 import android.test.ActivityInstrumentationTestCase2;
+import android.widget.ImageView;
 
 import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.activity.HomeActivity;
@@ -10,30 +11,28 @@ import com.robotium.solo.Solo;
 /**
  * Created by Dimitri on 20/02/14.
  */
-public class HomeTest extends ActivityInstrumentationTestCase2<HomeActivity> {
+public class HomeTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 
     private Solo solo;
-    private HomeActivity activity;
+    private LoginActivity loginActivity;
 
     public HomeTest() {
-        super(HomeActivity.class);
+        super(LoginActivity.class);
     }
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        activity = getActivity();
-        solo = new Solo(getInstrumentation(), activity);
+        loginActivity = getActivity();
+        solo = new Solo(getInstrumentation(), loginActivity);
+        solo.enterText(0, "test@gmail.com");
+        solo.enterText(1, "test");
+        solo.clickOnButton(solo.getString(R.string.login));
+        solo.waitForActivity(HomeActivity.class);
     }
 
     public void testActivityStart() throws Exception {
         solo.assertCurrentActivity("Current activity should be HomeActivity", HomeActivity.class);
-    }
-
-    public void testProfile() throws Exception {
-        solo.clickOnView(getActivity().findViewById(R.id.llt_home_profile));
-        solo.waitForActivity(ProfileActivity.class);
-        solo.assertCurrentActivity("Current activity should be ProfileActivity", ProfileActivity.class);
     }
 
     @Override

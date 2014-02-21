@@ -63,25 +63,29 @@
             android:layout_width="@dimen/default_size"
             android:layout_height="wrap_content"
             android:id="@+id/btn_home_newgame"
-            android:text="@string/new_game" />
+            android:text="@string/new_game"
+            android:enabled="false"/>
 
         <Button
             android:layout_width="@dimen/default_size"
             android:layout_height="wrap_content"
             android:id="@+id/btn_home_activegames"
-            android:text="@string/active_games" />
+            android:text="@string/active_games"
+            android:enabled="false"/>
 
         <Button
             android:layout_width="@dimen/default_size"
             android:layout_height="wrap_content"
             android:id="@+id/btn_home_statistics"
-            android:text="@string/statistics" />
+            android:text="@string/statistics"
+            android:enabled="false"/>
 
         <Button
             android:layout_width="@dimen/default_size"
             android:layout_height="wrap_content"
             android:id="@+id/btn_home_replay"
-            android:text="@string/replays" />
+            android:text="@string/replays"
+            android:enabled="false"/>
 
     </LinearLayout>
 

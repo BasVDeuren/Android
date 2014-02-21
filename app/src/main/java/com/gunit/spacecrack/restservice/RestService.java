@@ -72,50 +72,6 @@ public class RestService {
         return result;
     }
 
-//    public static String login(JSONObject user) {
-//        String accessToken = null;
-//        HttpClient httpClient = new DefaultHttpClient();
-//        HttpPost httpPost = new HttpPost(SpaceCrackApplication.URL_LOGIN);
-//        HttpConnectionParams.setConnectionTimeout(new BasicHttpParams(), SpaceCrackApplication.NETWORK_TIMEOUT);
-//
-//        StringEntity stringEntity = null;
-//        try {
-//            stringEntity = new StringEntity(user.toString());
-//        } catch (UnsupportedEncodingException e) {
-//            e.printStackTrace();
-//        }
-//
-//        httpPost.setHeader("accept", "application/json");
-//        httpPost.setHeader("Content-type", "application/json");
-//        httpPost.setEntity(stringEntity);
-//
-//        try {
-//            // Execute HTTP Post Request
-//            HttpResponse response = httpClient.execute(httpPost);
-//
-//            //Check the Status code of the response
-//            int statusCode = response.getStatusLine().getStatusCode();
-//            if (statusCode == HttpStatus.SC_OK) {
-//                String responseBody = EntityUtils.toString(response.getEntity());
-//                try {
-//                    //Get the access token
-//                    JSONObject responseJson = new JSONObject(responseBody);
-//                    accessToken = responseJson.getString("value");
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//                Log.i(TAG, "Logged in");
-//            } else {
-//                Log.i(TAG, "Login failed");
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        httpClient.getConnectionManager().shutdown();
-//        return accessToken;
-//    }
-
     public static String postRequest(String url, JSONObject user) {
         String accessToken = null;
         HttpClient httpClient = new DefaultHttpClient();
@@ -147,9 +103,9 @@ public class RestService {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Log.i(TAG, "Logged in");
+                Log.i(TAG, "Request succeeded");
             } else {
-                Log.i(TAG, "Login failed");
+                Log.i(TAG, "Request failed");
             }
 
         } catch (Exception e) {

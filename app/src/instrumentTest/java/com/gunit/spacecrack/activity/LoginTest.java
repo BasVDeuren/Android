@@ -1,11 +1,13 @@
 package com.gunit.spacecrack.activity;
 
+import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.activity.LoginActivity;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
+import com.gunit.spacecrack.fragment.RegisterFragment;
 import com.robotium.solo.Solo;
 
 /**
@@ -32,29 +34,25 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
     }
 
     public void testLoginSucces() throws Exception {
-        solo.enterText(0, "test");
+        solo.enterText(0, "test@gmail.com");
         solo.enterText(1, "test");
         solo.clickOnButton(solo.getString(R.string.login));
-        solo.waitForLogMessage("Logged in");
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Login", 0);
-        String accessToken = sharedPreferences.getString("accessToken", null);
-        assertNotNull("Token should not be null", accessToken);
+        solo.waitForLogMessage("Login success");
+        assertNotNull("Token should not be null", SpaceCrackApplication.accessToken);
     }
 
     public void testLoginFailed() throws Exception {
-        solo.enterText(0, "test");
+        solo.enterText(0, "test@gmail.com");
         solo.enterText(1, "pass");
         solo.clickOnButton(solo.getString(R.string.login));
-
         solo.waitForLogMessage("Login failed");
-        SpaceCrackApplication application = (SpaceCrackApplication) getActivity().getApplication();
         assertNull("Token should be null", SpaceCrackApplication.accessToken);
     }
 
 //    public void testRegister() throws Exception {
-//        solo.clickOnButton(getActivity().getResources().getString(R.string.request));
-//        solo.waitForActivity(RegisterActivity.class);
-//        solo.assertCurrentActivity("Current activity should be RegisterActivity", RegisterActivity.class);
+//        solo.clickOnButton(getActivity().getResources().getString(R.string.register));
+//        Fragment registerFragment = solo.getCurrentActivity().getFragmentManager().findFragmentById(R.id.fragment_register);
+//        assertTrue("RegisterFragment should be visible", registerFragment.isVisible());
 //    }
 
     @Override

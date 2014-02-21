@@ -172,7 +172,7 @@ public class EditProfileFragment extends Fragment {
                 byte64Img = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
             } else {
-                byte64Img = SpaceCrackApplication.profile.image;
+                byte64Img = SpaceCrackApplication.profile.image.substring(SpaceCrackApplication.profile.image.indexOf(",") + 1);
             }
 
             //Create an profile to edit
@@ -205,7 +205,6 @@ public class EditProfileFragment extends Fragment {
             Toast.makeText(getActivity(), result ? getResources().getString(R.string.profile_edited) : getResources().getString(R.string.edited_failed), Toast.LENGTH_SHORT).show();
 
             if (result) {
-                SpaceCrackApplication.profilePicture = BitmapFactory.decodeFile(picturePath);
                 new GetProfile().execute(SpaceCrackApplication.URL_PROFILE);
             }
 

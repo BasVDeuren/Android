@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -137,15 +138,20 @@ public class LoginFragment extends Fragment {
         @Override
         protected void onPostExecute (String result)
         {
-            Toast.makeText(getActivity(), result != null ? getResources().getString(R.string.login_succes) : getResources().getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
+            if (!facebookLogin) {
+                Toast.makeText(getActivity(), result != null ? getResources().getString(R.string.login_succes) : getResources().getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
+            }
 
             saveLoginCredentials(result, email, password);
 
             if (result != null) {
+                Log.i(TAG, "Login success");
                 new GetProfile().execute(SpaceCrackApplication.URL_PROFILE);
             } else if (facebookLogin) {
                 new RegisterTask(SpaceCrackApplication.graphUser.getName(), "facebook" + SpaceCrackApplication.graphUser.getId(), "facebook" + SpaceCrackApplication.graphUser.getId(), (String) SpaceCrackApplication.graphUser.asMap().get("email")).execute(SpaceCrackApplication.DOMAIN + SpaceCrackApplication.URL_REGISTER);
             }
+
+            Log.i(TAG, "Login failed");
 
             login.setEnabled(true);
             register.setEnabled(true);
@@ -208,7 +214,7 @@ public class LoginFragment extends Fragment {
         {
             saveLoginCredentials(result, email, password);
 
-            if (result != null && result.length() < 0) {
+            if (result != null) {
                 new GetProfile().execute(SpaceCrackApplication.URL_PROFILE);
             } else {
                 Toast.makeText(context, getResources().getString(R.string.email_register), Toast.LENGTH_SHORT).show();
