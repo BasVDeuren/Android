@@ -167,14 +167,13 @@ public class EditProfileFragment extends Fragment {
                 File file = new File(image);
                 Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 byte[] byteArray = stream.toByteArray();
                 byte64Img = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
             } else {
                 byte64Img = SpaceCrackApplication.profile.image;
             }
-
 
             //Create an profile to edit
             profile = new JSONObject();
@@ -183,7 +182,7 @@ public class EditProfileFragment extends Fragment {
                 profile.put("lastname", lastname);
                 profile.put("email", "");
                 profile.put("dayOfBirth", dateOfBirth);
-                profile.put("image", byte64Img);
+                profile.put("image", "data:image/png;base64," + byte64Img);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
