@@ -106,7 +106,7 @@ public class EditProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!firstName.getText().toString().equals("") && !lastName.getText().toString().equals("") && !date.getText().toString().equals(getResources().getText(R.string.birth_date))) {
-                    new EditTask(firstName.getText().toString(), lastName.getText().toString(), date.getText().toString(), picturePath).execute(SpaceCrackApplication.URL_PROFILE);
+                    new EditTask(firstName.getText().toString(), lastName.getText().toString(), SpaceCrackApplication.profile.email, date.getText().toString(), picturePath).execute(SpaceCrackApplication.URL_PROFILE);
                 } else {
                     Toast.makeText(getActivity(), getResources().getString(R.string.fill_in_fields), Toast.LENGTH_SHORT).show();
                 }
@@ -157,7 +157,7 @@ public class EditProfileFragment extends Fragment {
 
         private JSONObject profile;
 
-        public EditTask (String firstname, String lastname, String dateOfBirth, String image)
+        public EditTask (String firstname, String lastname, String email, String dateOfBirth, String image)
         {
             super();
 
@@ -180,7 +180,7 @@ public class EditProfileFragment extends Fragment {
             try {
                 profile.put("firstname", firstname);
                 profile.put("lastname", lastname);
-                profile.put("email", "");
+                profile.put("email", email);
                 profile.put("dayOfBirth", dateOfBirth);
                 profile.put("image", "data:image/png;base64," + byte64Img);
             } catch (JSONException e) {
