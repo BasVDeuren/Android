@@ -5,12 +5,12 @@
     android:gravity="center"
     tools:context="com.gunit.spacecrack.HomeActivity$PlaceholderFragment">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/spacebackground"
-        android:scaleType="centerCrop"
-        android:contentDescription="@string/background" />
+    <!--<ImageView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:src="@drawable/spacebackground"-->
+        <!--android:scaleType="centerCrop"-->
+        <!--android:contentDescription="@string/background" />-->
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -147,6 +147,10 @@ public class LoginFragment extends Fragment {
                 new RegisterTask(SpaceCrackApplication.graphUser.getName(), "facebook" + SpaceCrackApplication.graphUser.getId(), "facebook" + SpaceCrackApplication.graphUser.getId(), (String) SpaceCrackApplication.graphUser.asMap().get("email")).execute(SpaceCrackApplication.DOMAIN + SpaceCrackApplication.URL_REGISTER);
             }
 
+            login.setEnabled(true);
+            register.setEnabled(true);
+            facebook.setEnabled(true);
+
         }
     }
 
@@ -235,8 +239,8 @@ public class LoginFragment extends Fragment {
 
                     if (SpaceCrackApplication.profile.image != null) {
                         //Get the image from the Data URI
-                        String[] imageParts = SpaceCrackApplication.profile.image.split(",");
-                        byte[] decodedString = Base64.decode(imageParts[1], 0);
+                        String image = SpaceCrackApplication.profile.image.substring(SpaceCrackApplication.profile.image.indexOf(",") + 1);
+                        byte[] decodedString = Base64.decode(image, 0);
                         SpaceCrackApplication.profilePicture = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                     }
 

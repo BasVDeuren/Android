@@ -161,8 +161,8 @@ public class SplashScreenActivity extends Activity {
                     SpaceCrackApplication.profile = gson.fromJson(result, Profile.class);
                     //Get the image from the Data URI
                     if (SpaceCrackApplication.profile.image != null) {
-                        String[] imageParts = SpaceCrackApplication.profile.image.split(",");
-                        byte[] decodedString = Base64.decode(imageParts[1], 0);
+                        String image = SpaceCrackApplication.profile.image.substring(SpaceCrackApplication.profile.image.indexOf(",") + 1);
+                        byte[] decodedString = Base64.decode(image, 0);
                         SpaceCrackApplication.profilePicture = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                     }
 

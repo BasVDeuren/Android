@@ -35,6 +35,7 @@ public class RestService {
         String result = null;
         HttpClient httpClient = new DefaultHttpClient();
         HttpGet httpGet = new HttpGet(url);
+        HttpConnectionParams.setConnectionTimeout(new BasicHttpParams(), SpaceCrackApplication.NETWORK_TIMEOUT);
 
         CookieStore cookieStore = ((DefaultHttpClient) httpClient).getCookieStore();
         BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
@@ -119,6 +120,7 @@ public class RestService {
         String accessToken = null;
         HttpClient httpClient = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost(url);
+        HttpConnectionParams.setConnectionTimeout(new BasicHttpParams(), SpaceCrackApplication.NETWORK_TIMEOUT);
         StringEntity stringEntity = null;
         try {
             stringEntity = new StringEntity(user.toString());
