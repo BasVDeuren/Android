@@ -45,7 +45,8 @@ public class GameActivity extends BaseGameActivity implements IOnSceneTouchListe
     public EngineOptions onCreateEngineOptions() {
         camera = new Camera(0, 0, WIDTH, HEIGHT);
         boundCamera = new BoundCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, 0, WIDTH, 0, HEIGHT);
-        IResolutionPolicy resolutionPolicy = new RatioResolutionPolicy(WIDTH, HEIGHT);
+        boundCamera.setBoundsEnabled(true);
+        IResolutionPolicy resolutionPolicy = new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT);
         EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, resolutionPolicy, boundCamera);
         engineOptions.getAudioOptions().setNeedsMusic(true).setNeedsSound(true);
         engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);

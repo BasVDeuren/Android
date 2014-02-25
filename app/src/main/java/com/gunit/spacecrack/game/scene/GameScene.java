@@ -5,6 +5,7 @@ import com.gunit.spacecrack.game.GameActivity;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.scene.background.Background;
+import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
@@ -47,19 +48,20 @@ public class GameScene extends BaseScene {
     }
 
     private void createBackground() {
-        attachChild(new Sprite(0, 0, resourcesManager.gameBackgroundRegion, vbom) {
-            @Override
-            protected void preDraw(GLState pGLState, Camera pCamera) {
-                super.preDraw(pGLState, pCamera);
-                pGLState.enableDither();
-            }
-        });
+//        attachChild(new Sprite(0, 0, resourcesManager.gameBackgroundRegion, vbom) {
+//            @Override
+//            protected void preDraw(GLState pGLState, Camera pCamera) {
+//                super.preDraw(pGLState, pCamera);
+//                pGLState.enableDither();
+//            }
+//        });
+        this.setBackground(new Background(Color.BLACK));
     }
 
     private void createHUD() {
         gameHUD = new HUD();
 
-        scoreText = new Text(20, 420, resourcesManager.font, "Score: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
+        scoreText = new Text(20, GameActivity.CAMERA_HEIGHT - 70, resourcesManager.font, "Score: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
         scoreText.setHorizontalAlign(HorizontalAlign.LEFT);
         scoreText.setText("Score: 0");
         gameHUD.attachChild(scoreText);
