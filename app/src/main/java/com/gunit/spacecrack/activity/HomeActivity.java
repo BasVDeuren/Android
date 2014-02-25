@@ -2,52 +2,23 @@ package com.gunit.spacecrack.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.ProfilePictureView;
-import com.google.gson.Gson;
 import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
-import com.gunit.spacecrack.fragment.ProfileFragment;
-import com.gunit.spacecrack.model.Profile;
-import com.gunit.spacecrack.restservice.RestService;
+import com.gunit.spacecrack.chat.ChatActivity;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.CookieStore;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.cookie.Cookie;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.cookie.BasicClientCookie;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 public class HomeActivity extends Activity {
@@ -57,6 +28,7 @@ public class HomeActivity extends Activity {
     private TextView name;
     private LinearLayout profile;
     private Button newGame;
+    private Button chat;
     private SpaceCrackApplication application;
 
     private final String TAG = HomeActivity.class.getSimpleName();
@@ -82,6 +54,14 @@ public class HomeActivity extends Activity {
             }
         });
         newGame = (Button) findViewById(R.id.btn_home_newgame);
+        chat = (Button) findViewById(R.id.btn_home_chat);
+        chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, ChatActivity.class);
+                startActivity(intent);
+            }
+        });
 
         updateAccount();
 

@@ -87,6 +87,13 @@
             android:text="@string/replays"
             android:enabled="false"/>
 
+        <Button
+            android:layout_width="@dimen/default_size"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_home_chat"
+            android:text="@string/replays"
+            android:enabled="false"/>
+
     </LinearLayout>
 
 </RelativeLayout>

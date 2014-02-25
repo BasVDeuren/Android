@@ -2,12 +2,14 @@ package com.gunit.spacecrack.game;
 
 import android.view.KeyEvent;
 
-import com.gunit.spacecrack.game.scene.SceneManager;
+import com.gunit.spacecrack.game.manager.ResourcesManager;
+import com.gunit.spacecrack.game.manager.SceneManager;
 
 import org.andengine.engine.Engine;
 import org.andengine.engine.LimitedFPSEngine;
 import org.andengine.engine.camera.BoundCamera;
 import org.andengine.engine.camera.Camera;
+import org.andengine.engine.camera.SmoothCamera;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.engine.options.EngineOptions;
@@ -15,25 +17,29 @@ import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.WakeLockOptions;
 import org.andengine.engine.options.resolutionpolicy.IResolutionPolicy;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
-import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
-import org.andengine.input.touch.TouchEvent;
-import org.andengine.input.touch.detector.PinchZoomDetector;
 import org.andengine.ui.activity.BaseGameActivity;
 
 /**
  * Created by Dimitri on 24/02/14.
  */
-public class GameActivity extends BaseGameActivity implements IOnSceneTouchListener, PinchZoomDetector.IPinchZoomDetectorListener {
+public class GameActivity extends BaseGameActivity {
 
     private static final int WIDTH = 1600;
     private static final int HEIGHT = 1000;
     private Camera camera;
     private BoundCamera boundCamera;
+    private SmoothCamera smoothCamera;
     public static final int CAMERA_WIDTH = 930;
     public static final int CAMERA_HEIGHT = 558;
     private static final int FPS_LIMIT = 60;
     private ResourcesManager resourceManager;
+
+    // Camera movement speeds
+    final float maxVelocityX = 500;
+    final float maxVelocityY = 500;
+    // Camera zoom speed
+    final float maxZoomFactorChange = 5;
 
     @Override
     public Engine onCreateEngine(EngineOptions pEngineOptions) {
@@ -43,11 +49,14 @@ public class GameActivity extends BaseGameActivity implements IOnSceneTouchListe
 
     @Override
     public EngineOptions onCreateEngineOptions() {
-        camera = new Camera(0, 0, WIDTH, HEIGHT);
+        camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
         boundCamera = new BoundCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, 0, WIDTH, 0, HEIGHT);
         boundCamera.setBoundsEnabled(true);
+        smoothCamera = new SmoothCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, maxVelocityX, maxVelocityY, maxZoomFactorChange);
+        smoothCamera.setBounds(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
+        smoothCamera.setBoundsEnabled(true);
         IResolutionPolicy resolutionPolicy = new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT);
-        EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, resolutionPolicy, boundCamera);
+        EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, resolutionPolicy, smoothCamera);
         engineOptions.getAudioOptions().setNeedsMusic(true).setNeedsSound(true);
         engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);
         return engineOptions;
@@ -90,25 +99,5 @@ public class GameActivity extends BaseGameActivity implements IOnSceneTouchListe
             SceneManager.getInstance().getCurrentScene().onBackKeyPressed();
         }
         return false;
-    }
-
-    @Override
-    public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
-        return false;
-    }
-
-    @Override
-    public void onPinchZoomStarted(PinchZoomDetector pPinchZoomDetector, TouchEvent pSceneTouchEvent) {
-
-    }
-
-    @Override
-    public void onPinchZoom(PinchZoomDetector pPinchZoomDetector, TouchEvent pTouchEvent, float pZoomFactor) {
-
-    }
-
-    @Override
-    public void onPinchZoomFinished(PinchZoomDetector pPinchZoomDetector, TouchEvent pTouchEvent, float pZoomFactor) {
-
     }
 }

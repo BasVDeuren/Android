@@ -1,6 +1,10 @@
-package com.gunit.spacecrack.game.scene;
+package com.gunit.spacecrack.game.manager;
 
-import com.gunit.spacecrack.game.ResourcesManager;
+import com.gunit.spacecrack.game.scene.BaseScene;
+import com.gunit.spacecrack.game.scene.GameScene;
+import com.gunit.spacecrack.game.scene.LoadingScene;
+import com.gunit.spacecrack.game.scene.MainMenuScene;
+import com.gunit.spacecrack.game.scene.SplashScene;
 
 import org.andengine.engine.Engine;
 import org.andengine.engine.handler.timer.ITimerCallback;

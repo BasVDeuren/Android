@@ -1,5 +1,7 @@
 package com.gunit.spacecrack.game.scene;
 
+import com.gunit.spacecrack.game.manager.SceneManager;
+
 import org.andengine.engine.camera.Camera;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.opengl.util.GLState;

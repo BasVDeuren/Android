@@ -23,4 +23,5 @@ dependencies {
     compile project(':libs:facebook')
     compile 'com.google.code.gson:gson:2.2.4'
     compile project(':libs:AndEngine')
+    compile 'com.firebase.client:firebase-client-jvm:1.0.7@jar'
 }

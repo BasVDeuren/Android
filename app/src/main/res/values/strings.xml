@@ -51,5 +51,6 @@
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="username">Username</string>
     <string name="welcome">Welcome!</string>
+    <string name="title_activity_chat">ChatActivity</string>
 
 </resources>

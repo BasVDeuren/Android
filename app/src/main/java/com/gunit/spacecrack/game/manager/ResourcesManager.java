@@ -1,9 +1,11 @@
-package com.gunit.spacecrack.game;
+package com.gunit.spacecrack.game.manager;
 
 import android.graphics.Color;
 
+import com.gunit.spacecrack.game.GameActivity;
+
 import org.andengine.engine.Engine;
-import org.andengine.engine.camera.Camera;
+import org.andengine.engine.camera.SmoothCamera;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
 import org.andengine.opengl.texture.ITexture;
@@ -28,7 +30,7 @@ public class ResourcesManager {
 
     public GameActivity gameActivity;
     public Engine engine;
-    public Camera camera;
+    public SmoothCamera camera;
     public VertexBufferObjectManager vertexBufferObjectManager;
 
     //Font
@@ -60,7 +62,7 @@ public class ResourcesManager {
     public void init (GameActivity gameActivity) {
         this.gameActivity = gameActivity;
         this.engine = gameActivity.getEngine();
-        this.camera = engine.getCamera();
+        this.camera = (SmoothCamera) engine.getCamera();
         this.vertexBufferObjectManager = engine.getVertexBufferObjectManager();
     }
 
@@ -97,7 +99,7 @@ public class ResourcesManager {
     private void loadGameGraphics() {
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
         gameTextureAtlas = new BuildableBitmapTextureAtlas(gameActivity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
-//        gameBackgroundRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "galaxy.jpg");
+        gameBackgroundRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "galaxy.jpg");
         planetRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "planet1.png");
 
         try {
