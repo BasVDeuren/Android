@@ -51,6 +51,7 @@ public class ResourcesManager {
     public ITextureRegion planetRegion;
     public ITextureRegion connectedPlanetRegion;
     public ITextureRegion spaceshipRegion;
+    public ITextureRegion colonyFlagRegion;
     private BuildableBitmapTextureAtlas gameTextureAtlas;
 
     private ResourcesManager() {
@@ -128,6 +129,7 @@ public class ResourcesManager {
         planetRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "planet1.png");
         connectedPlanetRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "planet2.png");
         spaceshipRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "spaceship.png");
+        colonyFlagRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "player1flag.png");
 
         try {
             gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));

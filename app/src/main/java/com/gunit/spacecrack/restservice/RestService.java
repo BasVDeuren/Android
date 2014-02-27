@@ -30,6 +30,7 @@ import java.io.UnsupportedEncodingException;
 public class RestService {
 
     private static final String TAG = "REST Service";
+    private static String accessTokenTemp = "%224udccigvqh6g6p745cplfi9n3v%22";
 
     public static String getRequest(String url) {
         String result = null;
@@ -39,7 +40,7 @@ public class RestService {
 
         CookieStore cookieStore = ((DefaultHttpClient) httpClient).getCookieStore();
 //        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
-        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%2272mbijt5e9t6kpjv1btvcc3qq1%22");
+        BasicClientCookie cookie = new BasicClientCookie("accessToken", accessTokenTemp);
 
         cookie.setDomain(SpaceCrackApplication.IP_ADDRESS);
         cookie.setPath("/");
@@ -131,7 +132,7 @@ public class RestService {
 
         CookieStore cookieStore = ((DefaultHttpClient) httpClient).getCookieStore();
 //        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
-        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%2272mbijt5e9t6kpjv1btvcc3qq1%22");
+        BasicClientCookie cookie = new BasicClientCookie("accessToken", accessTokenTemp);
 
         cookie.setDomain(SpaceCrackApplication.IP_ADDRESS);
         cookie.setPath("/");

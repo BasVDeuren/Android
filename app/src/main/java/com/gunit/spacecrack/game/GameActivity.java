@@ -18,6 +18,7 @@ import com.gunit.spacecrack.game.manager.SceneManager;
 import com.gunit.spacecrack.model.Game;
 import com.gunit.spacecrack.model.GameWrapper;
 import com.gunit.spacecrack.model.Planet;
+import com.gunit.spacecrack.model.Player;
 import com.gunit.spacecrack.model.Profile;
 import com.gunit.spacecrack.model.SpaceCrackMap;
 import com.gunit.spacecrack.restservice.RestService;
@@ -42,7 +43,9 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Dimitri on 24/02/14.
@@ -59,6 +62,7 @@ public class GameActivity extends BaseGameActivity {
 
     public SpaceCrackMap spaceCrackMap;
     public GameWrapper gameWrapper;
+    public Map<String, Planet> planets;
 
     // Camera movement speeds
     final float maxVelocityX = 500;
@@ -69,8 +73,9 @@ public class GameActivity extends BaseGameActivity {
     @Override
     protected void onCreate(Bundle pSavedInstanceState) {
         super.onCreate(pSavedInstanceState);
+        planets = new HashMap<String, Planet>();
         new GetMap().execute(SpaceCrackApplication.URL_MAP);
-//        new StartGameTask("test", "1").execute(SpaceCrackApplication.URL_GAME);
+        new StartGameTask("test", "2").execute(SpaceCrackApplication.URL_GAME);
     }
 
     @Override
@@ -153,7 +158,9 @@ public class GameActivity extends BaseGameActivity {
                 try {
                     Gson gson = new Gson();
                     spaceCrackMap = gson.fromJson(result, SpaceCrackMap.class);
-
+                    for (Planet planet : spaceCrackMap.planets) {
+                        planets.put(planet.name, planet);
+                    }
                 } catch (JsonParseException e) {
                     e.printStackTrace();
                 }
@@ -165,7 +172,6 @@ public class GameActivity extends BaseGameActivity {
     public class StartGameTask extends AsyncTask<String, Void, String> {
 
         private JSONObject game;
-        private boolean facebookLogin;
         private String gameName;
         private String opponentId;
 
@@ -182,7 +188,6 @@ public class GameActivity extends BaseGameActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            this.facebookLogin = facebookLogin;
         }
 
         @Override
@@ -201,6 +206,7 @@ public class GameActivity extends BaseGameActivity {
         {
             if (result != null) {
                 Toast.makeText(GameActivity.this, "Data received", Toast.LENGTH_SHORT).show();
+                new GetActiveGame().execute(SpaceCrackApplication.URL_ACTIVEGAME + "/" + result);
             }
         }
     }

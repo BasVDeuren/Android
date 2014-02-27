@@ -172,7 +172,9 @@ public class EditProfileFragment extends Fragment {
                 byte64Img = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
             } else {
-                byte64Img = SpaceCrackApplication.profile.image.substring(SpaceCrackApplication.profile.image.indexOf(",") + 1);
+                if (SpaceCrackApplication.profile.image != null) {
+                    byte64Img = SpaceCrackApplication.profile.image.substring(SpaceCrackApplication.profile.image.indexOf(",") + 1);
+                }
             }
 
             //Create an profile to edit

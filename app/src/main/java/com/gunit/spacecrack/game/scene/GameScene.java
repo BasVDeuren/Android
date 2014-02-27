@@ -3,7 +3,10 @@ package com.gunit.spacecrack.game.scene;
 import com.gunit.spacecrack.game.GameActivity;
 import com.gunit.spacecrack.game.manager.ResourcesManager;
 import com.gunit.spacecrack.game.manager.SceneManager;
+import com.gunit.spacecrack.model.Colony;
 import com.gunit.spacecrack.model.Planet;
+import com.gunit.spacecrack.model.Player;
+import com.gunit.spacecrack.model.Ship;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
@@ -40,6 +43,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         createHUD();
         drawLines();
         createPlanets();
+        drawShips();
+        drawColonies();
         this.setOnSceneTouchListener(this);
         scrollDetector = new SurfaceScrollDetector(this);
         pinchZoomDetector = new PinchZoomDetector(this);
@@ -116,6 +121,30 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
                 line.setColor(0.6f, 0.6f, 0.6f);
                 attachChild(line);
             }
+        }
+    }
+
+    private void drawShips() {
+        Player player = activity.gameWrapper.game.player1;
+        Sprite shipSprite;
+
+        for (Ship ship : player.ships) {
+            Planet planet = activity.planets.get(ship.planetName);
+            shipSprite = createSprite((planet.x * 0.58125f), ((planet.y - 15) * 0.558f), resourcesManager.spaceshipRegion, vbom);
+//            shipSprite.setScale(0.15f);
+            attachChild(shipSprite);
+        }
+    }
+
+    private void drawColonies() {
+        Player player = activity.gameWrapper.game.player1;
+        Sprite colonySprite;
+
+        for (Colony colony : player.colonies) {
+            Planet planet = activity.planets.get(colony.planetName);
+            colonySprite = createSprite(((planet.x - 5) * 0.58125f), ((planet.y - 32) * 0.558f), resourcesManager.colonyFlagRegion, vbom);
+//            colonySprite.setScale(0.15f);
+            attachChild(colonySprite);
         }
     }
 
