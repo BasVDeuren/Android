@@ -1,5 +1,6 @@
 package com.gunit.spacecrack.game.scene;
 
+import com.gunit.spacecrack.game.manager.ResourcesManager;
 import com.gunit.spacecrack.game.manager.SceneManager;
 
 import org.andengine.engine.camera.Camera;
@@ -36,20 +37,14 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
     @Override
     public void disposeScene() {
+        ResourcesManager.getInstance().unloadMenuResources();
         this.detachSelf();
         this.dispose();
     }
 
     private void createBackground() {
-        attachChild(new Sprite(0, 0, resourcesManager.menuBackgroundRegion, vbom)
-        {
-            @Override
-            protected void preDraw(GLState pGLState, Camera pCamera)
-            {
-                super.preDraw(pGLState, pCamera);
-                pGLState.enableDither();
-            }
-        });
+        Sprite background = createSprite(0, 0, resourcesManager.menuBackgroundRegion, vbom);
+        attachChild(background);
     }
 
     private void createMenuChildScene()

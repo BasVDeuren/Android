@@ -32,16 +32,19 @@ public class SpaceCrackApplication extends Application {
 
     public final static int NETWORK_TIMEOUT = 5000;
     //Localhost
-    public final static String IP_ADDRESS = "10.0.2.2";
+//    public final static String IP_ADDRESS = "10.0.2.2";
     //Network
 //    public final static String IP_ADDRESS = "10.132.100.255";
 //    public final static String IP_ADDRESS = "10.0.3.2";
 //    public final static String IP_ADDRESS = "192.168.0.142";
-//    public final static String IP_ADDRESS = "192.168.56.1";
+    public final static String IP_ADDRESS = "192.168.56.1";
     public final static String DOMAIN = "http://" + IP_ADDRESS + ":8080";
     public final static String URL_LOGIN = DOMAIN + "/api/accesstokens";
     public final static String URL_REGISTER = DOMAIN + "/api/user";
     public final static String URL_PROFILE = DOMAIN + "/api/auth/profile";
+    public final static String URL_MAP = DOMAIN + "/api/map";
+    public final static String URL_GAME = DOMAIN + "/api/auth/game";
+    public final static String URL_ACTIVEGAME = DOMAIN + "/api/auth/game/specificGame";
 
 
     public List<GraphUser> getFriends() {

@@ -1,25 +1,24 @@
 package com.gunit.spacecrack.game.scene;
 
 import com.gunit.spacecrack.game.GameActivity;
+import com.gunit.spacecrack.game.manager.ResourcesManager;
 import com.gunit.spacecrack.game.manager.SceneManager;
+import com.gunit.spacecrack.model.Planet;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
-import org.andengine.engine.handler.IUpdateHandler;
+import org.andengine.entity.primitive.Line;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
-import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
 import org.andengine.input.touch.TouchEvent;
-import org.andengine.input.touch.controller.MultiTouch;
 import org.andengine.input.touch.detector.PinchZoomDetector;
 import org.andengine.input.touch.detector.ScrollDetector;
 import org.andengine.input.touch.detector.SurfaceScrollDetector;
 import org.andengine.opengl.util.GLState;
 import org.andengine.util.HorizontalAlign;
-import org.andengine.util.color.Color;
 
 /**
  * Created by Dimitri on 24/02/14.
@@ -39,6 +38,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
     public void createScene() {
         createBackground();
         createHUD();
+        drawLines();
         createPlanets();
         this.setOnSceneTouchListener(this);
         scrollDetector = new SurfaceScrollDetector(this);
@@ -65,18 +65,14 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         camera.setHUD(null);
         camera.setCenterDirect(GameActivity.CAMERA_WIDTH / 2, GameActivity.CAMERA_HEIGHT / 2);
         camera.setZoomFactor(1f);
+        ResourcesManager.getInstance().unloadGameResources();
         this.detachSelf();
         this.dispose();
     }
 
     private void createBackground() {
-        attachChild(new Sprite(0, 0, resourcesManager.gameBackgroundRegion, vbom) {
-            @Override
-            protected void preDraw(GLState pGLState, Camera pCamera) {
-                super.preDraw(pGLState, pCamera);
-                pGLState.enableDither();
-            }
-        });
+        Sprite background = createSprite(0, 0, resourcesManager.gameBackgroundRegion, vbom);
+        attachChild(background);
 //        this.setBackground(new Background(Color.BLACK));
     }
 
@@ -92,9 +88,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
     }
 
     private void createPlanets() {
-        Sprite planet;
-        for (int i = 0; i < 5; i++) {
-            planet = new Sprite(0, 0, resourcesManager.planetRegion, vbom)
+        Sprite planetSprite;
+
+        for (Planet planet : activity.spaceCrackMap.planets) {
+            planetSprite = new Sprite(0, 0, resourcesManager.planetRegion, vbom)
             {
                 @Override
                 protected void preDraw(GLState pGLState, Camera pCamera)
@@ -103,9 +100,22 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
                     pGLState.enableDither();
                 }
             };
-            planet.setPosition(i*100, i*50);
-            planet.setScale(0.5f);
-            attachChild(planet);
+//            planetSprite.setScale(0.15f);
+            planetSprite.setPosition((planet.x * 0.58125f) - (resourcesManager.planetRegion.getWidth()/2), (planet.y * 0.558f) - (resourcesManager.planetRegion.getHeight()/2));
+            attachChild(planetSprite);
+        }
+    }
+
+    private void drawLines() {
+        Line line;
+        for (Planet planet : activity.spaceCrackMap.planets) {
+            for (Planet connect : planet.connectedPlanets) {
+                line = new Line(planet.x * 0.58125f, planet.y * 0.558f, connect.x * 0.58125f, connect.y * 0.558f, vbom);
+
+                line.setLineWidth(5);
+                line.setColor(0.6f, 0.6f, 0.6f);
+                attachChild(line);
+            }
         }
     }
 

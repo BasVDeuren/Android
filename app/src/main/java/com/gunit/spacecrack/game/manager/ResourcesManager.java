@@ -31,14 +31,14 @@ public class ResourcesManager {
     public GameActivity gameActivity;
     public Engine engine;
     public SmoothCamera camera;
+    public float cameraHeight;
+    public float cameraWidth;
     public VertexBufferObjectManager vertexBufferObjectManager;
 
     //Font
     public Font font;
 
     //Splash screen
-    public ITextureRegion splashRegion;
-    private BitmapTextureAtlas splashTextureAtlas;
 
     //Menu screen
     public ITextureRegion menuBackgroundRegion;
@@ -49,6 +49,8 @@ public class ResourcesManager {
     //Game screen
     public ITextureRegion gameBackgroundRegion;
     public ITextureRegion planetRegion;
+    public ITextureRegion connectedPlanetRegion;
+    public ITextureRegion spaceshipRegion;
     private BuildableBitmapTextureAtlas gameTextureAtlas;
 
     private ResourcesManager() {
@@ -60,18 +62,47 @@ public class ResourcesManager {
     }
 
     public void init (GameActivity gameActivity) {
-        this.gameActivity = gameActivity;
-        this.engine = gameActivity.getEngine();
-        this.camera = (SmoothCamera) engine.getCamera();
-        this.vertexBufferObjectManager = engine.getVertexBufferObjectManager();
+        getInstance().gameActivity = gameActivity;
+        getInstance().engine = gameActivity.getEngine();
+        getInstance().camera = (SmoothCamera) engine.getCamera();
+        getInstance().cameraWidth = GameActivity.CAMERA_WIDTH;
+        getInstance().cameraHeight = GameActivity.CAMERA_HEIGHT;
+        getInstance().vertexBufferObjectManager = engine.getVertexBufferObjectManager();
+    }
+
+    public void loadFonts() {
+        if (font == null) {
+            FontFactory.setAssetBasePath("font/");
+            final ITexture mainFontTexture = new BitmapTextureAtlas(gameActivity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+
+            font = FontFactory.createStrokeFromAsset(gameActivity.getFontManager(), mainFontTexture, gameActivity.getAssets(), "font.ttf", 50, true, Color.WHITE, 2, Color.BLACK);
+            font.load();
+        }
+    }
+
+    public void unloadFonts() {
+        if (font != null) {
+            font.unload();
+            font = null;
+        }
+    }
+
+    public void loadSplashScreenResources()
+    {
+
     }
 
     public void loadMenuResources() {
-        loadMenuGraphics();
-        loadMenuFonts();
+        getInstance().loadMenuGraphics();
     }
 
-    public void loadMenuGraphics() {
+    public void loadGameResources() {
+        loadGameGraphics();
+        loadGameAudio();
+    }
+
+    private void loadMenuGraphics() {
+        //Set the path to assets/gfx/
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
         menuTextureAtlas = new BuildableBitmapTextureAtlas(gameActivity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
         menuBackgroundRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, gameActivity, "spacebackground.jpg");
@@ -81,8 +112,8 @@ public class ResourcesManager {
 
         try
         {
-            this.menuTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
-            this.menuTextureAtlas.load();
+            menuTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+            menuTextureAtlas.load();
         }
         catch (final ITextureAtlasBuilder.TextureAtlasBuilderException e)
         {
@@ -90,64 +121,48 @@ public class ResourcesManager {
         }
     }
 
-    public void loadGameResources() {
-        loadGameGraphics();
-        loadMenuFonts();
-        loadGameAudio();
-    }
-
     private void loadGameGraphics() {
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
         gameTextureAtlas = new BuildableBitmapTextureAtlas(gameActivity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
         gameBackgroundRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "galaxy.jpg");
         planetRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "planet1.png");
+        connectedPlanetRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "planet2.png");
+        spaceshipRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "spaceship.png");
 
         try {
-            this.gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
-            this.gameTextureAtlas.load();
+            gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+            gameTextureAtlas.load();
         } catch (final ITextureAtlasBuilder.TextureAtlasBuilderException e) {
             Debug.e(e);
         }
     }
 
-    private void loadMenuFonts() {
-        FontFactory.setAssetBasePath("font/");
-        final ITexture mainFontTexture = new BitmapTextureAtlas(gameActivity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 
-        font = FontFactory.createStrokeFromAsset(gameActivity.getFontManager(), mainFontTexture, gameActivity.getAssets(), "font.ttf", 50, true, Color.WHITE, 2, Color.BLACK);
-        font.load();
-    }
 
     private void loadGameAudio() {
 
     }
 
-    public void loadSplashScreen()
+
+
+    public void unloadSplashScreenResources()
     {
-        BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
-        splashTextureAtlas = new BitmapTextureAtlas(gameActivity.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
-        splashRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(splashTextureAtlas, gameActivity, "planet1.png", 0, 0);
-        splashTextureAtlas.load();
+
     }
 
-    public void unloadSplashScreen()
-    {
-        splashTextureAtlas.unload();
-        splashRegion = null;
-    }
+//    public void loadMenuTextures() {
+//        menuTextureAtlas.load();
+//    }
 
-    public void unloadMenuTextures()
-    {
+    public void unloadMenuResources() {
         menuTextureAtlas.unload();
+        menuTextureAtlas = null;
     }
 
-    public void loadMenuTextures()
-    {
-        menuTextureAtlas.load();
-    }
 
-    public void unloadGameTextures() {
-
+    public void unloadGameResources() {
+        gameTextureAtlas.unload();
+        gameTextureAtlas = null;
     }
 
 }

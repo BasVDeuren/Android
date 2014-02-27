@@ -38,7 +38,9 @@ public class RestService {
         HttpConnectionParams.setConnectionTimeout(new BasicHttpParams(), SpaceCrackApplication.NETWORK_TIMEOUT);
 
         CookieStore cookieStore = ((DefaultHttpClient) httpClient).getCookieStore();
-        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
+//        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
+        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%2272mbijt5e9t6kpjv1btvcc3qq1%22");
+
         cookie.setDomain(SpaceCrackApplication.IP_ADDRESS);
         cookie.setPath("/");
         cookieStore.addCookie(cookie);
@@ -113,6 +115,51 @@ public class RestService {
         }
         httpClient.getConnectionManager().shutdown();
         return accessToken;
+    }
+
+    public static String postGame(String url, JSONObject user) {
+        String result = null;
+        HttpClient httpClient = new DefaultHttpClient();
+        HttpPost httpPost = new HttpPost(url);
+        HttpConnectionParams.setConnectionTimeout(new BasicHttpParams(), SpaceCrackApplication.NETWORK_TIMEOUT);
+        StringEntity stringEntity = null;
+        try {
+            stringEntity = new StringEntity(user.toString());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        CookieStore cookieStore = ((DefaultHttpClient) httpClient).getCookieStore();
+//        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
+        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%2272mbijt5e9t6kpjv1btvcc3qq1%22");
+
+        cookie.setDomain(SpaceCrackApplication.IP_ADDRESS);
+        cookie.setPath("/");
+        cookieStore.addCookie(cookie);
+        ((DefaultHttpClient) httpClient).setCookieStore(cookieStore);
+
+        httpPost.setHeader("accept", "application/json");
+        httpPost.setHeader("Content-type", "application/json");
+        httpPost.setEntity(stringEntity);
+
+        try {
+            // Execute HTTP Post Request
+            HttpResponse response = httpClient.execute(httpPost);
+
+            //Check the Status code of the response
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                result = EntityUtils.toString(response.getEntity());
+                Log.i(TAG, "Request succeeded");
+            } else {
+                Log.i(TAG, "Request failed");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        httpClient.getConnectionManager().shutdown();
+        return result;
     }
 
     public static boolean editProfile(JSONObject profile) {

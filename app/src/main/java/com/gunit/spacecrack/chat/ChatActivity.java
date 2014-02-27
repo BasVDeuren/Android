@@ -3,7 +3,10 @@ package com.gunit.spacecrack.chat;
 import android.app.ListActivity;
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -11,7 +14,15 @@ import android.widget.*;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import com.gunit.spacecrack.R;
+import com.gunit.spacecrack.application.SpaceCrackApplication;
+import com.gunit.spacecrack.model.Profile;
+import com.gunit.spacecrack.restservice.RestService;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Random;
 
@@ -123,5 +134,4 @@ public class ChatActivity extends ListActivity {
             inputText.setText("");
         }
     }
-
 }

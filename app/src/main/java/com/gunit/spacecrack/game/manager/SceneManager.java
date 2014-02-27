@@ -37,8 +37,27 @@ public class SceneManager {
         SCENE_LOADING,
     }
 
+    public static SceneManager getInstance()
+    {
+        return INSTANCE;
+    }
+
+    public SceneType getCurrentSceneType()
+    {
+        return currentSceneType;
+    }
+
+    public BaseScene getCurrentScene()
+    {
+        return currentScene;
+    }
+
     public void setScene(BaseScene scene)
     {
+        if (currentScene != null) {
+            //Unload the current scene from the memory
+            currentScene.disposeScene();
+        }
         engine.setScene(scene);
         currentScene = scene;
         currentSceneType = scene.getSceneType();
@@ -65,30 +84,15 @@ public class SceneManager {
         }
     }
 
-    public static SceneManager getInstance()
-    {
-        return INSTANCE;
-    }
-
-    public SceneType getCurrentSceneType()
-    {
-        return currentSceneType;
-    }
-
-    public BaseScene getCurrentScene()
-    {
-        return currentScene;
-    }
-
     public void createSplashScene(IGameInterface.OnCreateSceneCallback pOnCreateSceneCallback) {
-        ResourcesManager.getInstance().loadSplashScreen();
+        ResourcesManager.getInstance().loadSplashScreenResources();
         splashScene = new SplashScene();
+        SceneManager.getInstance().setScene(splashScene);
         currentScene = splashScene;
         pOnCreateSceneCallback.onCreateSceneFinished(splashScene);
     }
 
     public void disposeSplashScene() {
-        ResourcesManager.getInstance().unloadSplashScreen();
         splashScene.disposeScene();
         splashScene = null;
     }
@@ -98,18 +102,16 @@ public class SceneManager {
         menuScene = new MainMenuScene();
         loadingScene = new LoadingScene();
         SceneManager.getInstance().setScene(menuScene);
-        disposeSplashScene();
     }
 
     public void loadMenuScene(final Engine engine) {
         setScene(loadingScene);
-        gameScene.disposeScene();
-        ResourcesManager.getInstance().unloadGameTextures();
         engine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 engine.unregisterUpdateHandler(pTimerHandler);
-                ResourcesManager.getInstance().loadMenuTextures();
+                ResourcesManager.getInstance().loadMenuResources();
+                menuScene = new MainMenuScene();
                 setScene(menuScene);
             }
         }));
@@ -120,12 +122,10 @@ public class SceneManager {
         gameScene = new GameScene();
         loadingScene = new LoadingScene();
         SceneManager.getInstance().setScene(gameScene);
-        disposeSplashScene();
     }
 
     public void loadGameScene(final Engine engine) {
         setScene(loadingScene);
-        ResourcesManager.getInstance().unloadMenuTextures();
         engine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
