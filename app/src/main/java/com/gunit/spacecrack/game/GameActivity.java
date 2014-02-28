@@ -1,32 +1,22 @@
 package com.gunit.spacecrack.game;
 
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
-import com.google.gson.reflect.TypeToken;
-import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.game.manager.ResourcesManager;
 import com.gunit.spacecrack.game.manager.SceneManager;
-import com.gunit.spacecrack.model.Game;
-import com.gunit.spacecrack.model.GameWrapper;
+import com.gunit.spacecrack.json.GameWrapper;
 import com.gunit.spacecrack.model.Planet;
-import com.gunit.spacecrack.model.Player;
-import com.gunit.spacecrack.model.Profile;
 import com.gunit.spacecrack.model.SpaceCrackMap;
 import com.gunit.spacecrack.restservice.RestService;
 
 import org.andengine.engine.Engine;
 import org.andengine.engine.LimitedFPSEngine;
-import org.andengine.engine.camera.BoundCamera;
-import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.SmoothCamera;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -41,10 +31,7 @@ import org.andengine.ui.activity.BaseGameActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,6 +44,8 @@ public class GameActivity extends BaseGameActivity {
     private SmoothCamera smoothCamera;
     public static final int CAMERA_WIDTH = 930;
     public static final int CAMERA_HEIGHT = 558;
+    public static final float SCALE_X = 0.58125f;
+    public static final float SCALE_Y = 0.558f;
     private static final int FPS_LIMIT = 60;
     private ResourcesManager resourceManager;
 
@@ -65,14 +54,19 @@ public class GameActivity extends BaseGameActivity {
     public Map<String, Planet> planets;
 
     // Camera movement speeds
-    final float maxVelocityX = 500;
-    final float maxVelocityY = 500;
+    public final float maxVelocityX = 500;
+    public final float maxVelocityY = 500;
     // Camera zoom speed
-    final float maxZoomFactorChange = 5;
+    public final float maxZoomFactorChange = 5;
+
 
     @Override
     protected void onCreate(Bundle pSavedInstanceState) {
         super.onCreate(pSavedInstanceState);
+        loadData();
+    }
+
+    private void loadData() {
         planets = new HashMap<String, Planet>();
         new GetMap().execute(SpaceCrackApplication.URL_MAP);
         new StartGameTask("test", "2").execute(SpaceCrackApplication.URL_GAME);
@@ -116,7 +110,7 @@ public class GameActivity extends BaseGameActivity {
 
     @Override
     public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) throws Exception {
-        mEngine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() {
+        mEngine.registerUpdateHandler(new TimerHandler(7f, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 mEngine.unregisterUpdateHandler(pTimerHandler);
@@ -172,15 +166,10 @@ public class GameActivity extends BaseGameActivity {
     public class StartGameTask extends AsyncTask<String, Void, String> {
 
         private JSONObject game;
-        private String gameName;
-        private String opponentId;
 
         public StartGameTask (String gameName, String opponentId)
         {
             super();
-            this.gameName = gameName;
-            this.opponentId = opponentId;
-            //Create an user to log in
             game = new JSONObject();
             try {
                 game.put("gameName", gameName);
@@ -188,11 +177,6 @@ public class GameActivity extends BaseGameActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
-
-        @Override
-        protected void onPreExecute() {
-
         }
 
         @Override

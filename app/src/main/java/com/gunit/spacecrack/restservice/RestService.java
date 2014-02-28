@@ -30,7 +30,7 @@ import java.io.UnsupportedEncodingException;
 public class RestService {
 
     private static final String TAG = "REST Service";
-    private static String accessTokenTemp = "%224udccigvqh6g6p745cplfi9n3v%22";
+    private static String accessTokenTemp = "%22v5dk7ft5i7jnqgp82rgajv5q2i%22";
 
     public static String getRequest(String url) {
         String result = null;
@@ -152,6 +152,53 @@ public class RestService {
             if (statusCode == HttpStatus.SC_OK) {
                 result = EntityUtils.toString(response.getEntity());
                 Log.i(TAG, "Request succeeded");
+            } else {
+                Log.i(TAG, "Request failed");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        httpClient.getConnectionManager().shutdown();
+        return result;
+    }
+
+    public static String postAction(String url, String action) {
+        String result = null;
+        HttpClient httpClient = new DefaultHttpClient();
+        HttpPost httpPost = new HttpPost(url);
+        HttpConnectionParams.setConnectionTimeout(new BasicHttpParams(), SpaceCrackApplication.NETWORK_TIMEOUT);
+        StringEntity stringEntity = null;
+        try {
+            stringEntity = new StringEntity(action);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        CookieStore cookieStore = ((DefaultHttpClient) httpClient).getCookieStore();
+//        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
+        BasicClientCookie cookie = new BasicClientCookie("accessToken", accessTokenTemp);
+
+        cookie.setDomain(SpaceCrackApplication.IP_ADDRESS);
+        cookie.setPath("/");
+        cookieStore.addCookie(cookie);
+        ((DefaultHttpClient) httpClient).setCookieStore(cookieStore);
+
+        httpPost.setHeader("accept", "application/json");
+        httpPost.setHeader("Content-type", "application/json");
+        httpPost.setEntity(stringEntity);
+
+        try {
+            // Execute HTTP Post Request
+            HttpResponse response = httpClient.execute(httpPost);
+
+            //Check the Status code of the response
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                result = EntityUtils.toString(response.getEntity());
+                Log.i(TAG, "Request succeeded");
+            } else if (statusCode == 406) {
+                result = String.valueOf(statusCode);
             } else {
                 Log.i(TAG, "Request failed");
             }

@@ -17,6 +17,7 @@ import org.andengine.opengl.texture.atlas.bitmap.source.IBitmapTextureAtlasSourc
 import org.andengine.opengl.texture.atlas.buildable.builder.BlackPawnTextureAtlasBuilder;
 import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder;
 import org.andengine.opengl.texture.region.ITextureRegion;
+import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.debug.Debug;
 
@@ -31,8 +32,6 @@ public class ResourcesManager {
     public GameActivity gameActivity;
     public Engine engine;
     public SmoothCamera camera;
-    public float cameraHeight;
-    public float cameraWidth;
     public VertexBufferObjectManager vertexBufferObjectManager;
 
     //Font
@@ -48,10 +47,9 @@ public class ResourcesManager {
 
     //Game screen
     public ITextureRegion gameBackgroundRegion;
-    public ITextureRegion planetRegion;
-    public ITextureRegion connectedPlanetRegion;
+    public ITiledTextureRegion planetRegion;
+    public ITiledTextureRegion colonyFlagRegion;
     public ITextureRegion spaceshipRegion;
-    public ITextureRegion colonyFlagRegion;
     private BuildableBitmapTextureAtlas gameTextureAtlas;
 
     private ResourcesManager() {
@@ -66,8 +64,6 @@ public class ResourcesManager {
         getInstance().gameActivity = gameActivity;
         getInstance().engine = gameActivity.getEngine();
         getInstance().camera = (SmoothCamera) engine.getCamera();
-        getInstance().cameraWidth = GameActivity.CAMERA_WIDTH;
-        getInstance().cameraHeight = GameActivity.CAMERA_HEIGHT;
         getInstance().vertexBufferObjectManager = engine.getVertexBufferObjectManager();
     }
 
@@ -126,10 +122,9 @@ public class ResourcesManager {
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
         gameTextureAtlas = new BuildableBitmapTextureAtlas(gameActivity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
         gameBackgroundRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "galaxy.jpg");
-        planetRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "planet1.png");
-        connectedPlanetRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "planet2.png");
+        planetRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, gameActivity, "planet.png", 2, 1);
         spaceshipRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "spaceship.png");
-        colonyFlagRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "player1flag.png");
+        colonyFlagRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, gameActivity, "playerflag.png", 2, 1);
 
         try {
             gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));

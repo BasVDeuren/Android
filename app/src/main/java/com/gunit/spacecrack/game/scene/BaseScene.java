@@ -11,7 +11,9 @@ import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.SmoothCamera;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.Sprite;
+import org.andengine.entity.sprite.TiledSprite;
 import org.andengine.opengl.texture.region.ITextureRegion;
+import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.util.GLState;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
@@ -45,6 +47,19 @@ public abstract class BaseScene extends Scene {
             }
         };
         return sprite;
+    }
+
+    protected TiledSprite createTiledSprite(float x, float y, ITiledTextureRegion region, VertexBufferObjectManager vbom, int index) {
+        TiledSprite tiledSprite = new TiledSprite(x, y, region, vbom)
+        {
+            @Override
+            protected void preDraw(GLState glState, Camera camera1) {
+                super.preDraw(glState, camera1);
+                glState.enableDither();
+            }
+        };
+        tiledSprite.setCurrentTileIndex(index);
+        return tiledSprite;
     }
 
     public abstract void createScene();
