@@ -36,8 +36,8 @@ public class SpaceCrackApplication extends Application {
     //Network (IP address pc)
 //    public final static String IP_ADDRESS = "10.132.100.255";
 //    public final static String IP_ADDRESS = "10.0.3.2";
-    public final static String IP_ADDRESS = "192.168.0.143";
-//    public final static String IP_ADDRESS = "192.168.56.1";
+//    public final static String IP_ADDRESS = "192.168.0.143";
+    public final static String IP_ADDRESS = "192.168.56.1";
     public final static String DOMAIN = "http://" + IP_ADDRESS + ":8080";
     public final static String URL_LOGIN = DOMAIN + "/api/accesstokens";
     public final static String URL_REGISTER = DOMAIN + "/api/user";

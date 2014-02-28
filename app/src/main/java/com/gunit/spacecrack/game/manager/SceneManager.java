@@ -60,7 +60,7 @@ public class SceneManager {
         }
         engine.setScene(scene);
         currentScene = scene;
-        currentSceneType = scene.getSceneType();
+//        currentSceneType = scene.getSceneType();
     }
 
     public void setScene(SceneType sceneType)
@@ -88,23 +88,17 @@ public class SceneManager {
         ResourcesManager.getInstance().loadSplashScreenResources();
         splashScene = new SplashScene();
         SceneManager.getInstance().setScene(splashScene);
-        currentScene = splashScene;
         pOnCreateSceneCallback.onCreateSceneFinished(splashScene);
     }
 
-    public void disposeSplashScene() {
-        splashScene.disposeScene();
-        splashScene = null;
-    }
-
-    public void createMenuScene() {
-        ResourcesManager.getInstance().loadMenuResources();
-        menuScene = new MainMenuScene();
-        loadingScene = new LoadingScene();
-        SceneManager.getInstance().setScene(menuScene);
-    }
+//    public void createMenuScene() {
+//        ResourcesManager.getInstance().loadMenuResources();
+//        menuScene = new MainMenuScene();
+//        SceneManager.getInstance().setScene(menuScene);
+//    }
 
     public void loadMenuScene(final Engine engine) {
+        loadingScene = new LoadingScene();
         setScene(loadingScene);
         engine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
             @Override
@@ -125,6 +119,7 @@ public class SceneManager {
     }
 
     public void loadGameScene(final Engine engine) {
+        loadingScene = new LoadingScene();
         setScene(loadingScene);
         engine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
             @Override

@@ -30,7 +30,7 @@ import java.io.UnsupportedEncodingException;
 public class RestService {
 
     private static final String TAG = "REST Service";
-    private static String accessTokenTemp = "%22v5dk7ft5i7jnqgp82rgajv5q2i%22";
+    private static String accessTokenTemp = "%22gs323t2ddkk9v09ulacd3t4a7%22";
 
     public static String getRequest(String url) {
         String result = null;

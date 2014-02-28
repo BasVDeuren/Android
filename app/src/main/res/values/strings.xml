@@ -9,8 +9,10 @@
     <string name="avatar">Avatar</string>
     <string name="background">Background</string>
     <string name="birth_date">Birth date</string>
+    <string name="chat">Chat</string>
     <string name="choose_opponent">Choose opponent</string>
     <string name="contact">Contact</string>
+    <string name="create_game">Create game</string>
     <string name="edit">Edit</string>
     <string name="edited_failed">Edited failed</string>
     <string name="email">E-mail</string>
@@ -19,6 +21,7 @@
     <string name="female">Female</string>
     <string name="fill_in_fields">Please fill in all the fields</string>
     <string name="first_name">First name</string>
+    <string name="game_not_created">Game could not be created</string>
     <string name="gender">Gender</string>
     <string name="hello_world">Hello world!</string>
     <string name="last_name">Last name</string>
@@ -26,8 +29,10 @@
     <string name="login_fail">Login failed</string>
     <string name="login_succes">Login succeeded</string>
     <string name="male">Male</string>
+    <string name="name_of_game">Name of game</string>
     <string name="new_game">New game</string>
     <string name="no_connection">No internet connection</string>
+    <string name="opponent">Opponent</string>
     <string name="password">Password</string>
     <string name="password_match">Passwords must match</string>
     <string name="profile">Profile</string>

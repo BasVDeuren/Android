@@ -1,5 +1,6 @@
 package com.gunit.spacecrack.game;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -59,6 +60,9 @@ public class GameActivity extends BaseGameActivity {
     // Camera zoom speed
     public final float maxZoomFactorChange = 5;
 
+    private boolean gameStarted;
+    private boolean mapLoaded;
+
 
     @Override
     protected void onCreate(Bundle pSavedInstanceState) {
@@ -66,16 +70,28 @@ public class GameActivity extends BaseGameActivity {
         loadData();
     }
 
+    @Override
+    public synchronized void onResumeGame() {
+        if (this.mEngine != null)
+            super.onResumeGame();
+    }
+
     private void loadData() {
+        gameStarted = false;
+        mapLoaded = false;
         planets = new HashMap<String, Planet>();
         new GetMap().execute(SpaceCrackApplication.URL_MAP);
-        new StartGameTask("test", "2").execute(SpaceCrackApplication.URL_GAME);
+        Intent intent = getIntent();
+        if (intent.getStringExtra("gameName") != null && intent.getStringExtra("opponent") != null) {
+            new StartGameTask(intent.getStringExtra("gameName"), intent.getStringExtra("opponent")).execute(SpaceCrackApplication.URL_GAME);
+        } else {
+            new StartGameTask("test", "2").execute(SpaceCrackApplication.URL_GAME);
+        }
     }
 
     @Override
     public Engine onCreateEngine(EngineOptions pEngineOptions) {
-        Engine engine = new LimitedFPSEngine(pEngineOptions, FPS_LIMIT);
-        return engine;
+        return new LimitedFPSEngine(pEngineOptions, FPS_LIMIT);
     }
 
     @Override
@@ -110,13 +126,13 @@ public class GameActivity extends BaseGameActivity {
 
     @Override
     public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) throws Exception {
-        mEngine.registerUpdateHandler(new TimerHandler(7f, new ITimerCallback() {
-            @Override
-            public void onTimePassed(TimerHandler pTimerHandler) {
-                mEngine.unregisterUpdateHandler(pTimerHandler);
-                SceneManager.getInstance().createMenuScene();
-            }
-        }));
+//        mEngine.registerUpdateHandler(new TimerHandler(10f, new ITimerCallback() {
+//            @Override
+//            public void onTimePassed(TimerHandler pTimerHandler) {
+//                mEngine.unregisterUpdateHandler(pTimerHandler);
+//                SceneManager.getInstance().loadMenuScene(mEngine);
+//            }
+//        }));
         pOnPopulateSceneCallback.onPopulateSceneFinished();
     }
 
@@ -134,6 +150,12 @@ public class GameActivity extends BaseGameActivity {
             SceneManager.getInstance().getCurrentScene().onBackKeyPressed();
         }
         return false;
+    }
+
+    private void startGame () {
+        if (mapLoaded && gameStarted) {
+            SceneManager.getInstance().loadMenuScene(mEngine);
+        }
     }
 
     //GET request to map
@@ -155,6 +177,8 @@ public class GameActivity extends BaseGameActivity {
                     for (Planet planet : spaceCrackMap.planets) {
                         planets.put(planet.name, planet);
                     }
+                    mapLoaded = true;
+                    startGame();
                 } catch (JsonParseException e) {
                     e.printStackTrace();
                 }
@@ -211,7 +235,8 @@ public class GameActivity extends BaseGameActivity {
                 try {
                     Gson gson = new Gson();
                     gameWrapper = gson.fromJson(result, GameWrapper.class);
-
+                    gameStarted = true;
+                    startGame();
                 } catch (JsonParseException e) {
                     e.printStackTrace();
                 }

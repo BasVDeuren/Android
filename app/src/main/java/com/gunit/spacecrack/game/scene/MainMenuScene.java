@@ -2,6 +2,7 @@ package com.gunit.spacecrack.game.scene;
 
 import com.gunit.spacecrack.game.manager.ResourcesManager;
 import com.gunit.spacecrack.game.manager.SceneManager;
+import com.gunit.spacecrack.game.uicontrols.InputText;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.entity.scene.menu.MenuScene;
@@ -56,7 +57,7 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
         final IMenuItem optionsMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_OPTIONS, resourcesManager.optionsRegion, vbom), 1.2f, 1);
 
         menuChildScene.addMenuItem(playMenuItem);
-        menuChildScene.addMenuItem(optionsMenuItem);
+//        menuChildScene.addMenuItem(optionsMenuItem);
 
         menuChildScene.buildAnimations();
         menuChildScene.setBackgroundEnabled(false);

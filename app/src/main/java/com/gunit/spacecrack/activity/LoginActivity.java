@@ -12,10 +12,6 @@ import com.gunit.spacecrack.fragment.LoginFragment;
 
 public class LoginActivity extends Activity {
 
-    private LoginFragment facebookFragment;
-    private Context context;
-    private SpaceCrackApplication application;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

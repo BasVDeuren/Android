@@ -64,7 +64,7 @@ public class LoginFragment extends Fragment {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!edtEmail.getText().toString().equals("") || !edtPassword.getText().toString().equals("")) {
+                if (!edtEmail.getText().toString().equals("") && !edtPassword.getText().toString().equals("")) {
                     new LoginTask(edtEmail.getText().toString(), edtPassword.getText().toString(), false).execute();
                 } else {
                     Toast.makeText(getActivity(), getResources().getString(R.string.fill_in_fields), Toast.LENGTH_SHORT).show();

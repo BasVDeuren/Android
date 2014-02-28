@@ -19,6 +19,7 @@ import com.gunit.spacecrack.restservice.RestService;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
+import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.entity.primitive.Line;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
@@ -193,9 +194,20 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
                     }
                     return true;
                 }
+
+                @Override
+                protected void onManagedUpdate(float pSecondsElapsed) {
+                    if (false) {
+                        this.detachSelf();
+                    }
+                    super.onManagedUpdate(pSecondsElapsed);
+
+                }
             };
             shipSprite.setScale(0.5f);
-            registerTouchArea(shipSprite);
+            if (player.playerId == activity.gameWrapper.activePlayerId) {
+                registerTouchArea(shipSprite);
+            }
             setTouchAreaBindingOnActionMoveEnabled(true);
             shipSprites.put(ship.shipId, shipSprite);
             attachChild(shipSprite);
@@ -231,15 +243,19 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
             @Override
             public void run() {
                 for (Map.Entry<Integer, Sprite> entry : shipSprites.entrySet()) {
+                    gameScene.unregisterTouchArea(entry.getValue());
                     gameScene.detachChild(entry.getValue());
+                    entry.getValue().dispose();
+                    entry.getValue().detachSelf();
                 }
                 for (Map.Entry<String, Sprite> entry : colonySprites.entrySet()) {
                     gameScene.detachChild(entry.getValue());
+                    entry.getValue().dispose();
                 }
             }
         });
-
     }
+
 
     private void addToScore(int i)
     {
@@ -287,6 +303,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         }
     }
 
+
+
     @Override
     public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
 
@@ -300,6 +318,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
 //            return true;
 //
 //        }
+
         if(this.pinchZoomDetector != null) {
             this.pinchZoomDetector.onTouchEvent(pSceneTouchEvent);
 
