@@ -28,6 +28,7 @@
     <string name="login">Login</string>
     <string name="login_fail">Login failed</string>
     <string name="login_succes">Login succeeded</string>
+    <string name="logout">Log out</string>
     <string name="male">Male</string>
     <string name="name_of_game">Name of game</string>
     <string name="new_game">New game</string>
@@ -39,6 +40,7 @@
     <string name="profile_edited">Profile edited</string>
     <string name="profile_fail">Profile could not be loaded</string>
     <string name="profile_not_available">Profile not available</string>
+    <string name="profile_not_setup">Your profile is not setup yet</string>
     <string name="random">Random</string>
     <string name="recent">Recent</string>
     <string name="repeat_password">Repeat password</string>
@@ -47,6 +49,8 @@
     <string name="register_succes">Registration succeeded</string>
     <string name="replays">Replays</string>
     <string name="save">Save</string>
+    <string name="search">Search</string>
+    <string name="search_users">Search for users</string>
     <string name="statistics">Statistics</string>
     <string name="title_activity_game">GameActivity</string>
     <string name="title_activity_home">HomeActivity</string>
@@ -54,6 +58,7 @@
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
     <string name="title_activity_profile">ProfileActivity</string>
+    <string name="user_not_found">User could not be found</string>
     <string name="username">Username</string>
     <string name="welcome">Welcome!</string>
     <string name="title_activity_chat">ChatActivity</string>

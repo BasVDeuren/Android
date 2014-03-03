@@ -28,6 +28,7 @@
     <string name="login">Aanmelden</string>
     <string name="login_fail">Aanmelden mislukt</string>
     <string name="login_succes">Aanmelden gelukt</string>
+    <string name="logout">Afmelden</string>
     <string name="male">Man</string>
     <string name="name_of_game">Name of game</string>
     <string name="new_game">Nieuw spel</string>
@@ -39,6 +40,7 @@
     <string name="profile_edited">Profiel bewerkt</string>
     <string name="profile_fail">Profiel kon niet geladen worden</string>
     <string name="profile_not_available">Profiel niet beschikbaar</string>
+    <string name="profile_not_setup">Uw profile is nog niet ingesteld</string>
     <string name="random">Random</string>
     <string name="recent">Recent</string>
     <string name="repeat_password">Herhaal wachtwoord</string>
@@ -47,6 +49,8 @@
     <string name="register_succes">Registratie gelukt</string>
     <string name="replays">Herhalingen</string>
     <string name="save">Bewaar</string>
+    <string name="search">Zoek</string>
+    <string name="search_users">Zoek naar gebruikers</string>
     <string name="statistics">Statistieken</string>
     <string name="title_activity_game">GameActivity</string>
     <string name="title_activity_home">HomeActivity</string>
@@ -54,6 +58,7 @@
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
     <string name="title_activity_profile">ProfileActivity</string>
+    <string name="user_not_found">Gebruiker kon niet gevonden worden</string>
     <string name="username">Gebruikersnaam</string>
     <string name="welcome">Welkom!</string>
 

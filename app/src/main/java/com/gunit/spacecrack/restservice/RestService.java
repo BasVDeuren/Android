@@ -30,7 +30,7 @@ import java.io.UnsupportedEncodingException;
 public class RestService {
 
     private static final String TAG = "REST Service";
-    private static String accessTokenTemp = "%22gs323t2ddkk9v09ulacd3t4a7%22";
+//    private static String accessTokenTemp = "%22gs323t2ddkk9v09ulacd3t4a7%22";
 
     public static String getRequest(String url) {
         String result = null;
@@ -39,8 +39,8 @@ public class RestService {
         HttpConnectionParams.setConnectionTimeout(new BasicHttpParams(), SpaceCrackApplication.NETWORK_TIMEOUT);
 
         CookieStore cookieStore = ((DefaultHttpClient) httpClient).getCookieStore();
-//        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
-        BasicClientCookie cookie = new BasicClientCookie("accessToken", accessTokenTemp);
+        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
+//        BasicClientCookie cookie = new BasicClientCookie("accessToken", accessTokenTemp);
 
         cookie.setDomain(SpaceCrackApplication.IP_ADDRESS);
         cookie.setPath("/");
@@ -131,8 +131,8 @@ public class RestService {
         }
 
         CookieStore cookieStore = ((DefaultHttpClient) httpClient).getCookieStore();
-//        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
-        BasicClientCookie cookie = new BasicClientCookie("accessToken", accessTokenTemp);
+        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
+//        BasicClientCookie cookie = new BasicClientCookie("accessToken", accessTokenTemp);
 
         cookie.setDomain(SpaceCrackApplication.IP_ADDRESS);
         cookie.setPath("/");
@@ -176,8 +176,8 @@ public class RestService {
         }
 
         CookieStore cookieStore = ((DefaultHttpClient) httpClient).getCookieStore();
-//        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
-        BasicClientCookie cookie = new BasicClientCookie("accessToken", accessTokenTemp);
+        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
+//        BasicClientCookie cookie = new BasicClientCookie("accessToken", accessTokenTemp);
 
         cookie.setDomain(SpaceCrackApplication.IP_ADDRESS);
         cookie.setPath("/");

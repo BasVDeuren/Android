@@ -43,6 +43,8 @@ public class SplashScreenActivity extends Activity {
             startApp();
         } else {
             Toast.makeText(SplashScreenActivity.this, getResources().getString(R.string.no_connection), Toast.LENGTH_LONG).show();
+            System.exit(0);
+            finish();
         }
 
     }

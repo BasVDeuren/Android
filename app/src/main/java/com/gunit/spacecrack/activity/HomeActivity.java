@@ -26,13 +26,6 @@ import java.util.List;
 
 public class HomeActivity extends Activity {
 
-    private ProfilePictureView fbPictureView;
-    private ImageView profilePicture;
-    private TextView name;
-    private LinearLayout profile;
-    private Button newGame;
-    private SpaceCrackApplication application;
-
     private final String TAG = HomeActivity.class.getSimpleName();
 
     @Override
@@ -42,7 +35,7 @@ public class HomeActivity extends Activity {
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new HomeFragment())
+                    .add(R.id.container, new HomeFragment(), "Home")
                     .commit();
         }
     }

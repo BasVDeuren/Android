@@ -4,12 +4,7 @@
     android:layout_height="match_parent"
     tools:context="com.gunit.spacecrack.activity.LoginActivity$PlaceholderFragment">
 
-    <!--<ImageView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:src="@drawable/spacebackground"-->
-    <!--android:scaleType="centerCrop"-->
-    <!--android:contentDescription="@string/background" />-->
+    <include layout="@layout/background" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,21 +22,40 @@
             android:singleLine="true"
             android:id="@+id/edt_newgame_gamename"
             android:inputType="textEmailAddress"
-            android:hint="@string/name_of_game"/>
+            android:hint="@string/name_of_game" />
 
-        <EditText
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:password="true"
-            android:id="@+id/edt_newgame_opponent"
-            android:hint="@string/opponent"/>
+            android:orientation="horizontal">
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:singleLine="true"
+                android:id="@+id/edt_newgame_opponent"
+                android:hint="@string/opponent" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/btn_newgame_search"
+                android:text="@string/search" />
+
+        </LinearLayout>
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/default_size"
+            android:id="@+id/lst_newgame_users" />
 
         <Button
             android:layout_width="@dimen/default_size"
             android:layout_height="wrap_content"
             android:id="@+id/btn_newgame_create"
-            android:text="@string/create_game"/>
+            android:text="@string/create_game" />
 
     </LinearLayout>
 

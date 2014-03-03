@@ -19,12 +19,12 @@ public class LoginActivity extends Activity {
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new LoginFragment())
+                    .add(R.id.container, new LoginFragment(), "Login")
                     .commit();
         }
     }
 
-    //Handlen  the result from the Facebook Login Dialog
+    //Handle the result from the Facebook Login Dialog
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

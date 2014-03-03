@@ -12,11 +12,11 @@ import com.robotium.solo.Solo;
 /**
  * Created by Dimitri on 20/02/14.
  */
-public class HomeTest extends ActivityInstrumentationTestCase2<LoginActivity> {
+public class ProfileTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 
     private Solo solo;
 
-    public HomeTest() {
+    public ProfileTest() {
         super(LoginActivity.class);
     }
 
@@ -28,26 +28,22 @@ public class HomeTest extends ActivityInstrumentationTestCase2<LoginActivity> {
         solo.enterText(1, "test");
         solo.clickOnButton(solo.getString(R.string.login));
         solo.waitForActivity(HomeActivity.class);
+        solo.clickOnView(solo.getView(R.id.llt_home_profile));
+        solo.waitForActivity(ProfileActivity.class);
     }
 
     public void testActivityStart() throws Exception {
-        solo.assertCurrentActivity("Current activity should be HomeActivity", HomeActivity.class);
-        solo.waitForFragmentByTag("Home");
-        Fragment homeFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("Home");
-        assertTrue("HomeFragment should be visible", homeFragment.isVisible());
-    }
-
-    public void testProfile() throws Exception {
-        solo.clickOnView(solo.getView(R.id.llt_home_profile));
-        solo.waitForActivity(ProfileActivity.class);
         solo.assertCurrentActivity("Current activity should be ProfileActivity", ProfileActivity.class);
+        solo.waitForFragmentByTag("Profile");
+        Fragment profileFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("Profile");
+        assertTrue("ProfileFragment should be visible", profileFragment.isVisible());
     }
 
-    public void testNewGame() throws Exception {
-        solo.clickOnButton(solo.getString(R.string.new_game));
-        solo.waitForFragmentByTag("New Game");
-        Fragment newGameFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("New Game");
-        assertTrue("NewGameFragment should be visible", newGameFragment.isVisible());
+    public void testEditProfile() throws Exception {
+        solo.clickOnButton(solo.getString(R.string.edit));
+        solo.waitForFragmentByTag("Edit Profile");
+        Fragment editProfileFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("Edit Profile");
+        assertTrue("EditProfileFragment should be visible", editProfileFragment.isVisible());
     }
 
     @Override

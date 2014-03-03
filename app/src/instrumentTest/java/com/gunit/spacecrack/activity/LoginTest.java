@@ -16,7 +16,6 @@ import com.robotium.solo.Solo;
 public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 
     private Solo solo;
-    private LoginActivity activity;
 
     public LoginTest() {
         super(LoginActivity.class);
@@ -25,12 +24,13 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        activity = getActivity();
-        solo = new Solo(getInstrumentation(), activity);
+        solo = new Solo(getInstrumentation(), getActivity());
     }
 
     public void testActivityStart() throws Exception {
         solo.assertCurrentActivity("Current activity should be LoginActivity", LoginActivity.class);
+        Fragment loginFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("Login");
+        assertTrue("RegisterFragment should be visible", loginFragment.isVisible());
     }
 
     public void testLoginSucces() throws Exception {
@@ -49,11 +49,12 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
         assertNull("Token should be null", SpaceCrackApplication.accessToken);
     }
 
-//    public void testRegister() throws Exception {
-//        solo.clickOnButton(getActivity().getResources().getString(R.string.register));
-//        Fragment registerFragment = solo.getCurrentActivity().getFragmentManager().findFragmentById(R.id.fragment_register);
-//        assertTrue("RegisterFragment should be visible", registerFragment.isVisible());
-//    }
+    public void testRegister() throws Exception {
+        solo.clickOnButton(getActivity().getResources().getString(R.string.register));
+        solo.waitForFragmentByTag("Register");
+        Fragment registerFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("Register");
+        assertTrue("RegisterFragment should be visible", registerFragment.isVisible());
+    }
 
     @Override
     public void tearDown() throws Exception {

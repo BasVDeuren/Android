@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -37,6 +38,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Calendar;
 
@@ -49,6 +51,7 @@ public class EditProfileFragment extends Fragment {
     private EditText lastName;
     private Button date;
     private Button save;
+    private Bitmap newPicture;
 
     private int galleryResult;
     private String picturePath;
@@ -106,7 +109,7 @@ public class EditProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!firstName.getText().toString().equals("") && !lastName.getText().toString().equals("") && !date.getText().toString().equals(getResources().getText(R.string.birth_date))) {
-                    new EditTask(firstName.getText().toString(), lastName.getText().toString(), SpaceCrackApplication.profile.email, date.getText().toString(), picturePath).execute(SpaceCrackApplication.URL_PROFILE);
+                    new EditTask(firstName.getText().toString(), lastName.getText().toString(), SpaceCrackApplication.profile.email, date.getText().toString(), newPicture).execute(SpaceCrackApplication.URL_PROFILE);
                 } else {
                     Toast.makeText(getActivity(), getResources().getString(R.string.fill_in_fields), Toast.LENGTH_SHORT).show();
                 }
@@ -123,18 +126,102 @@ public class EditProfileFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == galleryResult && data != null) {
+
             Uri selectedImage = data.getData();
             String[] filePathImage = {MediaStore.Images.Media.DATA};
             Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathImage, null, null, null);
-
             if (cursor.moveToFirst()) {
                 int columnIndex = cursor.getColumnIndex(filePathImage[0]);
                 picturePath = cursor.getString(columnIndex);
-                profilePicture.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+                try {
+//                    profilePicture.setImageBitmap(decodeUri(selectedImage));
+                    newPicture = decodeSampledBitmapFromUri(selectedImage, 200, 200);
+                    profilePicture.setImageBitmap(newPicture);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
-
             cursor.close();
         }
+
+//        if (requestCode == galleryResult && data != null) {
+//            Uri selectedImage = data.getData();
+//            String[] filePathImage = {MediaStore.Images.Media.DATA};
+//            Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathImage, null, null, null);
+//
+//            if (cursor.moveToFirst()) {
+//                int columnIndex = cursor.getColumnIndex(filePathImage[0]);
+//                picturePath = cursor.getString(columnIndex);
+//                profilePicture.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+//            }
+//
+//            cursor.close();
+//        }
+    }
+
+    public Bitmap decodeSampledBitmapFromUri (Uri selectedImage, int reqWidth, int reqHeight) throws FileNotFoundException {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(
+                getActivity().getContentResolver().openInputStream(selectedImage), null, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeStream(
+                getActivity().getContentResolver().openInputStream(selectedImage), null, options);
+    }
+
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    private Bitmap decodeUri(Uri selectedImage) throws FileNotFoundException {
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(
+                getActivity().getContentResolver().openInputStream(selectedImage), null, o);
+
+        final int REQUIRED_SIZE = 100;
+
+        int width_tmp = o.outWidth, height_tmp = o.outHeight;
+        int scale = 1;
+        while (true) {
+            if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE) {
+                break;
+            }
+            width_tmp /= 2;
+            height_tmp /= 2;
+            scale *= 2;
+        }
+
+        BitmapFactory.Options o2 = new BitmapFactory.Options();
+        o2.inSampleSize = scale;
+        return BitmapFactory.decodeStream(
+                getActivity().getContentResolver().openInputStream(selectedImage), null, o2);
     }
 
     private class StartDatePicker extends DialogFragment implements DatePickerDialog.OnDateSetListener{
@@ -157,17 +244,17 @@ public class EditProfileFragment extends Fragment {
 
         private JSONObject profile;
 
-        public EditTask (String firstname, String lastname, String email, String dateOfBirth, String image)
+        public EditTask (String firstname, String lastname, String email, String dateOfBirth, Bitmap image)
         {
             super();
 
             String byte64Img = "";
             if (image != null) {
                 //Convert image to Base64 String
-                File file = new File(image);
-                Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
+//                File file = new File(image);
+//                Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                image.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 byte[] byteArray = stream.toByteArray();
                 byte64Img = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
@@ -240,7 +327,7 @@ public class EditProfileFragment extends Fragment {
 
                     //Return to the Profile
                     getActivity().getFragmentManager().beginTransaction()
-                            .replace(R.id.container, new ProfileFragment())
+                            .replace(R.id.container, new ProfileFragment(), "Profile")
                             .commit();
                 } catch (JsonParseException e) {
                     e.printStackTrace();

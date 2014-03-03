@@ -4,12 +4,7 @@
     android:layout_height="match_parent"
     tools:context="com.gunit.spacecrack.GameActivity$PlaceholderFragment">
 
-
-    <!--<ImageView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:src="@drawable/spacebackground"-->
-        <!--android:scaleType="centerCrop"/>-->
+    <include layout="@layout/background"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -47,8 +42,9 @@
             android:id="@+id/btn_profile_date"/>
 
         <Button
-            android:layout_width="@dimen/button_width"
+            android:layout_width="@dimen/default_size"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:id="@+id/btn_profile_save"
             android:text="@string/save"/>
 

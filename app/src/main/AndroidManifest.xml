@@ -30,7 +30,8 @@
         </activity>
         <activity
             android:name="com.gunit.spacecrack.activity.HomeActivity"
-            android:label="@string/title_activity_home" >
+            android:label="@string/title_activity_home"
+            android:configChanges="keyboardHidden|orientation" >
         </activity>
         <activity
             android:name="com.gunit.spacecrack.activity.ProfileActivity"
@@ -40,7 +41,7 @@
             android:name="com.gunit.spacecrack.game.GameActivity"
             android:exported="true"
             android:configChanges="orientation|screenSize"
-            android:label="@string/title_activity_profile" >
+            android:label="@string/title_activity_game" >
         </activity>
         <activity
             android:name=".chat.ChatActivity"
@@ -50,7 +51,6 @@
             android:name="com.facebook.LoginActivity"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

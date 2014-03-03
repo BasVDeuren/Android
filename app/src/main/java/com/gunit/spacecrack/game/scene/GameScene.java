@@ -289,7 +289,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         @Override
         protected void onPostExecute (String result)
         {
-            if (result != null) {
+            if (result != null || !result.equals("")) {
                 if (result.equals("406")) {
                     Toast.makeText(activity, "Move is not valid", Toast.LENGTH_SHORT).show();
                     shipSprite.setPosition((planet.x * GameActivity.SCALE_X) - 10, (planet.y * GameActivity.SCALE_Y) - 10);
@@ -299,6 +299,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
                     resetPlayers();
                     drawPlayers(game);
                 }
+            } else {
+                Toast.makeText(activity, "Something went wrong...", Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.model.GraphUser;
@@ -18,6 +19,9 @@ import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.fragment.EditProfileFragment;
 import com.gunit.spacecrack.model.Profile;
+
+import org.andengine.entity.primitive.Line;
+import org.andengine.entity.text.Text;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -32,6 +36,8 @@ public class ProfileFragment extends Fragment {
     private TextView name;
     private TextView age;
     private TextView gender;
+    private TextView setup;
+    private LinearLayout profileInfo;
     private Button edit;
 
     @Override
@@ -43,12 +49,18 @@ public class ProfileFragment extends Fragment {
         name = (TextView) rootView.findViewById(R.id.txt_profile_name);
         age = (TextView) rootView.findViewById(R.id.txt_profile_age);
         gender = (TextView) rootView.findViewById(R.id.txt_profile_gender);
+        setup = (TextView) rootView.findViewById(R.id.txt_profile_setup);
+        profileInfo = (LinearLayout) rootView.findViewById(R.id.llt_profile_info);
+        if (SpaceCrackApplication.profile.firstname == null && SpaceCrackApplication.profile.lastname == null) {
+            setup.setVisibility(View.VISIBLE);
+            profileInfo.setVisibility(View.GONE);
+        }
         edit = (Button) rootView.findViewById(R.id.btn_profile_edit);
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().getFragmentManager().beginTransaction()
-                        .replace(R.id.container, new EditProfileFragment())
+                        .replace(R.id.container, new EditProfileFragment(), "Edit Profile")
                         .addToBackStack("ProfileFragment")
                         .commit();
             }
@@ -70,8 +82,6 @@ public class ProfileFragment extends Fragment {
         } else if (SpaceCrackApplication.profile != null) {
             if (SpaceCrackApplication.profile.firstname != null && SpaceCrackApplication.profile.lastname != null) {
                 name.setText(SpaceCrackApplication.profile.firstname + " " + SpaceCrackApplication.profile.lastname);
-            } else {
-                name.setText(getResources().getText(R.string.first_name) + " " + getResources().getText(R.string.last_name));
             }
             DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(getActivity());
             age.setText(dateFormat.format(new Date(SpaceCrackApplication.profile.dayOfBirth)));

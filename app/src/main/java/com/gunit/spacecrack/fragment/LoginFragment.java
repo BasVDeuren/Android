@@ -76,7 +76,7 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 getActivity().getFragmentManager().beginTransaction()
-                        .replace(R.id.container, new RegisterFragment())
+                        .replace(R.id.container, new RegisterFragment(), "Register")
                         .addToBackStack("LoginFragment")
                         .commit();
             }

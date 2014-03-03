@@ -26,7 +26,7 @@ public class SpaceCrackApplication extends Application {
     public static GraphUser graphUser;
 
     //Friends of logged in Facebook user
-    private List<GraphUser> friends;
+    private static List<GraphUser> friends;
 
     public static String accessToken;
 
@@ -36,8 +36,8 @@ public class SpaceCrackApplication extends Application {
     //Network (IP address pc)
 //    public final static String IP_ADDRESS = "10.132.100.255";
 //    public final static String IP_ADDRESS = "10.0.3.2";
-//    public final static String IP_ADDRESS = "192.168.0.143";
-    public final static String IP_ADDRESS = "192.168.56.1";
+    public final static String IP_ADDRESS = "192.168.0.143";
+//    public final static String IP_ADDRESS = "192.168.56.1";
     public final static String DOMAIN = "http://" + IP_ADDRESS + ":8080";
     public final static String URL_LOGIN = DOMAIN + "/api/accesstokens";
     public final static String URL_REGISTER = DOMAIN + "/api/user";
@@ -46,6 +46,16 @@ public class SpaceCrackApplication extends Application {
     public final static String URL_GAME = DOMAIN + "/api/auth/game";
     public final static String URL_ACTIVEGAME = DOMAIN + "/api/auth/game/specificGame";
     public final static String URL_ACTION = DOMAIN + "/api/auth/action";
+    public final static String URL_FIND_USERNAME = DOMAIN + "/api/auth/findusersbyusername";
+    public final static String URL_FIND_EMAIL = DOMAIN + "/api/auth/findusersbyemail";
+
+    public static void logout() {
+        profile = null;
+        profilePicture = null;
+        graphUser = null;
+        friends = null;
+        accessToken = null;
+    }
 
 
     public List<GraphUser> getFriends() {

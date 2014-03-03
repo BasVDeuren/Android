@@ -15,7 +15,7 @@ public class ProfileActivity extends Activity {
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new ProfileFragment())
+                    .add(R.id.container, new ProfileFragment(), "Profile")
                     .commit();
         }
     }

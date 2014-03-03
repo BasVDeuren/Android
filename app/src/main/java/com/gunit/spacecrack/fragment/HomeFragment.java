@@ -2,6 +2,7 @@ package com.gunit.spacecrack.fragment;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +20,8 @@ import com.facebook.Session;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.ProfilePictureView;
 import com.gunit.spacecrack.R;
+import com.gunit.spacecrack.activity.HomeActivity;
+import com.gunit.spacecrack.activity.LoginActivity;
 import com.gunit.spacecrack.activity.ProfileActivity;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.game.GameActivity;
@@ -34,6 +37,7 @@ public class HomeFragment extends Fragment {
     private TextView name;
     private LinearLayout profile;
     private Button newGame;
+    private Button logout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,11 +62,27 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 getActivity().getFragmentManager().beginTransaction()
-                        .replace(R.id.container, new NewGameFragment())
+                        .replace(R.id.container, new NewGameFragment(), "New Game")
                         .addToBackStack("HomeFragment")
                         .commit();
             }
         });
+        logout = (Button) view.findViewById(R.id.btn_home_logout);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Session.getActiveSession() != null) {
+                    Session.getActiveSession().closeAndClearTokenInformation();
+                }
+                SpaceCrackApplication.logout();
+                getActivity().getSharedPreferences("Login", 0).edit().clear().commit();
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                startActivity(intent);
+                getActivity().finish();
+            }
+        });
+
+        updateAccount();
 
         return view;
     }
