@@ -51,7 +51,7 @@ public class ProfileFragment extends Fragment {
         gender = (TextView) rootView.findViewById(R.id.txt_profile_gender);
         setup = (TextView) rootView.findViewById(R.id.txt_profile_setup);
         profileInfo = (LinearLayout) rootView.findViewById(R.id.llt_profile_info);
-        if (SpaceCrackApplication.profile.firstname == null && SpaceCrackApplication.profile.lastname == null) {
+        if (SpaceCrackApplication.user.profile.firstname == null && SpaceCrackApplication.user.profile.lastname == null && SpaceCrackApplication.graphUser == null) {
             setup.setVisibility(View.VISIBLE);
             profileInfo.setVisibility(View.GONE);
         }
@@ -79,12 +79,12 @@ public class ProfileFragment extends Fragment {
             } else if (SpaceCrackApplication.graphUser.getProperty("gender").equals("female")) {
                 gender.setText(getResources().getString(R.string.female));
             }
-        } else if (SpaceCrackApplication.profile != null) {
-            if (SpaceCrackApplication.profile.firstname != null && SpaceCrackApplication.profile.lastname != null) {
-                name.setText(SpaceCrackApplication.profile.firstname + " " + SpaceCrackApplication.profile.lastname);
+        } else if (SpaceCrackApplication.user.profile != null) {
+            if (SpaceCrackApplication.user.profile.firstname != null && SpaceCrackApplication.user.profile.lastname != null) {
+                name.setText(SpaceCrackApplication.user.profile.firstname + " " + SpaceCrackApplication.user.profile.lastname);
             }
             DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(getActivity());
-            age.setText(dateFormat.format(new Date(SpaceCrackApplication.profile.dayOfBirth)));
+            age.setText(dateFormat.format(new Date(SpaceCrackApplication.user.profile.dayOfBirth)));
             if (SpaceCrackApplication.profilePicture != null) {
                 profilePicture.setImageBitmap(SpaceCrackApplication.profilePicture);
             }

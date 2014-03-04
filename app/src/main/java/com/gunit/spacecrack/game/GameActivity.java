@@ -82,10 +82,10 @@ public class GameActivity extends BaseGameActivity {
         planets = new HashMap<String, Planet>();
         new GetMap().execute(SpaceCrackApplication.URL_MAP);
         Intent intent = getIntent();
-        if (intent.getStringExtra("gameName") != null && intent.getStringExtra("opponent") != null) {
-            new StartGameTask(intent.getStringExtra("gameName"), intent.getStringExtra("opponent")).execute(SpaceCrackApplication.URL_GAME);
+        if (intent.getStringExtra("gameName") != null && intent.getIntExtra("opponent", 0) != 0) {
+            new StartGameTask(intent.getStringExtra("gameName"), intent.getIntExtra("opponent", 0)).execute(SpaceCrackApplication.URL_GAME);
         } else {
-            new StartGameTask("test", "2").execute(SpaceCrackApplication.URL_GAME);
+            new StartGameTask("test", 2).execute(SpaceCrackApplication.URL_GAME);
         }
     }
 
@@ -154,7 +154,8 @@ public class GameActivity extends BaseGameActivity {
 
     private void startGame () {
         if (mapLoaded && gameStarted) {
-            SceneManager.getInstance().loadMenuScene(mEngine);
+//            SceneManager.getInstance().loadMenuScene(mEngine);
+            SceneManager.getInstance().loadGameScene(mEngine);
         }
     }
 
@@ -191,7 +192,7 @@ public class GameActivity extends BaseGameActivity {
 
         private JSONObject game;
 
-        public StartGameTask (String gameName, String opponentId)
+        public StartGameTask (String gameName, int opponentId)
         {
             super();
             game = new JSONObject();
@@ -213,7 +214,6 @@ public class GameActivity extends BaseGameActivity {
         protected void onPostExecute (String result)
         {
             if (result != null) {
-                Toast.makeText(GameActivity.this, "Data received", Toast.LENGTH_SHORT).show();
                 new GetActiveGame().execute(SpaceCrackApplication.URL_ACTIVEGAME + "/" + result);
             }
         }
@@ -232,6 +232,7 @@ public class GameActivity extends BaseGameActivity {
         protected void onPostExecute (String result)
         {
             if (result != null) {
+                Toast.makeText(GameActivity.this, "Data received", Toast.LENGTH_SHORT).show();
                 try {
                     Gson gson = new Gson();
                     gameWrapper = gson.fromJson(result, GameWrapper.class);

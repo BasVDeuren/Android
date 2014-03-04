@@ -48,6 +48,7 @@ public class UserAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder = null;
+        User user = (User) getItem(position);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         if (convertView == null) {
@@ -60,8 +61,6 @@ public class UserAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-
-        User user = (User) getItem(position);
 
         if (user.profile.image != null) {
             String image = user.profile.image.substring(user.profile.image.indexOf(",") + 1);

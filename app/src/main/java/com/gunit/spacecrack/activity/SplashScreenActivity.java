@@ -21,6 +21,7 @@ import com.google.gson.JsonParseException;
 import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.model.Profile;
+import com.gunit.spacecrack.model.User;
 import com.gunit.spacecrack.restservice.RestService;
 
 import org.json.JSONException;
@@ -137,7 +138,7 @@ public class SplashScreenActivity extends Activity {
             editor.commit();
             if (result != null) {
                 //Get the profile of the user
-                new GetProfile().execute(SpaceCrackApplication.URL_PROFILE);
+                new GetUser().execute(SpaceCrackApplication.URL_USER);
             } else {
                 Toast.makeText(SplashScreenActivity.this, getResources().getText(R.string.login_fail), Toast.LENGTH_SHORT).show();
                 goLogin();
@@ -145,8 +146,8 @@ public class SplashScreenActivity extends Activity {
         }
     }
 
-    //POST request to edit the profile
-    private class GetProfile extends AsyncTask<String, Void, String> {
+    //GET request to User
+    private class GetUser extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground (String...url)
@@ -160,10 +161,10 @@ public class SplashScreenActivity extends Activity {
             if (result != null) {
                 try {
                     Gson gson = new Gson();
-                    SpaceCrackApplication.profile = gson.fromJson(result, Profile.class);
+                    SpaceCrackApplication.user = gson.fromJson(result, User.class);
                     //Get the image from the Data URI
-                    if (SpaceCrackApplication.profile.image != null) {
-                        String image = SpaceCrackApplication.profile.image.substring(SpaceCrackApplication.profile.image.indexOf(",") + 1);
+                    if (SpaceCrackApplication.user.profile.image != null) {
+                        String image = SpaceCrackApplication.user.profile.image.substring(SpaceCrackApplication.user.profile.image.indexOf(",") + 1);
                         byte[] decodedString = Base64.decode(image, 0);
                         SpaceCrackApplication.profilePicture = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                     }
@@ -173,7 +174,7 @@ public class SplashScreenActivity extends Activity {
                     e.printStackTrace();
                 }
             } else {
-                Toast.makeText(SplashScreenActivity.this, getResources().getText(R.string.profile_fail), Toast.LENGTH_SHORT).show();
+                Toast.makeText(SplashScreenActivity.this, getResources().getText(R.string.user_fail), Toast.LENGTH_SHORT).show();
                 goLogin();
             }
         }

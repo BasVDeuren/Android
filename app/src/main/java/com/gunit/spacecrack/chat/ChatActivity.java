@@ -1,35 +1,27 @@
 package com.gunit.spacecrack.chat;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.*;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.ValueEventListener;
-import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
 import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
-import com.gunit.spacecrack.model.Profile;
-import com.gunit.spacecrack.restservice.RestService;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Random;
 
 public class ChatActivity extends ListActivity {
-
-//    private static final String FIREBASE_URL = "https://amber-fire-3394.firebaseio.com";
-    private static final String FIREBASE_URL = "https://android-chat.firebaseIO-demo.com";
 
     private String username;
     private Firebase ref;
@@ -43,11 +35,19 @@ public class ChatActivity extends ListActivity {
 
         // Make sure we have a username
         setupUsername();
+//        username = SpaceCrackApplication.profile.firstname;
 
         setTitle("Chatting as " + username);
 
         // Setup our Firebase ref
-        ref = new Firebase(FIREBASE_URL).child("chat");
+        Intent intent = getIntent();
+        if (intent.getStringExtra("gameId") != null) {
+            ref = new Firebase(SpaceCrackApplication.URL_FIREBASE_CHAT).child(intent.getStringExtra("gameId"));
+        } else {
+            ref = new Firebase(SpaceCrackApplication.URL_FIREBASE_CHAT).child("1");
+        }
+
+
 
         // Setup our input methods. Enter key on the keyboard or pushing the send button
         EditText inputText = (EditText)findViewById(R.id.messageInput);

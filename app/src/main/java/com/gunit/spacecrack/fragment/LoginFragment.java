@@ -25,6 +25,7 @@ import com.gunit.spacecrack.activity.LoginActivity;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.activity.HomeActivity;
 import com.gunit.spacecrack.model.Profile;
+import com.gunit.spacecrack.model.User;
 import com.gunit.spacecrack.restservice.RestService;
 
 import org.json.JSONException;
@@ -146,7 +147,7 @@ public class LoginFragment extends Fragment {
 
             if (result != null) {
                 Log.i(TAG, "Login success");
-                new GetProfile().execute(SpaceCrackApplication.URL_PROFILE);
+                new GetUser().execute(SpaceCrackApplication.URL_USER);
             } else if (facebookLogin) {
                 new RegisterTask(SpaceCrackApplication.graphUser.getName(), "facebook" + SpaceCrackApplication.graphUser.getId(), "facebook" + SpaceCrackApplication.graphUser.getId(), (String) SpaceCrackApplication.graphUser.asMap().get("email")).execute(SpaceCrackApplication.DOMAIN + SpaceCrackApplication.URL_REGISTER);
             }
@@ -194,7 +195,7 @@ public class LoginFragment extends Fragment {
         protected String doInBackground (String...url)
         {
             //Register newUser
-            String accessToken = RestService.postRequest(SpaceCrackApplication.URL_REGISTER, newUser);
+            String accessToken = RestService.postRequest(SpaceCrackApplication.URL_USER, newUser);
             //If newUser has been registered, login
             if (accessToken != null) {
                 JSONObject loginUser = new JSONObject();
@@ -215,7 +216,7 @@ public class LoginFragment extends Fragment {
             saveLoginCredentials(result, email, password);
 
             if (result != null) {
-                new GetProfile().execute(SpaceCrackApplication.URL_PROFILE);
+                new GetUser().execute(SpaceCrackApplication.URL_USER);
             } else {
                 Toast.makeText(context, getResources().getString(R.string.email_register), Toast.LENGTH_SHORT).show();
                 login.setEnabled(true);
@@ -226,8 +227,8 @@ public class LoginFragment extends Fragment {
         }
     }
 
-    //POST request to edit the profile
-    private class GetProfile extends AsyncTask<String, Void, String> {
+    //GET request to User
+    private class GetUser extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground (String...url)
@@ -241,11 +242,11 @@ public class LoginFragment extends Fragment {
             if (result != null) {
                 try {
                     Gson gson = new Gson();
-                    SpaceCrackApplication.profile = gson.fromJson(result, Profile.class);
+                    SpaceCrackApplication.user = gson.fromJson(result, User.class);
 
-                    if (SpaceCrackApplication.profile.image != null) {
+                    if (SpaceCrackApplication.user.profile.image != null) {
                         //Get the image from the Data URI
-                        String image = SpaceCrackApplication.profile.image.substring(SpaceCrackApplication.profile.image.indexOf(",") + 1);
+                        String image = SpaceCrackApplication.user.profile.image.substring(SpaceCrackApplication.user.profile.image.indexOf(",") + 1);
                         byte[] decodedString = Base64.decode(image, 0);
                         SpaceCrackApplication.profilePicture = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                     }

@@ -11,6 +11,7 @@
     <string name="birth_date">Geboortedatum</string>
     <string name="chat">Chat</string>
     <string name="choose_opponent">Kies tegensctander</string>
+    <string name="commandpoints_fail">Te weinig commandpoints</string>
     <string name="contact">Contact</string>
     <string name="create_game">Spel aanmaken</string>
     <string name="edit">Bewerk</string>
@@ -22,6 +23,7 @@
     <string name="fill_in_fields">Vul al de velden in</string>
     <string name="first_name">Voornaam</string>
     <string name="game_not_created">Spel kon niet aangemaakt worden</string>
+    <string name="game_not_found">Geen spellen gevonden</string>
     <string name="gender">Geslacht</string>
     <string name="hello_world">Hello world!</string>
     <string name="last_name">Familienaam</string>
@@ -30,7 +32,7 @@
     <string name="login_succes">Aanmelden gelukt</string>
     <string name="logout">Afmelden</string>
     <string name="male">Man</string>
-    <string name="name_of_game">Name of game</string>
+    <string name="name_of_game">Naam van het spel</string>
     <string name="new_game">Nieuw spel</string>
     <string name="no_connection">Geen internet connectie</string>
     <string name="opponent">Tegenstander</string>
@@ -58,6 +60,7 @@
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
     <string name="title_activity_profile">ProfileActivity</string>
+    <string name="user_fail">Gebruiker kon niet geladen worden</string>
     <string name="user_not_found">Gebruiker kon niet gevonden worden</string>
     <string name="username">Gebruikersnaam</string>
     <string name="welcome">Welkom!</string>

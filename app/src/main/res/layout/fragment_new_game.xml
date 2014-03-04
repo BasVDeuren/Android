@@ -46,6 +46,50 @@
 
         </LinearLayout>
 
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/rdg_newgame_usertype">
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/rdb_newgame_username"
+                android:text="@string/username"/>
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/rdb_newgame_email"
+                android:text="@string/email"/>
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/btn_newgame_contact"
+                android:text="@string/contact"/>
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/btn_newgame_facebook"
+                android:text="@string/facebook"/>
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/btn_newgame_random"
+                android:text="@string/random"/>
+
+        </LinearLayout>
+
         <ListView
             android:layout_width="match_parent"
             android:layout_height="@dimen/default_size"

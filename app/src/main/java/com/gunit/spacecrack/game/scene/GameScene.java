@@ -1,11 +1,16 @@
 package com.gunit.spacecrack.game.scene;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.ValueEventListener;
 import com.google.gson.Gson;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
+import com.gunit.spacecrack.chat.ChatActivity;
 import com.gunit.spacecrack.game.GameActivity;
 import com.gunit.spacecrack.game.manager.ResourcesManager;
 import com.gunit.spacecrack.game.manager.SceneManager;
@@ -19,8 +24,8 @@ import com.gunit.spacecrack.restservice.RestService;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
-import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.entity.primitive.Line;
+import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.Sprite;
@@ -34,7 +39,9 @@ import org.andengine.input.touch.detector.SurfaceScrollDetector;
 import org.andengine.opengl.util.GLState;
 import org.andengine.util.HorizontalAlign;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,20 +51,51 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
 
     private Scene gameScene;
     private HUD gameHUD;
-    private Text scoreText;
-    private int score;
+    private Text commandText;
     private PinchZoomDetector pinchZoomDetector;
     private final float MIN_ZOOM_FACTOR = 1f;
     private final float MAX_ZOOM_FACTOR = 3f;
+    private final int MOVECOST = 1;
+    private final int COLONIZECOST = 2;
     private float zoomFactor;
     private SurfaceScrollDetector scrollDetector;
     private Map<String, TiledSprite> planetSprites;
-    private Map<Integer, Sprite> shipSprites;
-    private Map<String, Sprite> colonySprites;
+
+    private List<Sprite> shipSprites;
+    private List<Sprite> colonySprites;
+
+    private Firebase ref;
 
     @Override
     public void createScene() {
         gameScene = this;
+
+        shipSprites = new ArrayList<Sprite>();
+        colonySprites = new ArrayList<Sprite>();
+
+        //Register Firebase listener
+        ref = new Firebase(activity.gameWrapper.firebaseGameURL);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() != null) {
+                    Log.i("DataSnapshot", dataSnapshot.getValue().toString());
+                    Gson gson = new Gson();
+                    Game game = gson.fromJson(dataSnapshot.getValue().toString(), Game.class);
+                    if (game != null) {
+                        activity.gameWrapper.game = game;
+                        resetPlayers();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled() {
+
+            }
+        });
+
+        //Draw the game
         createBackground();
         createHUD();
 
@@ -65,6 +103,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         drawPlanets();
         drawPlayers(activity.gameWrapper.game);
 
+        //Detect touch controls
         this.setOnSceneTouchListener(this);
         scrollDetector = new SurfaceScrollDetector(this);
         pinchZoomDetector = new PinchZoomDetector(this);
@@ -77,7 +116,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
 
     @Override
     public void onBackKeyPressed() {
-        SceneManager.getInstance().loadMenuScene(engine);
+//        SceneManager.getInstance().loadMenuScene(engine);
+        activity.finish();
     }
 
     @Override
@@ -104,11 +144,36 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
     private void createHUD() {
         gameHUD = new HUD();
 
-        scoreText = new Text(20, GameActivity.CAMERA_HEIGHT - 70, resourcesManager.font, "Score: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
-        scoreText.setHorizontalAlign(HorizontalAlign.LEFT);
-        scoreText.setText("Score: 0");
-        gameHUD.attachChild(scoreText);
-
+        commandText = new Text(12, GameActivity.CAMERA_HEIGHT - 120, resourcesManager.font, "Commandpoints: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
+        commandText.setHorizontalAlign(HorizontalAlign.LEFT);
+        commandText.setText("Commandpoints: " + activity.gameWrapper.game.player1.commandPoints);
+        gameHUD.attachChild(commandText);
+        Rectangle chat = new Rectangle(20, GameActivity.CAMERA_HEIGHT - 70, 50, 50, vbom)
+        {
+            @Override
+            public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
+                if (pSceneTouchEvent.isActionUp()) {
+                    Intent intent = new Intent(activity, ChatActivity.class);
+                    intent.putExtra("gameId", String.valueOf(activity.gameWrapper.game.gameId));
+                    activity.startActivity(intent);
+                }
+                return true;
+            }
+        };
+        gameHUD.registerTouchArea(chat);
+        gameHUD.attachChild(chat);
+        Rectangle endTurn = new Rectangle(90, GameActivity.CAMERA_HEIGHT - 70, 50, 50, vbom)
+        {
+            @Override
+            public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
+                if (pSceneTouchEvent.isActionUp() && !activity.gameWrapper.game.player1.turnEnded) {
+                    new ActionTask(new Action("ENDTURN", activity.gameWrapper.game.gameId, activity.gameWrapper.activePlayerId), null, null).execute(SpaceCrackApplication.URL_ACTION);
+                }
+                return true;
+            }
+        };
+        gameHUD.registerTouchArea(endTurn);
+        gameHUD.attachChild(endTurn);
         camera.setHUD(gameHUD);
     }
 
@@ -142,24 +207,26 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         drawColonies(game.player2, 1);
         drawShips(game.player1);
         drawShips(game.player2);
+        updateCommandPoints();
     }
 
     private void drawColonies(Player player, int index) {
         Sprite colonySprite;
-        colonySprites = new HashMap<String, Sprite>();
 
         for (Colony colony : player.colonies) {
             Planet planet = activity.planets.get(colony.planetName);
-            colonySprite = createTiledSprite((planet.x * GameActivity.SCALE_X) - 10, (planet.y * GameActivity.SCALE_Y) - 25, resourcesManager.colonyFlagRegion, vbom, index);
-            colonySprite.setScale(0.5f);
-            colonySprites.put(colony.planetName, colonySprite);
-            attachChild(colonySprite);
+            Sprite planetSprite = planetSprites.get(colony.planetName);
+//            colonySprite = createTiledSprite((planet.x * GameActivity.SCALE_X) - 10, (planet.y * GameActivity.SCALE_Y) - 25, resourcesManager.colonyFlagRegion, vbom, index);
+            colonySprite = createTiledSprite(10, -15, resourcesManager.colonyFlagRegion, vbom, index);
+//            colonySprite.setScale(0.5f);
+            colonySprites.add(colonySprite);
+            planetSprite.attachChild(colonySprite);
+//            attachChild(colonySprite);
         }
     }
 
     private void drawShips(Player player) {
         Sprite shipSprite;
-        shipSprites = new HashMap<Integer, Sprite>();
 
         for (Ship ship : player.ships) {
             final Planet planet = activity.planets.get(ship.planetName);
@@ -185,7 +252,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
                             this.setScale(0.5f);
                             Planet newPlanet = checkValidPosition(this, finalShip.planetName);
                             if (newPlanet != null) {
-                                placeShip(this, planet, newPlanet, finalShip);
+                                if (checkCommandPoints(newPlanet.name)) {
+                                    placeShip(this, planet, newPlanet, finalShip);
+                                } else {
+//                                    Toast.makeText(activity, activity.getResources().getString(R.string.commandpoints_fail), Toast.LENGTH_SHORT).show();
+                                    this.setPosition((planet.x * GameActivity.SCALE_X) - 10, (planet.y * GameActivity.SCALE_Y) - 10);
+                                }
                             } else {
                                 this.setPosition((planet.x * GameActivity.SCALE_X) - 10, (planet.y * GameActivity.SCALE_Y) - 10);
                             }
@@ -194,22 +266,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
                     }
                     return true;
                 }
-
-                @Override
-                protected void onManagedUpdate(float pSecondsElapsed) {
-                    if (false) {
-                        this.detachSelf();
-                    }
-                    super.onManagedUpdate(pSecondsElapsed);
-
-                }
             };
             shipSprite.setScale(0.5f);
             if (player.playerId == activity.gameWrapper.activePlayerId) {
                 registerTouchArea(shipSprite);
             }
             setTouchAreaBindingOnActionMoveEnabled(true);
-            shipSprites.put(ship.shipId, shipSprite);
+            shipSprites.add(shipSprite);
             attachChild(shipSprite);
         }
     }
@@ -234,6 +297,15 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         return null;
     }
 
+    private boolean checkCommandPoints(String planetName) {
+        boolean colony = false;
+        Sprite planetSprite = planetSprites.get(planetName);
+        if (planetSprite.getChildCount() > 0) {
+            colony = true;
+        }
+        return (colony && activity.gameWrapper.game.player1.commandPoints >= MOVECOST) || (!colony && activity.gameWrapper.game.player1.commandPoints >= COLONIZECOST);
+    }
+
     private void placeShip(Sprite shipSprite, Planet oldPlanet,Planet newPlanet, Ship ship) {
         new ActionTask(new Action("MOVESHIP", newPlanet.name, activity.gameWrapper.game.gameId, activity.gameWrapper.activePlayerId, ship), shipSprite, oldPlanet).execute(SpaceCrackApplication.URL_ACTION);
     }
@@ -242,25 +314,44 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         activity.runOnUpdateThread(new Runnable() {
             @Override
             public void run() {
-                for (Map.Entry<Integer, Sprite> entry : shipSprites.entrySet()) {
-                    gameScene.unregisterTouchArea(entry.getValue());
-                    gameScene.detachChild(entry.getValue());
-                    entry.getValue().dispose();
-                    entry.getValue().detachSelf();
+//                for (Map.Entry<Integer, Sprite> entry : shipSprites.entrySet()) {
+//                    gameScene.unregisterTouchArea(entry.getValue());
+//                    gameScene.detachChild(entry.getValue());
+//                    entry.getValue().clearEntityModifiers();
+//                    entry.getValue().clearUpdateHandlers();
+//                    if (!entry.getValue().isDisposed()) {
+//                        entry.getValue().dispose();
+//                    }
+//                    entry.getValue().detachSelf();
+//                }
+//                for (Map.Entry<String, Sprite> entry : colonySprites.entrySet()) {
+//                    gameScene.detachChild(entry.getValue());
+//                    entry.getValue().dispose();
+//                }
+                for (Sprite sprite : shipSprites) {
+                    gameScene.unregisterTouchArea(sprite);
+                    sprite.clearEntityModifiers();
+                    sprite.clearUpdateHandlers();
+                    sprite.dispose();
+                    detachChild(sprite);
                 }
-                for (Map.Entry<String, Sprite> entry : colonySprites.entrySet()) {
-                    gameScene.detachChild(entry.getValue());
-                    entry.getValue().dispose();
+                for (Sprite sprite : colonySprites) {
+                    sprite.clearEntityModifiers();
+                    sprite.clearUpdateHandlers();
+                    sprite.dispose();
+                    detachChild(sprite);
                 }
+                shipSprites.clear();
+                colonySprites.clear();
+                drawPlayers(activity.gameWrapper.game);
             }
         });
     }
 
 
-    private void addToScore(int i)
+    private void updateCommandPoints()
     {
-        score += i;
-        scoreText.setText("Score: " + score);
+        commandText.setText("Commandpoints: " + activity.gameWrapper.game.player1.commandPoints);
     }
 
     //POST request
@@ -290,15 +381,18 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         protected void onPostExecute (String result)
         {
             if (result != null || !result.equals("")) {
-                if (result.equals("406")) {
-                    Toast.makeText(activity, "Move is not valid", Toast.LENGTH_SHORT).show();
-                    shipSprite.setPosition((planet.x * GameActivity.SCALE_X) - 10, (planet.y * GameActivity.SCALE_Y) - 10);
+                if (shipSprite != null && planet !=null) {
+                    if (result.equals("406")) {
+                        Toast.makeText(activity, "Move is not valid", Toast.LENGTH_SHORT).show();
+                        shipSprite.setPosition((planet.x * GameActivity.SCALE_X) - 10, (planet.y * GameActivity.SCALE_Y) - 10);
+                    } else {
+                        Toast.makeText(activity, "Move valid", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Gson gson = new Gson();
-                    Game game = gson.fromJson(result, Game.class);
-                    resetPlayers();
-                    drawPlayers(game);
+                    Toast.makeText(activity, "Turn ended", Toast.LENGTH_SHORT).show();
+                    Log.i("Result", result);
                 }
+
             } else {
                 Toast.makeText(activity, "Something went wrong...", Toast.LENGTH_SHORT).show();
             }
@@ -337,9 +431,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         }
 
         return true;
-
-//        return false;
-
     }
 
     @Override

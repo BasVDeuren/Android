@@ -1,5 +1,9 @@
 package com.gunit.spacecrack.game.scene;
 
+import android.content.Intent;
+
+import com.gunit.spacecrack.chat.ChatActivity;
+import com.gunit.spacecrack.game.GameActivity;
 import com.gunit.spacecrack.game.manager.ResourcesManager;
 import com.gunit.spacecrack.game.manager.SceneManager;
 import com.gunit.spacecrack.game.uicontrols.InputText;
@@ -28,7 +32,8 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
     @Override
     public void onBackKeyPressed() {
-        System.exit(0);
+//        System.exit(0);
+        activity.finish();
     }
 
     @Override
@@ -57,7 +62,7 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
         final IMenuItem optionsMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_OPTIONS, resourcesManager.optionsRegion, vbom), 1.2f, 1);
 
         menuChildScene.addMenuItem(playMenuItem);
-//        menuChildScene.addMenuItem(optionsMenuItem);
+        menuChildScene.addMenuItem(optionsMenuItem);
 
         menuChildScene.buildAnimations();
         menuChildScene.setBackgroundEnabled(false);
@@ -78,6 +83,9 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
                 SceneManager.getInstance().loadGameScene(engine);
                 return true;
             case MENU_OPTIONS:
+                Intent intent = new Intent(activity, ChatActivity.class);
+                intent.putExtra("gameId", activity.gameWrapper.game.gameId);
+                activity.startActivity(intent);
                 return true;
             default:
                 return false;

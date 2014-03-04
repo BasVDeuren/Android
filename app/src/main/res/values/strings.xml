@@ -11,6 +11,8 @@
     <string name="birth_date">Birth date</string>
     <string name="chat">Chat</string>
     <string name="choose_opponent">Choose opponent</string>
+    <string name="commandpoints">Commandpoints</string>
+    <string name="commandpoints_fail">Too few commandpoints</string>
     <string name="contact">Contact</string>
     <string name="create_game">Create game</string>
     <string name="edit">Edit</string>
@@ -22,6 +24,7 @@
     <string name="fill_in_fields">Please fill in all the fields</string>
     <string name="first_name">First name</string>
     <string name="game_not_created">Game could not be created</string>
+    <string name="game_not_found">No games could be found</string>
     <string name="gender">Gender</string>
     <string name="hello_world">Hello world!</string>
     <string name="last_name">Last name</string>
@@ -58,6 +61,7 @@
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
     <string name="title_activity_profile">ProfileActivity</string>
+    <string name="user_fail">User could not be loaded</string>
     <string name="user_not_found">User could not be found</string>
     <string name="username">Username</string>
     <string name="welcome">Welcome!</string>

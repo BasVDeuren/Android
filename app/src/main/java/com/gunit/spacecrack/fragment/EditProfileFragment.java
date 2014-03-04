@@ -72,7 +72,7 @@ public class EditProfileFragment extends Fragment {
 
         context = getActivity();
 
-        Profile profile = SpaceCrackApplication.profile;
+        Profile profile = SpaceCrackApplication.user.profile;
 
         calendar = Calendar.getInstance();
         calendar.setTimeInMillis(profile.dayOfBirth);
@@ -109,7 +109,7 @@ public class EditProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!firstName.getText().toString().equals("") && !lastName.getText().toString().equals("") && !date.getText().toString().equals(getResources().getText(R.string.birth_date))) {
-                    new EditTask(firstName.getText().toString(), lastName.getText().toString(), SpaceCrackApplication.profile.email, date.getText().toString(), newPicture).execute(SpaceCrackApplication.URL_PROFILE);
+                    new EditTask(firstName.getText().toString(), lastName.getText().toString(), SpaceCrackApplication.user.profile.email, date.getText().toString(), newPicture).execute(SpaceCrackApplication.URL_PROFILE);
                 } else {
                     Toast.makeText(getActivity(), getResources().getString(R.string.fill_in_fields), Toast.LENGTH_SHORT).show();
                 }
@@ -259,8 +259,8 @@ public class EditProfileFragment extends Fragment {
                 byte64Img = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
             } else {
-                if (SpaceCrackApplication.profile.image != null) {
-                    byte64Img = SpaceCrackApplication.profile.image.substring(SpaceCrackApplication.profile.image.indexOf(",") + 1);
+                if (SpaceCrackApplication.user.profile.image != null) {
+                    byte64Img = SpaceCrackApplication.user.profile.image.substring(SpaceCrackApplication.user.profile.image.indexOf(",") + 1);
                 }
             }
 
@@ -316,11 +316,11 @@ public class EditProfileFragment extends Fragment {
             if (result != null) {
                 try {
                     Gson gson = new Gson();
-                    SpaceCrackApplication.profile = gson.fromJson(result, Profile.class);
+                    SpaceCrackApplication.user.profile = gson.fromJson(result, Profile.class);
 
-                    if (SpaceCrackApplication.profile.image != null) {
+                    if (SpaceCrackApplication.user.profile.image != null) {
                         //Get the image from the Data URI
-                        String image = SpaceCrackApplication.profile.image.substring(SpaceCrackApplication.profile.image.indexOf(",") + 1);
+                        String image = SpaceCrackApplication.user.profile.image.substring(SpaceCrackApplication.user.profile.image.indexOf(",") + 1);
                         byte[] decodedString = Base64.decode(image, 0);
                         SpaceCrackApplication.profilePicture = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                     }

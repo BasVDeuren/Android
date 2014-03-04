@@ -1,9 +1,13 @@
 package com.gunit.spacecrack.fragment;
 
 import android.app.Fragment;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +15,8 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -24,6 +30,7 @@ import com.gunit.spacecrack.model.User;
 import com.gunit.spacecrack.restservice.RestService;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,34 +38,70 @@ import java.util.List;
  */
 public class NewGameFragment extends Fragment implements AdapterView.OnItemClickListener {
 
-    private EditText gameName;
-    private EditText opponent;
-    private Button search;
-    private Button createGame;
-    private ListView usersList;
+    private EditText edtGameName;
+    private EditText edtOpponent;
+    private Button btnSearch;
+    private Button btnContact;
+    private Button btnFacebook;
+    private Button btnRandom;
+    private Button btnCreateGame;
+    private ListView lstUsers;
     private List users;
     private User selectedUser;
+    private RadioGroup rdgUserType;
+    private RadioButton rdbUsername;
+    private RadioButton rdbEemail;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_new_game, container, false);
-        gameName = (EditText) view.findViewById(R.id.edt_newgame_gamename);
-        opponent = (EditText) view.findViewById(R.id.edt_newgame_opponent);
-        search = (Button) view.findViewById(R.id.btn_newgame_search);
-        search.setOnClickListener(new View.OnClickListener() {
+        edtGameName = (EditText) view.findViewById(R.id.edt_newgame_gamename);
+        edtOpponent = (EditText) view.findViewById(R.id.edt_newgame_opponent);
+
+        btnSearch = (Button) view.findViewById(R.id.btn_newgame_search);
+
+        btnContact = (Button) view.findViewById(R.id.btn_newgame_contact);
+        btnFacebook = (Button) view.findViewById(R.id.btn_newgame_facebook);
+        btnRandom = (Button) view.findViewById(R.id.btn_newgame_random);
+
+        rdgUserType = (RadioGroup) view.findViewById(R.id.rdg_newgame_usertype);
+        rdbUsername = (RadioButton) view.findViewById(R.id.rdb_newgame_username);
+        rdbEemail = (RadioButton) view.findViewById(R.id.rdb_newgame_email);
+        rdgUserType.check(rdbUsername.getId());
+
+        btnCreateGame = (Button) view.findViewById(R.id.btn_newgame_create);
+
+        addClickListeners();
+
+        lstUsers = (ListView) view.findViewById(R.id.lst_newgame_users);
+        lstUsers.setOnItemClickListener(this);
+        return view;
+    }
+
+    private void addClickListeners() {
+        btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (opponent.getText() != null) {
-                    new FindUsernameTask().execute(SpaceCrackApplication.URL_FIND_USERNAME + "/" + opponent.getText().toString());
+                if (edtOpponent.getText() != null) {
+                    if (rdbUsername.isChecked()) {
+                        new FindUserTask(true).execute(SpaceCrackApplication.URL_FIND_USERNAME + "/" + edtOpponent.getText().toString());
+                    } else if (rdbEemail.isChecked()) {
+                        new FindUserTask(true).execute(SpaceCrackApplication.URL_FIND_EMAIL + "/" + edtOpponent.getText().toString());
+                    }
                 }
             }
         });
-        createGame = (Button) view.findViewById(R.id.btn_newgame_create);
-        createGame.setOnClickListener(new View.OnClickListener() {
+        btnRandom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!gameName.getText().toString().equals("") && selectedUser != null) {
+                new FindUserTask(false).execute(SpaceCrackApplication.URL_FIND_USERID + "/" + SpaceCrackApplication.user.userId);
+            }
+        });
+        btnCreateGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!edtGameName.getText().toString().equals("") && selectedUser != null) {
                     Intent intent = new Intent(getActivity(), GameActivity.class);
-                    intent.putExtra("gameName", gameName.getText().toString());
+                    intent.putExtra("gameName", edtGameName.getText().toString());
                     intent.putExtra("opponent", selectedUser.userId);
                     startActivity(intent);
                 } else {
@@ -66,25 +109,59 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
                 }
             }
         });
-        usersList = (ListView) view.findViewById(R.id.lst_newgame_users);
-        usersList.setOnItemClickListener(this);
-        return view;
+
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         selectedUser = (User) users.get(position);
-        opponent.setText(selectedUser.username);
+        edtOpponent.setText(selectedUser.username);
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
+    private List<String> getNameEmailDetails(){
+        List<String> names = new ArrayList<String>();
+        ContentResolver cr = getActivity().getContentResolver();
+        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,null, null, null, null);
+        if (cur.getCount() > 0) {
+            while (cur.moveToNext()) {
+                String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
+                Cursor cur1 = cr.query(
+                        ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
+                        ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
+                        new String[]{id}, null);
+                while (cur1.moveToNext()) {
+                    //to get the contact names
+                    String name=cur1.getString(cur1.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                    Log.e("Name :", name);
+                    String email = cur1.getString(cur1.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+                    Log.e("Email", email);
+                    if(email!=null){
+                        names.add(name);
+                    }
+                }
+                cur1.close();
+            }
+        }
+        return names;
     }
 
     //POST request to edit the profile
-    private class FindUsernameTask extends AsyncTask<String, Void, String> {
+    private class FindUserTask extends AsyncTask<String, Void, String> {
+
+        private boolean multiple;
+
+        public FindUserTask (boolean multiple) {
+            this.multiple = multiple;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            btnSearch.setEnabled(false);
+            btnContact.setEnabled(false);
+            btnFacebook.setEnabled(false);
+            btnRandom.setEnabled(false);
+        }
 
         @Override
         protected String doInBackground (String...url)
@@ -98,17 +175,33 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
             if (result != null) {
                 try {
                     Gson gson = new Gson();
-                    Type listType = new TypeToken<List<User>>(){}.getType();
-                    users = gson.fromJson(result, listType);
-                    UserAdapter userAdapter = new UserAdapter(getActivity(), users);
-                    usersList.setAdapter(userAdapter);
-
+                    if (multiple) {
+                        users = new ArrayList();
+                        Type listType = new TypeToken<List<User>>(){}.getType();
+                        users = gson.fromJson(result, listType);
+                        for (int i  = 0; i < users.size(); i++) {
+                            User user = (User) users.get(i);
+                            if (user.userId == SpaceCrackApplication.user.userId) {
+                                users.remove(users.get(i));
+                            }
+                        }
+                        users.remove(SpaceCrackApplication.user);
+                        UserAdapter userAdapter = new UserAdapter(getActivity(), users);
+                        lstUsers.setAdapter(userAdapter);
+                    } else {
+                        selectedUser = gson.fromJson(result, User.class);
+                        edtOpponent.setText(selectedUser.username);
+                    }
                 } catch (JsonParseException e) {
                     e.printStackTrace();
                 }
             } else {
                 Toast.makeText(getActivity(), getResources().getText(R.string.user_not_found), Toast.LENGTH_SHORT).show();
             }
+            btnSearch.setEnabled(true);
+            btnContact.setEnabled(true);
+            btnFacebook.setEnabled(true);
+            btnRandom.setEnabled(true);
         }
     }
 

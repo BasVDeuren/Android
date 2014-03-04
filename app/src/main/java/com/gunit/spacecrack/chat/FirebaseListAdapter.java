@@ -49,24 +49,28 @@ public abstract class FirebaseListAdapter<T> extends BaseAdapter {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
 
-                T model = dataSnapshot.getValue(FirebaseListAdapter.this.modelClass);
-                modelNames.put(dataSnapshot.getName(), model);
+                try {
+                    T model = dataSnapshot.getValue(FirebaseListAdapter.this.modelClass);
+                    modelNames.put(dataSnapshot.getName(), model);
 
-                // Insert into the correct location, based on previousChildName
-                if (previousChildName == null) {
-                    models.add(0, model);
-                } else {
-                    T previousModel = modelNames.get(previousChildName);
-                    int previousIndex = models.indexOf(previousModel);
-                    int nextIndex = previousIndex + 1;
-                    if (nextIndex == models.size()) {
-                        models.add(model);
+                    // Insert into the correct location, based on previousChildName
+                    if (previousChildName == null) {
+                        models.add(0, model);
                     } else {
-                        models.add(nextIndex, model);
+                        T previousModel = modelNames.get(previousChildName);
+                        int previousIndex = models.indexOf(previousModel);
+                        int nextIndex = previousIndex + 1;
+                        if (nextIndex == models.size()) {
+                            models.add(model);
+                        } else {
+                            models.add(nextIndex, model);
+                        }
                     }
-                }
 
-                notifyDataSetChanged();
+                    notifyDataSetChanged();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override

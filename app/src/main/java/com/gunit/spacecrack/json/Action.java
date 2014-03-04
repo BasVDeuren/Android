@@ -12,6 +12,12 @@ public class Action {
     public int playerId;
     public Ship ship;
 
+    public Action (String actionType, int gameId, int playerId) {
+        this.actionType = actionType;
+        this.gameId = gameId;
+        this.playerId = playerId;
+    }
+
     public Action(String actionType, String destinationPlanetName, int gameId, int playerId, Ship ship) {
         this.actionType = actionType;
         this.destinationPlanetName = destinationPlanetName;

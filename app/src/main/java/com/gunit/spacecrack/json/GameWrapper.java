@@ -8,6 +8,5 @@ import com.gunit.spacecrack.model.Game;
 public class GameWrapper {
     public Game game;
     public int activePlayerId;
-    public String activePlayerFirebaseURL;
-    public String opponentFirebaseURL;
+    public String firebaseGameURL;
 }

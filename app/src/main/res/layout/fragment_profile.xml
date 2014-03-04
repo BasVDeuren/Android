@@ -34,7 +34,7 @@
             android:layout_width="@dimen/default_size"
             android:layout_height="wrap_content"
             android:id="@+id/txt_profile_setup"
-            android:text="@string/app_name"
+            android:text="@string/profile_not_setup"
             android:visibility="gone"/>
 
         <LinearLayout

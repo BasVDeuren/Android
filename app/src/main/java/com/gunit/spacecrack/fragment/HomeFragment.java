@@ -37,6 +37,7 @@ public class HomeFragment extends Fragment {
     private TextView name;
     private LinearLayout profile;
     private Button newGame;
+    private Button activeGames;
     private Button logout;
 
     @Override
@@ -49,7 +50,7 @@ public class HomeFragment extends Fragment {
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SpaceCrackApplication.profile != null) {
+                if (SpaceCrackApplication.user.profile != null) {
                     Intent intent = new Intent(getActivity(), ProfileActivity.class);
                     startActivity(intent);
                 } else {
@@ -63,6 +64,16 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 getActivity().getFragmentManager().beginTransaction()
                         .replace(R.id.container, new NewGameFragment(), "New Game")
+                        .addToBackStack("HomeFragment")
+                        .commit();
+            }
+        });
+        activeGames = (Button) view.findViewById(R.id.btn_home_activegames);
+        activeGames.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getFragmentManager().beginTransaction()
+                        .replace(R.id.container, new ActiveGamesFragment(), "Active Games")
                         .addToBackStack("HomeFragment")
                         .commit();
             }
@@ -110,9 +121,9 @@ public class HomeFragment extends Fragment {
                 //getFriends();
             }
         } else {
-            if (SpaceCrackApplication.profile != null) {
-                if (SpaceCrackApplication.profile.firstname != null && SpaceCrackApplication.profile.lastname != null) {
-                    name.setText(SpaceCrackApplication.profile.firstname + " " + SpaceCrackApplication.profile.lastname);
+            if (SpaceCrackApplication.user.profile != null) {
+                if (SpaceCrackApplication.user.profile.firstname != null && SpaceCrackApplication.user.profile.lastname != null) {
+                    name.setText(SpaceCrackApplication.user.profile.firstname + " " + SpaceCrackApplication.user.profile.lastname);
                 }
                 if (SpaceCrackApplication.profilePicture != null) {
                     profilePicture.setImageBitmap(SpaceCrackApplication.profilePicture);

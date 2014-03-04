@@ -7,19 +7,26 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
         android:orientation="vertical"
         android:layout_centerInParent="true"
         android:gravity="center">
 
-        <TextView
-            android:text="@string/app_name"
+        <!--<IconTextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textSize="80sp"-->
+            <!--android:textAlignment="center"-->
+            <!--android:text="{fa-rocket}"/>-->
+
+        <IconTextView
+            android:text="{fa-rocket} Space Crack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:paddingBottom="@dimen/activity_vertical_margin"
-            android:textColor="@android:color/white"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:textSize="36sp"
             android:id="@+id/txt_splash_spacecrack"/>
 

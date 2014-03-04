@@ -30,7 +30,7 @@ public class ChatListAdapter extends FirebaseListAdapter<Chat> {
     @Override
     protected void populateView(View view, Chat chat) {
         // Map a Chat object to an entry in our listview
-        String author = chat.getAuthor();
+        String author = chat.getFrom();
         TextView authorText = (TextView)view.findViewById(R.id.author);
         authorText.setText(author + ": ");
         // If the message was sent by this user, color it differently
@@ -39,6 +39,6 @@ public class ChatListAdapter extends FirebaseListAdapter<Chat> {
         } else {
             authorText.setTextColor(Color.BLUE);
         }
-        ((TextView)view.findViewById(R.id.message)).setText(chat.getMessage());
+        ((TextView)view.findViewById(R.id.message)).setText(chat.getBody());
     }
 }

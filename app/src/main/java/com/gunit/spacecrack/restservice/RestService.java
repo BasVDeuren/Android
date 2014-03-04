@@ -15,6 +15,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
@@ -34,9 +35,11 @@ public class RestService {
 
     public static String getRequest(String url) {
         String result = null;
-        HttpClient httpClient = new DefaultHttpClient();
         HttpGet httpGet = new HttpGet(url);
-        HttpConnectionParams.setConnectionTimeout(new BasicHttpParams(), SpaceCrackApplication.NETWORK_TIMEOUT);
+        HttpParams httpParams = new BasicHttpParams();
+        HttpConnectionParams.setConnectionTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
+        HttpConnectionParams.setSoTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
+        HttpClient httpClient = new DefaultHttpClient(httpParams);
 
         CookieStore cookieStore = ((DefaultHttpClient) httpClient).getCookieStore();
         BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
@@ -77,9 +80,11 @@ public class RestService {
 
     public static String postRequest(String url, JSONObject user) {
         String accessToken = null;
-        HttpClient httpClient = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost(url);
-        HttpConnectionParams.setConnectionTimeout(new BasicHttpParams(), SpaceCrackApplication.NETWORK_TIMEOUT);
+        HttpParams httpParams = new BasicHttpParams();
+        HttpConnectionParams.setConnectionTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
+        HttpConnectionParams.setSoTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
+        HttpClient httpClient = new DefaultHttpClient(httpParams);
         StringEntity stringEntity = null;
         try {
             stringEntity = new StringEntity(user.toString());
@@ -120,9 +125,11 @@ public class RestService {
 
     public static String postGame(String url, JSONObject user) {
         String result = null;
-        HttpClient httpClient = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost(url);
-        HttpConnectionParams.setConnectionTimeout(new BasicHttpParams(), SpaceCrackApplication.NETWORK_TIMEOUT);
+        HttpParams httpParams = new BasicHttpParams();
+        HttpConnectionParams.setConnectionTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
+        HttpConnectionParams.setSoTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
+        HttpClient httpClient = new DefaultHttpClient(httpParams);
         StringEntity stringEntity = null;
         try {
             stringEntity = new StringEntity(user.toString());
@@ -165,9 +172,11 @@ public class RestService {
 
     public static String postAction(String url, String action) {
         String result = null;
-        HttpClient httpClient = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost(url);
-        HttpConnectionParams.setConnectionTimeout(new BasicHttpParams(), SpaceCrackApplication.NETWORK_TIMEOUT);
+        HttpParams httpParams = new BasicHttpParams();
+        HttpConnectionParams.setConnectionTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
+        HttpConnectionParams.setSoTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
+        HttpClient httpClient = new DefaultHttpClient(httpParams);
         StringEntity stringEntity = null;
         try {
             stringEntity = new StringEntity(action);
@@ -212,9 +221,13 @@ public class RestService {
 
     public static boolean editProfile(JSONObject profile) {
         boolean result = false;
-        HttpClient httpClient = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost(SpaceCrackApplication.URL_PROFILE);
         HttpContext httpContext = new BasicHttpContext();
+
+        HttpParams httpParams = new BasicHttpParams();
+        HttpConnectionParams.setConnectionTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
+        HttpConnectionParams.setSoTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
+        HttpClient httpClient = new DefaultHttpClient(httpParams);
 
         CookieStore cookieStore = ((DefaultHttpClient) httpClient).getCookieStore();
         BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");

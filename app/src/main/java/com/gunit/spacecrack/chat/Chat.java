@@ -5,23 +5,23 @@ package com.gunit.spacecrack.chat;
  */
 public class Chat {
 
-    private String message;
-    private String author;
+    private String body;
+    private String from;
 
     // Required default constructor for Firebase object mapping
     @SuppressWarnings("unused")
     private Chat() { }
 
-    Chat(String message, String author) {
-        this.message = message;
-        this.author = author;
+    Chat(String body, String from) {
+        this.body = body;
+        this.from = from;
     }
 
-    public String getMessage() {
-        return message;
+    public String getBody() {
+        return body;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getFrom() {
+        return from;
     }
 }
