@@ -1,13 +1,18 @@
 package com.gunit.spacecrack.game;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
+import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.game.manager.ResourcesManager;
 import com.gunit.spacecrack.game.manager.SceneManager;
@@ -15,12 +20,11 @@ import com.gunit.spacecrack.json.GameWrapper;
 import com.gunit.spacecrack.model.Planet;
 import com.gunit.spacecrack.model.SpaceCrackMap;
 import com.gunit.spacecrack.restservice.RestService;
+import com.gunit.spacecrack.service.SpaceCrackService;
 
 import org.andengine.engine.Engine;
 import org.andengine.engine.LimitedFPSEngine;
 import org.andengine.engine.camera.SmoothCamera;
-import org.andengine.engine.handler.timer.ITimerCallback;
-import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.WakeLockOptions;
@@ -63,12 +67,48 @@ public class GameActivity extends BaseGameActivity {
     private boolean gameStarted;
     private boolean mapLoaded;
 
+    private SpaceCrackService spaceCrackService;
+    private boolean boundToService = false;
 
     @Override
     protected void onCreate(Bundle pSavedInstanceState) {
         super.onCreate(pSavedInstanceState);
         loadData();
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //Bind to the service
+        Intent intent = new Intent(this, SpaceCrackService.class);
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        if (boundToService) {
+            unbindService(serviceConnection);
+        }
+        super.onStop();
+    }
+
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            SpaceCrackService.LocalBinder binder = (SpaceCrackService.LocalBinder) service;
+            spaceCrackService = binder.getService();
+            boundToService = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            boundToService = false;
+        }
+    };
 
     @Override
     public synchronized void onResumeGame() {
@@ -155,6 +195,9 @@ public class GameActivity extends BaseGameActivity {
     private void startGame () {
         if (mapLoaded && gameStarted) {
 //            SceneManager.getInstance().loadMenuScene(mEngine);
+//            spaceCrackService.addFirebaseListener(SpaceCrackApplication.URL_FIREBASE_CHAT, String.valueOf(gameWrapper.game.gameId));
+            spaceCrackService.addFirebaseListener(SpaceCrackApplication.URL_FIREBASE_CHAT, String.valueOf(1));
+
             SceneManager.getInstance().loadGameScene(mEngine);
         }
     }
@@ -215,6 +258,8 @@ public class GameActivity extends BaseGameActivity {
         {
             if (result != null) {
                 new GetActiveGame().execute(SpaceCrackApplication.URL_ACTIVEGAME + "/" + result);
+            } else {
+                Toast.makeText(GameActivity.this, GameActivity.this.getResources().getString(R.string.turn_ended), Toast.LENGTH_SHORT).show();
             }
         }
     }

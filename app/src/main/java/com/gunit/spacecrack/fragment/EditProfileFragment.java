@@ -7,7 +7,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -28,7 +27,6 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.gunit.spacecrack.R;
-import com.gunit.spacecrack.activity.HomeActivity;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.model.Profile;
 import com.gunit.spacecrack.restservice.RestService;
@@ -37,21 +35,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Calendar;
 
 /**
  * Created by Dimitri on 20/02/14.
  */
 public class EditProfileFragment extends Fragment {
-    private ImageView profilePicture;
-    private EditText firstName;
-    private EditText lastName;
-    private Button date;
-    private Button save;
-    private Bitmap newPicture;
+    private ImageView imgProfilePicture;
+    private EditText edtFirstName;
+    private EditText edtLastName;
+    private Button btnDate;
+    private Button btnSave;
+    private Bitmap btnNewPicture;
 
     private int galleryResult;
     private String picturePath;
@@ -80,36 +76,36 @@ public class EditProfileFragment extends Fragment {
         startMonth = calendar.get(Calendar.MONTH);
         startDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-        profilePicture = (ImageView) rootView.findViewById(R.id.img_edit_profile_profilepicture);
+        imgProfilePicture = (ImageView) rootView.findViewById(R.id.img_edit_profile_profilepicture);
         if (SpaceCrackApplication.profilePicture != null) {
-            profilePicture.setImageBitmap(SpaceCrackApplication.profilePicture);
+            imgProfilePicture.setImageBitmap(SpaceCrackApplication.profilePicture);
         }
-        profilePicture.setOnClickListener(new View.OnClickListener() {
+        imgProfilePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, galleryResult);
             }
         });
-        firstName = (EditText) rootView.findViewById(R.id.edt_profile_first_name);
-        firstName.setText(profile.firstname);
-        lastName = (EditText) rootView.findViewById(R.id.edt_profile_last_name);
-        lastName.setText(profile.lastname);
-        date = (Button) rootView.findViewById(R.id.btn_profile_date);
-        date.setOnClickListener(new View.OnClickListener() {
+        edtFirstName = (EditText) rootView.findViewById(R.id.edt_profile_first_name);
+        edtFirstName.setText(profile.firstname);
+        edtLastName = (EditText) rootView.findViewById(R.id.edt_profile_last_name);
+        edtLastName.setText(profile.lastname);
+        btnDate = (Button) rootView.findViewById(R.id.btn_profile_date);
+        btnDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DialogFragment datePicker = new StartDatePicker();
                 datePicker.show(getActivity().getFragmentManager(), "start_date_picker");
             }
         });
-        date.setText(startDay + "-" + (startMonth + 1) + "-" + startYear);
-        save = (Button) rootView.findViewById(R.id.btn_profile_save);
-        save.setOnClickListener(new View.OnClickListener() {
+        btnDate.setText(startDay + "-" + (startMonth + 1) + "-" + startYear);
+        btnSave = (Button) rootView.findViewById(R.id.btn_profile_save);
+        btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!firstName.getText().toString().equals("") && !lastName.getText().toString().equals("") && !date.getText().toString().equals(getResources().getText(R.string.birth_date))) {
-                    new EditTask(firstName.getText().toString(), lastName.getText().toString(), SpaceCrackApplication.user.profile.email, date.getText().toString(), newPicture).execute(SpaceCrackApplication.URL_PROFILE);
+                if (!edtFirstName.getText().toString().equals("") && !edtLastName.getText().toString().equals("") && !btnDate.getText().toString().equals(getResources().getText(R.string.birth_date))) {
+                    new EditTask(edtFirstName.getText().toString(), edtLastName.getText().toString(), SpaceCrackApplication.user.profile.email, btnDate.getText().toString(), btnNewPicture).execute(SpaceCrackApplication.URL_PROFILE);
                 } else {
                     Toast.makeText(getActivity(), getResources().getString(R.string.fill_in_fields), Toast.LENGTH_SHORT).show();
                 }
@@ -134,9 +130,9 @@ public class EditProfileFragment extends Fragment {
                 int columnIndex = cursor.getColumnIndex(filePathImage[0]);
                 picturePath = cursor.getString(columnIndex);
                 try {
-//                    profilePicture.setImageBitmap(decodeUri(selectedImage));
-                    newPicture = decodeSampledBitmapFromUri(selectedImage, 200, 200);
-                    profilePicture.setImageBitmap(newPicture);
+//                    imgProfilePicture.setImageBitmap(decodeUri(selectedImage));
+                    btnNewPicture = decodeSampledBitmapFromUri(selectedImage, 200, 200);
+                    imgProfilePicture.setImageBitmap(btnNewPicture);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -152,7 +148,7 @@ public class EditProfileFragment extends Fragment {
 //            if (cursor.moveToFirst()) {
 //                int columnIndex = cursor.getColumnIndex(filePathImage[0]);
 //                picturePath = cursor.getString(columnIndex);
-//                profilePicture.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+//                imgProfilePicture.setImageBitmap(BitmapFactory.decodeFile(picturePath));
 //            }
 //
 //            cursor.close();
@@ -235,7 +231,7 @@ public class EditProfileFragment extends Fragment {
             startYear = year;
             startMonth = monthOfYear;
             startDay = dayOfMonth;
-            date.setText(startDay + "-" + (startMonth + 1) + "-" + startYear);
+            btnDate.setText(startDay + "-" + (startMonth + 1) + "-" + startYear);
         }
     }
 
@@ -279,7 +275,7 @@ public class EditProfileFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
-            save.setEnabled(false);
+            btnSave.setEnabled(false);
         }
 
         @Override
@@ -297,7 +293,7 @@ public class EditProfileFragment extends Fragment {
                 new GetProfile().execute(SpaceCrackApplication.URL_PROFILE);
             }
 
-            save.setEnabled(true);
+            btnSave.setEnabled(true);
         }
     }
 

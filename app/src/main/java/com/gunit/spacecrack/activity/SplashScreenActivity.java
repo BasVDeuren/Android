@@ -23,6 +23,7 @@ import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.model.Profile;
 import com.gunit.spacecrack.model.User;
 import com.gunit.spacecrack.restservice.RestService;
+import com.gunit.spacecrack.service.SpaceCrackService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,10 +54,6 @@ public class SplashScreenActivity extends Activity {
     private void startApp() {
         if (isLoggedIn()) {
             new LoginTask(sharedPreferences.getString("email", null), sharedPreferences.getString("password", null)).execute();
-//            //Store the access token for authorisation
-//            SpaceCrackApplication.accessToken = sharedPreferences.getString("accessToken", null);
-
-
         } else {
             goLogin();
         }

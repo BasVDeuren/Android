@@ -25,7 +25,9 @@
     <string name="first_name">First name</string>
     <string name="game_not_created">Game could not be created</string>
     <string name="game_not_found">No games could be found</string>
+    <string name="game_not_loaded">Game could not be loaded</string>
     <string name="gender">Gender</string>
+    <string name="general_settings">General settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="last_name">Last name</string>
     <string name="login">Login</string>
@@ -35,7 +37,10 @@
     <string name="male">Male</string>
     <string name="name_of_game">Name of game</string>
     <string name="new_game">New game</string>
+    <string name="new_message">New message</string>
     <string name="no_connection">No internet connection</string>
+    <string name="notifications">Notifitcations</string>
+    <string name="notifications_enable">Enable notifications</string>
     <string name="opponent">Opponent</string>
     <string name="password">Password</string>
     <string name="password_match">Passwords must match</string>
@@ -61,6 +66,7 @@
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
     <string name="title_activity_profile">ProfileActivity</string>
+    <string name="turn_ended">Turn ended</string>
     <string name="user_fail">User could not be loaded</string>
     <string name="user_not_found">User could not be found</string>
     <string name="username">Username</string>

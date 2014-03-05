@@ -1,6 +1,7 @@
 package com.gunit.spacecrack.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +22,7 @@ import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.fragment.HomeFragment;
 import com.gunit.spacecrack.fragment.LoginFragment;
 import com.gunit.spacecrack.game.GameActivity;
+import com.gunit.spacecrack.service.SpaceCrackService;
 
 import java.util.List;
 
@@ -40,4 +42,8 @@ public class HomeActivity extends Activity {
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
 }

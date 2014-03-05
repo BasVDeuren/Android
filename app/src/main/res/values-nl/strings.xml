@@ -24,7 +24,9 @@
     <string name="first_name">Voornaam</string>
     <string name="game_not_created">Spel kon niet aangemaakt worden</string>
     <string name="game_not_found">Geen spellen gevonden</string>
+    <string name="game_not_loaded">Spel kon niet geladen worden</string>
     <string name="gender">Geslacht</string>
+    <string name="general_settings">Algemene instellingen</string>
     <string name="hello_world">Hello world!</string>
     <string name="last_name">Familienaam</string>
     <string name="login">Aanmelden</string>
@@ -34,7 +36,10 @@
     <string name="male">Man</string>
     <string name="name_of_game">Naam van het spel</string>
     <string name="new_game">Nieuw spel</string>
+    <string name="new_message">Nieuw bericht</string>
     <string name="no_connection">Geen internet connectie</string>
+    <string name="notifications">Notificaties</string>
+    <string name="notifications_enable">Notificaties inschakelen</string>
     <string name="opponent">Tegenstander</string>
     <string name="password">Wachtwoord</string>
     <string name="password_match">Wachtwoorden moeten gelijk zijn</string>
@@ -60,6 +65,7 @@
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
     <string name="title_activity_profile">ProfileActivity</string>
+    <string name="turn_ended">Beurt over</string>
     <string name="user_fail">Gebruiker kon niet geladen worden</string>
     <string name="user_not_found">Gebruiker kon niet gevonden worden</string>
     <string name="username">Gebruikersnaam</string>

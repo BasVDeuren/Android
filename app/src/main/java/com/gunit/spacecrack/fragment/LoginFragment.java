@@ -24,7 +24,6 @@ import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.activity.LoginActivity;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.activity.HomeActivity;
-import com.gunit.spacecrack.model.Profile;
 import com.gunit.spacecrack.model.User;
 import com.gunit.spacecrack.restservice.RestService;
 
@@ -40,9 +39,9 @@ public class LoginFragment extends Fragment {
 
     private EditText edtEmail;
     private EditText edtPassword;
-    private Button login;
-    private Button register;
-    private LoginButton facebook;
+    private Button btnLogin;
+    private Button btnRegister;
+    private LoginButton btnFacebook;
     private SharedPreferences sharedPreferences;
 
     private LoginActivity loginActivity;
@@ -61,8 +60,8 @@ public class LoginFragment extends Fragment {
         //Find the views
         edtEmail = (EditText) view.findViewById(R.id.edt_login_email);
         edtPassword = (EditText) view.findViewById(R.id.edt_login_password);
-        login = (Button) view.findViewById(R.id.btn_login_login);
-        login.setOnClickListener(new View.OnClickListener() {
+        btnLogin = (Button) view.findViewById(R.id.btn_login_login);
+        btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!edtEmail.getText().toString().equals("") && !edtPassword.getText().toString().equals("")) {
@@ -72,8 +71,8 @@ public class LoginFragment extends Fragment {
                 }
             }
         });
-        register = (Button) view.findViewById(R.id.btn_login_register);
-        register.setOnClickListener(new View.OnClickListener() {
+        btnRegister = (Button) view.findViewById(R.id.btn_login_register);
+        btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().getFragmentManager().beginTransaction()
@@ -82,10 +81,10 @@ public class LoginFragment extends Fragment {
                         .commit();
             }
         });
-        facebook = (LoginButton) view.findViewById(R.id.btn_login_facebook);
+        btnFacebook = (LoginButton) view.findViewById(R.id.btn_login_facebook);
         //Set the permissions
-        facebook.setReadPermissions(Arrays.asList("email", "user_birthday"));
-        facebook.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
+        btnFacebook.setReadPermissions(Arrays.asList("email", "user_birthday"));
+        btnFacebook.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
             @Override
             public void onUserInfoFetched(GraphUser user) {
                 SpaceCrackApplication.graphUser = user;
@@ -125,9 +124,9 @@ public class LoginFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
-            login.setEnabled(false);
-            register.setEnabled(false);
-            facebook.setEnabled(false);
+            btnLogin.setEnabled(false);
+            btnRegister.setEnabled(false);
+            btnFacebook.setEnabled(false);
         }
 
         @Override
@@ -149,14 +148,14 @@ public class LoginFragment extends Fragment {
                 Log.i(TAG, "Login success");
                 new GetUser().execute(SpaceCrackApplication.URL_USER);
             } else if (facebookLogin) {
-                new RegisterTask(SpaceCrackApplication.graphUser.getName(), "facebook" + SpaceCrackApplication.graphUser.getId(), "facebook" + SpaceCrackApplication.graphUser.getId(), (String) SpaceCrackApplication.graphUser.asMap().get("email")).execute(SpaceCrackApplication.DOMAIN + SpaceCrackApplication.URL_REGISTER);
+                new RegisterTask(SpaceCrackApplication.graphUser.getName(), "btnFacebook" + SpaceCrackApplication.graphUser.getId(), "btnFacebook" + SpaceCrackApplication.graphUser.getId(), (String) SpaceCrackApplication.graphUser.asMap().get("email")).execute(SpaceCrackApplication.URL_REGISTER);
             }
 
             Log.i(TAG, "Login failed");
 
-            login.setEnabled(true);
-            register.setEnabled(true);
-            facebook.setEnabled(true);
+            btnLogin.setEnabled(true);
+            btnRegister.setEnabled(true);
+            btnFacebook.setEnabled(true);
 
         }
     }
@@ -186,16 +185,16 @@ public class LoginFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
-            login.setEnabled(false);
-            register.setEnabled(false);
-            facebook.setEnabled(false);
+            btnLogin.setEnabled(false);
+            btnRegister.setEnabled(false);
+            btnFacebook.setEnabled(false);
         }
 
         @Override
         protected String doInBackground (String...url)
         {
             //Register newUser
-            String accessToken = RestService.postRequest(SpaceCrackApplication.URL_USER, newUser);
+            String accessToken = RestService.postRequest(url[0], newUser);
             //If newUser has been registered, login
             if (accessToken != null) {
                 JSONObject loginUser = new JSONObject();
@@ -219,9 +218,9 @@ public class LoginFragment extends Fragment {
                 new GetUser().execute(SpaceCrackApplication.URL_USER);
             } else {
                 Toast.makeText(context, getResources().getString(R.string.email_register), Toast.LENGTH_SHORT).show();
-                login.setEnabled(true);
-                register.setEnabled(true);
-                facebook.setEnabled(true);
+                btnLogin.setEnabled(true);
+                btnRegister.setEnabled(true);
+                btnFacebook.setEnabled(true);
             }
 
         }
@@ -260,9 +259,9 @@ public class LoginFragment extends Fragment {
             } else {
                 Toast.makeText(loginActivity, getResources().getText(R.string.profile_fail), Toast.LENGTH_SHORT).show();
             }
-            login.setEnabled(true);
-            register.setEnabled(true);
-            facebook.setEnabled(true);
+            btnLogin.setEnabled(true);
+            btnRegister.setEnabled(true);
+            btnFacebook.setEnabled(true);
         }
     }
 

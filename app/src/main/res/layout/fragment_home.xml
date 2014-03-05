@@ -9,7 +9,7 @@
     <include layout="@layout/background"/>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
@@ -84,6 +84,16 @@
 
     </LinearLayout>
 
+    <IconButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:id="@+id/btn_home_settings"
+        android:text="{fa-cog}"
+        android:layout_toLeftOf="@+id/btn_home_logout"
+        android:layout_alignParentBottom="true"/>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -91,7 +101,7 @@
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:id="@+id/btn_home_logout"
         android:text="@string/logout"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

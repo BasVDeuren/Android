@@ -2,13 +2,13 @@ package com.gunit.spacecrack.fragment;
 
 import android.app.Fragment;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.IconButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,11 +20,10 @@ import com.facebook.Session;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.ProfilePictureView;
 import com.gunit.spacecrack.R;
-import com.gunit.spacecrack.activity.HomeActivity;
 import com.gunit.spacecrack.activity.LoginActivity;
 import com.gunit.spacecrack.activity.ProfileActivity;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
-import com.gunit.spacecrack.game.GameActivity;
+import com.gunit.spacecrack.service.SpaceCrackService;
 
 import java.util.List;
 
@@ -33,21 +32,22 @@ import java.util.List;
  */
 public class HomeFragment extends Fragment {
     private ProfilePictureView fbPictureView;
-    private ImageView profilePicture;
-    private TextView name;
-    private LinearLayout profile;
-    private Button newGame;
-    private Button activeGames;
-    private Button logout;
+    private ImageView imgProfilePicture;
+    private TextView txtName;
+    private LinearLayout lltProfile;
+    private Button btnNewGame;
+    private Button btnActiveGames;
+    private Button btnLogout;
+    private IconButton btnSettings;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         fbPictureView = (ProfilePictureView) view.findViewById(R.id.ppv_home_fbpicture);
-        profilePicture = (ImageView) view.findViewById(R.id.img_home_profilepicture);
-        name = (TextView) view.findViewById(R.id.txt_home_welcome);
-        profile = (LinearLayout) view.findViewById(R.id.llt_home_profile);
-        profile.setOnClickListener(new View.OnClickListener() {
+        imgProfilePicture = (ImageView) view.findViewById(R.id.img_home_profilepicture);
+        txtName = (TextView) view.findViewById(R.id.txt_home_welcome);
+        lltProfile = (LinearLayout) view.findViewById(R.id.llt_home_profile);
+        lltProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (SpaceCrackApplication.user.profile != null) {
@@ -58,8 +58,17 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
-        newGame = (Button) view.findViewById(R.id.btn_home_newgame);
-        newGame.setOnClickListener(new View.OnClickListener() {
+        btnSettings = (IconButton) view.findViewById(R.id.btn_home_settings);
+        btnSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getFragmentManager().beginTransaction()
+                        .replace(R.id.container, new SettingsFragment(), "Settings")
+                        .addToBackStack("HomeFragment")
+                        .commit();            }
+        });
+        btnNewGame = (Button) view.findViewById(R.id.btn_home_newgame);
+        btnNewGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().getFragmentManager().beginTransaction()
@@ -68,8 +77,8 @@ public class HomeFragment extends Fragment {
                         .commit();
             }
         });
-        activeGames = (Button) view.findViewById(R.id.btn_home_activegames);
-        activeGames.setOnClickListener(new View.OnClickListener() {
+        btnActiveGames = (Button) view.findViewById(R.id.btn_home_activegames);
+        btnActiveGames.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().getFragmentManager().beginTransaction()
@@ -78,8 +87,8 @@ public class HomeFragment extends Fragment {
                         .commit();
             }
         });
-        logout = (Button) view.findViewById(R.id.btn_home_logout);
-        logout.setOnClickListener(new View.OnClickListener() {
+        btnLogout = (Button) view.findViewById(R.id.btn_home_logout);
+        btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Session.getActiveSession() != null) {
@@ -95,6 +104,10 @@ public class HomeFragment extends Fragment {
 
         updateAccount();
 
+        Intent intent = new Intent(getActivity(), SpaceCrackService.class);
+        intent.putExtra("username", SpaceCrackApplication.user.username);
+        getActivity().startService(intent);
+
         return view;
     }
 
@@ -103,17 +116,17 @@ public class HomeFragment extends Fragment {
         final Session session = Session.getActiveSession();
         if (session != null && session.isOpened()) {
             fbPictureView.setVisibility(View.VISIBLE);
-            profilePicture.setVisibility(View.GONE);
+            imgProfilePicture.setVisibility(View.GONE);
             if (SpaceCrackApplication.graphUser != null) {
                 fbPictureView.setProfileId(SpaceCrackApplication.graphUser.getId());
-                name.setText(SpaceCrackApplication.graphUser.getFirstName() + " " + SpaceCrackApplication.graphUser.getLastName());
+                txtName.setText(SpaceCrackApplication.graphUser.getFirstName() + " " + SpaceCrackApplication.graphUser.getLastName());
             } else {
                 Request request = Request.newMeRequest(session, new Request.GraphUserCallback() {
                     @Override
                     public void onCompleted(GraphUser user, Response response) {
                         if (user != null && session == Session.getActiveSession()) {
                             fbPictureView.setProfileId(user.getId());
-                            name.setText(user.getFirstName() + " " + user.getLastName());
+                            txtName.setText(user.getFirstName() + " " + user.getLastName());
                         }
                     }
                 });
@@ -123,10 +136,10 @@ public class HomeFragment extends Fragment {
         } else {
             if (SpaceCrackApplication.user.profile != null) {
                 if (SpaceCrackApplication.user.profile.firstname != null && SpaceCrackApplication.user.profile.lastname != null) {
-                    name.setText(SpaceCrackApplication.user.profile.firstname + " " + SpaceCrackApplication.user.profile.lastname);
+                    txtName.setText(SpaceCrackApplication.user.profile.firstname + " " + SpaceCrackApplication.user.profile.lastname);
                 }
                 if (SpaceCrackApplication.profilePicture != null) {
-                    profilePicture.setImageBitmap(SpaceCrackApplication.profilePicture);
+                    imgProfilePicture.setImageBitmap(SpaceCrackApplication.profilePicture);
                 }
             }
         }

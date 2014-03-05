@@ -43,6 +43,13 @@ public class HomeTest extends ActivityInstrumentationTestCase2<LoginActivity> {
         solo.assertCurrentActivity("Current activity should be ProfileActivity", ProfileActivity.class);
     }
 
+    public void testSettings() throws Exception {
+        solo.clickOnView(solo.getView(R.id.btn_home_settings));
+        solo.waitForFragmentByTag("Settings");
+        Fragment settingsFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("Settings");
+        assertTrue("SettingsFragment should be visible", settingsFragment.isVisible());
+    }
+
     public void testNewGame() throws Exception {
         solo.clickOnButton(solo.getString(R.string.new_game));
         solo.waitForFragmentByTag("New Game");

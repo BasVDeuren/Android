@@ -28,25 +28,28 @@ public class ChatActivity extends ListActivity {
     private ValueEventListener connectedListener;
     private ChatListAdapter chatListAdapter;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        // Make sure we have a username
-        setupUsername();
-//        username = SpaceCrackApplication.profile.firstname;
+        SharedPreferences prefs = getApplication().getSharedPreferences("ChatPrefs", 0);
 
-        setTitle("Chatting as " + username);
+        Intent intent = getIntent();
 
         // Setup our Firebase ref
-        Intent intent = getIntent();
         if (intent.getStringExtra("gameId") != null) {
             ref = new Firebase(SpaceCrackApplication.URL_FIREBASE_CHAT).child(intent.getStringExtra("gameId"));
         } else {
             ref = new Firebase(SpaceCrackApplication.URL_FIREBASE_CHAT).child("1");
         }
 
+        // Make sure we have a username
+        setupUsername();
+//        username = SpaceCrackApplication.profile.firstname;
+
+        setTitle("Chatting as " + username);
 
 
         // Setup our input methods. Enter key on the keyboard or pushing the send button
@@ -73,6 +76,9 @@ public class ChatActivity extends ListActivity {
     @Override
     public void onStart() {
         super.onStart();
+        if (username == null) {
+            setupUsername();
+        }
         // Setup our view and list adapter. Ensure it scrolls to the bottom as data changes
         final ListView listView = getListView();
         // Tell our list adapter that we only want 50 messages at a time
@@ -116,9 +122,11 @@ public class ChatActivity extends ListActivity {
         SharedPreferences prefs = getApplication().getSharedPreferences("ChatPrefs", 0);
         username = prefs.getString("username", null);
         if (username == null) {
-            Random r = new Random();
-            // Assign a random user name if we don't have one saved.
-            username = "JavaUser" + r.nextInt(100000);
+//            Random r = new Random();
+//            // Assign a random user name if we don't have one saved.
+//            username = "JavaUser" + r.nextInt(100000);
+            Intent intent = getIntent();
+            username = intent.getStringExtra("username");
             prefs.edit().putString("username", username).commit();
         }
     }

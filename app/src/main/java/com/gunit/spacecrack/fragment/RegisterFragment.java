@@ -25,11 +25,11 @@ import org.json.JSONObject;
  */
 public class RegisterFragment extends Fragment {
 
-    private Button register;
-    private EditText username;
-    private EditText password;
-    private EditText confirmPassword;
-    private EditText email;
+    private Button btnRegister;
+    private EditText txtUsername;
+    private EditText txtPassword;
+    private EditText txtConfirmPassword;
+    private EditText txtEmail;
 
     private static final String TAG = "RegisterFragment";
 
@@ -37,16 +37,16 @@ public class RegisterFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_register, container, false);
 
-        username = (EditText) view.findViewById(R.id.edt_register_username);
-        password = (EditText) view.findViewById(R.id.edt_register_password);
-        confirmPassword = (EditText) view.findViewById(R.id.edt_register_password_confirm);
-        email = (EditText) view.findViewById(R.id.edt_register_email);
-        register = (Button) view.findViewById(R.id.btn_register_register);
-        register.setOnClickListener(new View.OnClickListener() {
+        txtUsername = (EditText) view.findViewById(R.id.edt_register_username);
+        txtPassword = (EditText) view.findViewById(R.id.edt_register_password);
+        txtConfirmPassword = (EditText) view.findViewById(R.id.edt_register_password_confirm);
+        txtEmail = (EditText) view.findViewById(R.id.edt_register_email);
+        btnRegister = (Button) view.findViewById(R.id.btn_register_register);
+        btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkPasswords(password.getText().toString(), confirmPassword.getText().toString())) {
-                    new RegisterTask(username.getText().toString(), password.getText().toString(), confirmPassword.getText().toString(), email.getText().toString()).execute(SpaceCrackApplication.URL_REGISTER);
+                if (checkPasswords(txtPassword.getText().toString(), txtConfirmPassword.getText().toString())) {
+                    new RegisterTask(txtUsername.getText().toString(), txtPassword.getText().toString(), txtConfirmPassword.getText().toString(), txtEmail.getText().toString()).execute(SpaceCrackApplication.URL_REGISTER);
                 } else {
                     Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.password_match), Toast.LENGTH_SHORT).show();
                 }
@@ -85,7 +85,7 @@ public class RegisterFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
-            register.setEnabled(false);
+            btnRegister.setEnabled(false);
         }
 
         @Override
@@ -110,7 +110,7 @@ public class RegisterFragment extends Fragment {
                 startActivity(intent);
                 getActivity().finish();
             }
-            register.setEnabled(true);
+            btnRegister.setEnabled(true);
         }
     }
 }
