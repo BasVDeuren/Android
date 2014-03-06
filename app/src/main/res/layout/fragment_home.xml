@@ -85,8 +85,8 @@
     </LinearLayout>
 
     <IconButton
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:id="@+id/btn_home_settings"
@@ -94,13 +94,13 @@
         android:layout_toLeftOf="@+id/btn_home_logout"
         android:layout_alignParentBottom="true"/>
 
-    <Button
+    <IconButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:id="@+id/btn_home_logout"
-        android:text="@string/logout"
+        android:text="{fa-sign-out}"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"/>
 

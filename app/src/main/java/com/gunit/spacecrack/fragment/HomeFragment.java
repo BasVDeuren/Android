@@ -37,7 +37,7 @@ public class HomeFragment extends Fragment {
     private LinearLayout lltProfile;
     private Button btnNewGame;
     private Button btnActiveGames;
-    private Button btnLogout;
+    private IconButton btnLogout;
     private IconButton btnSettings;
 
     @Override
@@ -47,6 +47,24 @@ public class HomeFragment extends Fragment {
         imgProfilePicture = (ImageView) view.findViewById(R.id.img_home_profilepicture);
         txtName = (TextView) view.findViewById(R.id.txt_home_welcome);
         lltProfile = (LinearLayout) view.findViewById(R.id.llt_home_profile);
+
+        btnSettings = (IconButton) view.findViewById(R.id.btn_home_settings);
+        btnNewGame = (Button) view.findViewById(R.id.btn_home_newgame);
+        btnActiveGames = (Button) view.findViewById(R.id.btn_home_activegames);
+        btnLogout = (IconButton) view.findViewById(R.id.btn_home_logout);
+
+        addListeners();
+
+        updateAccount();
+
+        Intent intent = new Intent(getActivity(), SpaceCrackService.class);
+        intent.putExtra("username", SpaceCrackApplication.user.username);
+        getActivity().startService(intent);
+
+        return view;
+    }
+
+    private void addListeners() {
         lltProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,16 +76,15 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
-        btnSettings = (IconButton) view.findViewById(R.id.btn_home_settings);
         btnSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().getFragmentManager().beginTransaction()
                         .replace(R.id.container, new SettingsFragment(), "Settings")
                         .addToBackStack("HomeFragment")
-                        .commit();            }
+                        .commit();
+            }
         });
-        btnNewGame = (Button) view.findViewById(R.id.btn_home_newgame);
         btnNewGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,7 +94,6 @@ public class HomeFragment extends Fragment {
                         .commit();
             }
         });
-        btnActiveGames = (Button) view.findViewById(R.id.btn_home_activegames);
         btnActiveGames.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,7 +103,6 @@ public class HomeFragment extends Fragment {
                         .commit();
             }
         });
-        btnLogout = (Button) view.findViewById(R.id.btn_home_logout);
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,14 +116,6 @@ public class HomeFragment extends Fragment {
                 getActivity().finish();
             }
         });
-
-        updateAccount();
-
-        Intent intent = new Intent(getActivity(), SpaceCrackService.class);
-        intent.putExtra("username", SpaceCrackApplication.user.username);
-        getActivity().startService(intent);
-
-        return view;
     }
 
     //Update account with information retrieved from Facebook

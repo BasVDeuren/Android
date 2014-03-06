@@ -41,12 +41,12 @@
             android:text="@string/birth_date"
             android:id="@+id/btn_profile_date"/>
 
-        <Button
-            android:layout_width="@dimen/default_size"
+        <IconButton
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:id="@+id/btn_profile_save"
-            android:text="@string/save"/>
+            android:text="{fa-floppy-o}"/>
 
     </LinearLayout>
 

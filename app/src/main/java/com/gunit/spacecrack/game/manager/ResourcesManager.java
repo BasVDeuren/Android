@@ -51,6 +51,9 @@ public class ResourcesManager {
     public ITiledTextureRegion colonyFlagRegion;
     public ITiledTextureRegion castleRegion;
     public ITiledTextureRegion spaceshipRegion;
+    public ITextureRegion miniSpaceshipPlayer1Region;
+    public ITextureRegion miniSpaceshipPLayer2Region;
+    public ITextureRegion chatRegion;
     private BuildableBitmapTextureAtlas gameTextureAtlas;
 
     private ResourcesManager() {
@@ -73,7 +76,7 @@ public class ResourcesManager {
             FontFactory.setAssetBasePath("font/");
             final ITexture mainFontTexture = new BitmapTextureAtlas(gameActivity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 
-            font = FontFactory.createStrokeFromAsset(gameActivity.getFontManager(), mainFontTexture, gameActivity.getAssets(), "font.ttf", 50, true, Color.WHITE, 2, Color.BLACK);
+            font = FontFactory.createStrokeFromAsset(gameActivity.getFontManager(), mainFontTexture, gameActivity.getAssets(), "font.ttf", 30, true, Color.RED, 2, Color.BLACK);
             font.load();
         }
     }
@@ -125,8 +128,11 @@ public class ResourcesManager {
         gameBackgroundRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "galaxy.jpg");
         planetRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, gameActivity, "planet.png", 2, 1);
         spaceshipRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, gameActivity, "spaceship.png", 2, 1);
+        miniSpaceshipPlayer1Region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "mini_player1spaceship.png");
+        miniSpaceshipPLayer2Region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "mini_player2spaceship.png");
         colonyFlagRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, gameActivity, "playerflag.png", 2, 1);
         castleRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, gameActivity, "castle.png", 2, 1);
+        chatRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "chat.png");
 
         try {
             gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));

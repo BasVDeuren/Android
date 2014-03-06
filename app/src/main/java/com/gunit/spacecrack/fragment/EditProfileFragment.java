@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.IconButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -46,7 +47,7 @@ public class EditProfileFragment extends Fragment {
     private EditText edtFirstName;
     private EditText edtLastName;
     private Button btnDate;
-    private Button btnSave;
+    private IconButton btnSave;
     private Bitmap btnNewPicture;
 
     private int galleryResult;
@@ -80,6 +81,23 @@ public class EditProfileFragment extends Fragment {
         if (SpaceCrackApplication.profilePicture != null) {
             imgProfilePicture.setImageBitmap(SpaceCrackApplication.profilePicture);
         }
+
+        edtFirstName = (EditText) rootView.findViewById(R.id.edt_profile_first_name);
+        edtFirstName.setText(profile.firstname);
+        edtLastName = (EditText) rootView.findViewById(R.id.edt_profile_last_name);
+        edtLastName.setText(profile.lastname);
+        btnDate = (Button) rootView.findViewById(R.id.btn_profile_date);
+        btnDate.setText(startDay + "-" + (startMonth + 1) + "-" + startYear);
+        btnSave = (IconButton) rootView.findViewById(R.id.btn_profile_save);
+
+        addListeners();
+
+        sharedPreferences = getActivity().getSharedPreferences("Login", 0);
+
+        return rootView;
+    }
+
+    private void addListeners() {
         imgProfilePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,11 +105,6 @@ public class EditProfileFragment extends Fragment {
                 startActivityForResult(intent, galleryResult);
             }
         });
-        edtFirstName = (EditText) rootView.findViewById(R.id.edt_profile_first_name);
-        edtFirstName.setText(profile.firstname);
-        edtLastName = (EditText) rootView.findViewById(R.id.edt_profile_last_name);
-        edtLastName.setText(profile.lastname);
-        btnDate = (Button) rootView.findViewById(R.id.btn_profile_date);
         btnDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,8 +112,6 @@ public class EditProfileFragment extends Fragment {
                 datePicker.show(getActivity().getFragmentManager(), "start_date_picker");
             }
         });
-        btnDate.setText(startDay + "-" + (startMonth + 1) + "-" + startYear);
-        btnSave = (Button) rootView.findViewById(R.id.btn_profile_save);
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,10 +122,6 @@ public class EditProfileFragment extends Fragment {
                 }
             }
         });
-
-        sharedPreferences = getActivity().getSharedPreferences("Login", 0);
-
-        return rootView;
     }
 
     @Override

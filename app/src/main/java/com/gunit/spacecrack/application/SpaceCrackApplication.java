@@ -31,14 +31,14 @@ public class SpaceCrackApplication extends Application {
 
     public static String accessToken;
 
-    public final static int NETWORK_TIMEOUT = 120000;
+    public final static int NETWORK_TIMEOUT = 12000;
     //Localhost emulator
 //    public final static String IP_ADDRESS = "10.0.2.2";
     //Network (IP address pc)
 //    public final static String IP_ADDRESS = "10.132.100.255";
 //    public final static String IP_ADDRESS = "10.0.3.2";
-//    public static final String IP_ADDRESS = "192.168.0.143";
-    public final static String IP_ADDRESS = "192.168.56.1";
+    public static final String IP_ADDRESS = "192.168.0.143";
+//    public final static String IP_ADDRESS = "192.168.56.1";
     public static final String DOMAIN = "http://" + IP_ADDRESS + ":8080";
     public static final String URL_LOGIN = DOMAIN + "/api/accesstokens";
     public static final String URL_REGISTER = DOMAIN + "/api/user";

@@ -32,17 +32,17 @@
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="4"
+                android:layout_weight="5"
                 android:singleLine="true"
                 android:id="@+id/edt_newgame_opponent"
                 android:hint="@string/opponent" />
 
-            <Button
+            <IconButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:id="@+id/btn_newgame_search"
-                android:text="@string/search" />
+                android:text="{fa-search}" />
 
         </LinearLayout>
 
@@ -67,26 +67,26 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <Button
+            <IconButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:id="@+id/btn_newgame_contact"
-                android:text="@string/contact"/>
+                android:text="{fa-user}"/>
 
-            <Button
+            <IconButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:id="@+id/btn_newgame_facebook"
-                android:text="@string/facebook"/>
+                android:text="{fa-facebook-square}"/>
 
-            <Button
+            <IconButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:id="@+id/btn_newgame_random"
-                android:text="@string/random"/>
+                android:text="{fa-question}"/>
 
         </LinearLayout>
 

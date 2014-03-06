@@ -9,4 +9,5 @@ import com.gunit.spacecrack.model.Player;
 public class Ship {
     public int shipId;
     public String planetName;
+    public int strength;
 }

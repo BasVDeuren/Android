@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.IconButton;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -40,10 +41,10 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
 
     private EditText edtGameName;
     private EditText edtOpponent;
-    private Button btnSearch;
-    private Button btnContact;
-    private Button btnFacebook;
-    private Button btnRandom;
+    private IconButton btnSearch;
+    private IconButton btnContact;
+    private IconButton btnFacebook;
+    private IconButton btnRandom;
     private Button btnCreateGame;
     private ListView lstUsers;
     private List users;
@@ -57,11 +58,11 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
         edtGameName = (EditText) view.findViewById(R.id.edt_newgame_gamename);
         edtOpponent = (EditText) view.findViewById(R.id.edt_newgame_opponent);
 
-        btnSearch = (Button) view.findViewById(R.id.btn_newgame_search);
+        btnSearch = (IconButton) view.findViewById(R.id.btn_newgame_search);
 
-        btnContact = (Button) view.findViewById(R.id.btn_newgame_contact);
-        btnFacebook = (Button) view.findViewById(R.id.btn_newgame_facebook);
-        btnRandom = (Button) view.findViewById(R.id.btn_newgame_random);
+        btnContact = (IconButton) view.findViewById(R.id.btn_newgame_contact);
+        btnFacebook = (IconButton) view.findViewById(R.id.btn_newgame_facebook);
+        btnRandom = (IconButton) view.findViewById(R.id.btn_newgame_random);
 
         rdgUserType = (RadioGroup) view.findViewById(R.id.rdg_newgame_usertype);
         rdbUsername = (RadioButton) view.findViewById(R.id.rdb_newgame_username);
@@ -70,14 +71,18 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
 
         btnCreateGame = (Button) view.findViewById(R.id.btn_newgame_create);
 
-        addClickListeners();
+        addListeners();
+
+        edtGameName.setText("Android");
+        edtOpponent.setText("test");
+        btnSearch.callOnClick();
 
         lstUsers = (ListView) view.findViewById(R.id.lst_newgame_users);
         lstUsers.setOnItemClickListener(this);
         return view;
     }
 
-    private void addClickListeners() {
+    private void addListeners() {
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,6 +177,11 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
         @Override
         protected void onPostExecute (String result)
         {
+            btnSearch.setEnabled(true);
+            btnContact.setEnabled(true);
+            btnFacebook.setEnabled(true);
+            btnRandom.setEnabled(true);
+
             if (result != null) {
                 try {
                     Gson gson = new Gson();
@@ -198,10 +208,6 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
             } else {
                 Toast.makeText(getActivity(), getResources().getText(R.string.user_not_found), Toast.LENGTH_SHORT).show();
             }
-            btnSearch.setEnabled(true);
-            btnContact.setEnabled(true);
-            btnFacebook.setEnabled(true);
-            btnRandom.setEnabled(true);
         }
     }
 

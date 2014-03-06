@@ -31,10 +31,12 @@
     <string name="hello_world">Hello world!</string>
     <string name="last_name">Last name</string>
     <string name="login">Login</string>
+    <string name="loggin_in">Loggin in</string>
     <string name="login_fail">Login failed</string>
     <string name="login_succes">Login succeeded</string>
     <string name="logout">Log out</string>
     <string name="male">Male</string>
+    <string name="multitouch_support">Your device does not support multi touch</string>
     <string name="name_of_game">Name of game</string>
     <string name="new_game">New game</string>
     <string name="new_message">New message</string>
@@ -44,6 +46,7 @@
     <string name="opponent">Opponent</string>
     <string name="password">Password</string>
     <string name="password_match">Passwords must match</string>
+    <string name="please_wait">Please wait</string>
     <string name="profile">Profile</string>
     <string name="profile_edited">Profile edited</string>
     <string name="profile_fail">Profile could not be loaded</string>
@@ -53,6 +56,7 @@
     <string name="recent">Recent</string>
     <string name="repeat_password">Repeat password</string>
     <string name="register">Register</string>
+    <string name="registrating">Registrating</string>
     <string name="register_fail">Registration failed</string>
     <string name="register_succes">Registration succeeded</string>
     <string name="replays">Replays</string>

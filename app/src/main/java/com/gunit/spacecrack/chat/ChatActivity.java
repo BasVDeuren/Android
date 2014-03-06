@@ -137,7 +137,7 @@ public class ChatActivity extends ListActivity {
         if (!input.equals("")) {
             // Create our 'model', a Chat object
             Chat chat = new Chat(input, username);
-            // Create a new, auto-generated child of that chat location, and save our chat data there
+            // Create a new, auto-generated child of that chatRegion location, and save our chatRegion data there
             ref.push().setValue(chat);
             inputText.setText("");
         }

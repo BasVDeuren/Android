@@ -74,25 +74,26 @@ public class SpaceCrackService extends Service {
     }
 
     public void addFirebaseListener(String url, String gameId) {
-        this.gameId = gameId;
-        firebase = new Firebase(url + "/" + gameId);
-        ValueEventListener valueEventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                notifications = sharedPreferences.getBoolean("pref_notifications", true);
-                Log.i("Notification", String.valueOf(!isForeground("com.gunit.spacecrack")) + " + " + String.valueOf(notifications));
-                if (!isForeground("com.gunit.spacecrack") && notifications) {
-                    showNotification();
+        if (valueEventListeners.get(gameId) == null) {
+            this.gameId = gameId;
+            firebase = new Firebase(url + "/" + gameId);
+            ValueEventListener valueEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    notifications = sharedPreferences.getBoolean("pref_notifications", true);
+                    if (!isForeground("com.gunit.spacecrack") && notifications) {
+                        showNotification();
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled() {
+                @Override
+                public void onCancelled() {
 
-            }
-        };
-        valueEventListeners.put(gameId, valueEventListener);
-        firebase.addValueEventListener(valueEventListener);
+                }
+            };
+            valueEventListeners.put(gameId, valueEventListener);
+            firebase.addValueEventListener(valueEventListener);
+        }
     }
 
     public void removeFirebaseListener(String gameId) {

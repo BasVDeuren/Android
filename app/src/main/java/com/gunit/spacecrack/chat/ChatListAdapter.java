@@ -25,7 +25,7 @@ public class ChatListAdapter extends FirebaseListAdapter<Chat> {
      * when there is a data change, and we are given an instance of a View that corresponds to the layout that we passed
      * to the constructor, as well as a single <code>Chat</code> instance that represents the current data to bind.
      * @param view A view instance corresponding to the layout we passed to the constructor.
-     * @param chat An instance representing the current state of a chat message
+     * @param chat An instance representing the current state of a chatRegion message
      */
     @Override
     protected void populateView(View view, Chat chat) {

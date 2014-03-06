@@ -14,16 +14,16 @@
         android:gravity="center"
         android:orientation="vertical">
 
-        <ListView
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/lst_activegames_games" />
+            android:text="@string/active_games"
+            android:textSize="24sp" />
 
-        <Button
-            android:layout_width="@dimen/default_size"
-            android:layout_height="wrap_content"
-            android:id="@+id/btn_newgame_create"
-            android:text="@string/create_game" />
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/lst_activegames_games" />
 
     </LinearLayout>
 

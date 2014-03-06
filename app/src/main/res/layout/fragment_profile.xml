@@ -33,6 +33,8 @@
         <TextView
             android:layout_width="@dimen/default_size"
             android:layout_height="wrap_content"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingBottom="@dimen/activity_vertical_margin"
             android:id="@+id/txt_profile_setup"
             android:text="@string/profile_not_setup"
             android:visibility="gone"/>
@@ -67,11 +69,11 @@
 
         </LinearLayout>
 
-        <Button
-            android:layout_width="@dimen/default_size"
+        <IconButton
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btn_profile_edit"
-            android:text="@string/edit" />
+            android:text="{fa-wrench}" />
 
     </LinearLayout>
 

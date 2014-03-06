@@ -1,6 +1,7 @@
 package com.gunit.spacecrack.fragment;
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.facebook.Session;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 import com.google.gson.Gson;
@@ -49,6 +51,8 @@ public class LoginFragment extends Fragment {
     private static final String TAG = "LoginFragment";
     private Context context;
 
+    private ProgressDialog progressDialog;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
@@ -61,6 +65,17 @@ public class LoginFragment extends Fragment {
         edtEmail = (EditText) view.findViewById(R.id.edt_login_email);
         edtPassword = (EditText) view.findViewById(R.id.edt_login_password);
         btnLogin = (Button) view.findViewById(R.id.btn_login_login);
+        btnRegister = (Button) view.findViewById(R.id.btn_login_register);
+        btnFacebook = (LoginButton) view.findViewById(R.id.btn_login_facebook);
+        //Set the permissions
+        btnFacebook.setReadPermissions(Arrays.asList("email", "user_birthday"));
+
+        addListeners();
+
+        return view;
+    }
+
+    private void addListeners() {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,7 +86,6 @@ public class LoginFragment extends Fragment {
                 }
             }
         });
-        btnRegister = (Button) view.findViewById(R.id.btn_login_register);
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,9 +95,6 @@ public class LoginFragment extends Fragment {
                         .commit();
             }
         });
-        btnFacebook = (LoginButton) view.findViewById(R.id.btn_login_facebook);
-        //Set the permissions
-        btnFacebook.setReadPermissions(Arrays.asList("email", "user_birthday"));
         btnFacebook.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
             @Override
             public void onUserInfoFetched(GraphUser user) {
@@ -94,8 +105,6 @@ public class LoginFragment extends Fragment {
                 }
             }
         });
-
-        return view;
     }
 
     //POST request to log the user in
@@ -127,6 +136,8 @@ public class LoginFragment extends Fragment {
             btnLogin.setEnabled(false);
             btnRegister.setEnabled(false);
             btnFacebook.setEnabled(false);
+            progressDialog = ProgressDialog.show(getActivity(), getString(R.string.please_wait), getString(R.string.loggin_in));
+            progressDialog.setCancelable(true);
         }
 
         @Override
@@ -139,7 +150,7 @@ public class LoginFragment extends Fragment {
         protected void onPostExecute (String result)
         {
             if (!facebookLogin) {
-                Toast.makeText(getActivity(), result != null ? getResources().getString(R.string.login_succes) : getResources().getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), result != null ? getString(R.string.login_succes) : getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
             }
 
             saveLoginCredentials(result, email, password);
@@ -148,15 +159,14 @@ public class LoginFragment extends Fragment {
                 Log.i(TAG, "Login success");
                 new GetUser().execute(SpaceCrackApplication.URL_USER);
             } else if (facebookLogin) {
-                new RegisterTask(SpaceCrackApplication.graphUser.getName(), "btnFacebook" + SpaceCrackApplication.graphUser.getId(), "btnFacebook" + SpaceCrackApplication.graphUser.getId(), (String) SpaceCrackApplication.graphUser.asMap().get("email")).execute(SpaceCrackApplication.URL_REGISTER);
+                new RegisterTask(SpaceCrackApplication.graphUser.getName(), "facebook" + SpaceCrackApplication.graphUser.getId(), "facebook" + SpaceCrackApplication.graphUser.getId(), (String) SpaceCrackApplication.graphUser.asMap().get("email")).execute(SpaceCrackApplication.URL_REGISTER);
             }
 
             Log.i(TAG, "Login failed");
-
+            progressDialog.dismiss();
             btnLogin.setEnabled(true);
             btnRegister.setEnabled(true);
             btnFacebook.setEnabled(true);
-
         }
     }
 
@@ -188,6 +198,8 @@ public class LoginFragment extends Fragment {
             btnLogin.setEnabled(false);
             btnRegister.setEnabled(false);
             btnFacebook.setEnabled(false);
+            progressDialog = ProgressDialog.show(getActivity(), getString(R.string.please_wait), getString(R.string.loggin_in));
+            progressDialog.setCancelable(true);
         }
 
         @Override
@@ -217,10 +229,14 @@ public class LoginFragment extends Fragment {
             if (result != null) {
                 new GetUser().execute(SpaceCrackApplication.URL_USER);
             } else {
-                Toast.makeText(context, getResources().getString(R.string.email_register), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, getString(R.string.email_register), Toast.LENGTH_SHORT).show();
+                if (Session.getActiveSession() != null) {
+                    Session.getActiveSession().closeAndClearTokenInformation();
+                }
                 btnLogin.setEnabled(true);
                 btnRegister.setEnabled(true);
                 btnFacebook.setEnabled(true);
+                progressDialog.dismiss();
             }
 
         }
@@ -262,6 +278,7 @@ public class LoginFragment extends Fragment {
             btnLogin.setEnabled(true);
             btnRegister.setEnabled(true);
             btnFacebook.setEnabled(true);
+            progressDialog.dismiss();
         }
     }
 

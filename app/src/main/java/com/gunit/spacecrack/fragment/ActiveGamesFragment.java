@@ -1,6 +1,7 @@
 package com.gunit.spacecrack.fragment;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,10 +17,12 @@ import com.google.gson.reflect.TypeToken;
 import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.adapter.GameAdapter;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
+import com.gunit.spacecrack.game.GameActivity;
 import com.gunit.spacecrack.json.GameViewModel;
 import com.gunit.spacecrack.restservice.RestService;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,6 +37,7 @@ public class ActiveGamesFragment extends Fragment implements AdapterView.OnItemC
         View view = inflater.inflate(R.layout.fragment_active_games, container, false);
 
         lstGames = (ListView) view.findViewById(R.id.lst_activegames_games);
+        lstGames.setOnItemClickListener(this);
         new GetGamesTask().execute(SpaceCrackApplication.URL_GAME);
 
         return view;
@@ -41,7 +45,10 @@ public class ActiveGamesFragment extends Fragment implements AdapterView.OnItemC
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        GameViewModel game = (GameViewModel) games.get(position);
+        Intent intent = new Intent(getActivity(), GameActivity.class);
+        intent.putExtra("gameId", game.gameId);
+        startActivity(intent);
     }
 
     //POST request to edit the profile

@@ -42,7 +42,7 @@
         <activity
             android:name="com.gunit.spacecrack.game.GameActivity"
             android:exported="true"
-            android:configChanges="orientation|screenSize"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:label="@string/title_activity_game" >
         </activity>
         <activity

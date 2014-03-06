@@ -91,6 +91,13 @@ public class SceneManager {
         pOnCreateSceneCallback.onCreateSceneFinished(splashScene);
     }
 
+    public void createLoadingScene(IGameInterface.OnCreateSceneCallback pOnCreateSceneCallback) {
+        ResourcesManager.getInstance().loadSplashScreenResources();
+        splashScene = new SplashScene();
+        SceneManager.getInstance().setScene(splashScene);
+        pOnCreateSceneCallback.onCreateSceneFinished(splashScene);
+    }
+
 //    public void createMenuScene() {
 //        ResourcesManager.getInstance().loadMenuResources();
 //        menuScene = new MainMenuScene();
@@ -130,5 +137,9 @@ public class SceneManager {
                 setScene(gameScene);
             }
         }));
+    }
+
+    public void loadLoadingScene() {
+        setScene(loadingScene);
     }
 }

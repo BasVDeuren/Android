@@ -1,5 +1,6 @@
 package com.gunit.spacecrack.json;
 
+import com.gunit.spacecrack.model.Colony;
 import com.gunit.spacecrack.model.Ship;
 
 /**
@@ -11,6 +12,7 @@ public class Action {
     public int gameId;
     public int playerId;
     public Ship ship;
+    public Colony colony;
 
     public Action (String actionType, int gameId, int playerId) {
         this.actionType = actionType;
@@ -24,6 +26,13 @@ public class Action {
         this.gameId = gameId;
         this.playerId = playerId;
         this.ship = ship;
+    }
+
+    public Action(String actionType, Colony colony, int gameId, int playerId) {
+        this.actionType = actionType;
+        this.colony = colony;
+        this.gameId = gameId;
+        this.playerId = playerId;
     }
 }
 
