@@ -20,10 +20,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
-import com.gunit.spacecrack.model.Profile;
+import com.gunit.spacecrack.chat.ChatActivity;
+import com.gunit.spacecrack.game.GameActivity;
 import com.gunit.spacecrack.model.User;
 import com.gunit.spacecrack.restservice.RestService;
-import com.gunit.spacecrack.service.SpaceCrackService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,9 +82,22 @@ public class SplashScreenActivity extends Activity {
         return sharedPreferences.getString("accessToken", null) != null;
     }
 
-    private void goHome () {
-        Intent intent = new Intent(SplashScreenActivity.this, HomeActivity.class);
-        startActivity(intent);
+    private void proceedApp() {
+        Intent intent = getIntent();
+        Intent startIntent = new Intent(SplashScreenActivity.this, HomeActivity.class);
+        if (intent.getStringExtra("task") != null) {
+            if (intent.getStringExtra("task") != null) {
+                if (intent.getStringExtra("task").equals("chat")) {
+                    startIntent = new Intent(SplashScreenActivity.this, ChatActivity.class);
+                    startIntent.putExtra("gameId", intent.getStringExtra("gameId"));
+                    startIntent.putExtra("username", intent.getStringExtra("username"));
+                } else if (intent.getStringExtra("task").equals("game")) {
+                    startIntent = new Intent(SplashScreenActivity.this, GameActivity.class);
+                    startIntent.putExtra("gameId", intent.getIntExtra("gameId", 0));
+                }
+            }
+        }
+        startActivity(startIntent);
         //Close this activity so it won't show up again
         finish();
     }
@@ -165,8 +178,7 @@ public class SplashScreenActivity extends Activity {
                         byte[] decodedString = Base64.decode(image, 0);
                         SpaceCrackApplication.profilePicture = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                     }
-
-                    goHome();
+                    proceedApp();
                 } catch (JsonParseException e) {
                     e.printStackTrace();
                 }

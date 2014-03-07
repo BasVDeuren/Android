@@ -68,6 +68,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
     private List<Sprite> shipSprites;
     private List<Sprite> colonySprites;
 
+    private boolean dragging = false;
+
+    ButtonSprite endTurn;
+
     private Firebase ref;
 
     @Override
@@ -108,6 +112,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         createBackground();
         createHUD();
 
+        Log.d("Engine runnning", String.valueOf(engine.isRunning()));
+
         drawLines();
         drawPlanets();
         drawPlayers(activity.gameWrapper.game);
@@ -119,7 +125,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         pinchZoomDetector.setEnabled(true);
         this.setOnSceneTouchListener(this);
         this.setTouchAreaBindingOnActionMoveEnabled(true);
-        camera.setZoomFactor(1.5f);
 
     }
 
@@ -159,20 +164,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         txtCommand.setHorizontalAlign(HorizontalAlign.LEFT);
         txtCommand.setText("Commandpoints: " + activity.player.commandPoints);
         gameHUD.attachChild(txtCommand);
-//        Rectangle chatRegion = new Rectangle(20, GameActivity.CAMERA_HEIGHT - 70, 50, 50, vbom)
-//        {
-//            @Override
-//            public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
-//                if (pSceneTouchEvent.isActionUp()) {
-//                    Intent intent = new Intent(activity, ChatActivity.class);
-////                    intent.putExtra("gameId", String.valueOf(activity.gameWrapper.game.gameId));
-//                    intent.putExtra("gameId", String.valueOf(1));
-//                    intent.putExtra("username", SpaceCrackApplication.user.username);
-//                    activity.startActivity(intent);
-//                }
-//                return true;
-//            }
-//        };
         ButtonSprite chat = new ButtonSprite(20, GameActivity.CAMERA_HEIGHT - 70, resourcesManager.chatRegion, vbom)
         {
             @Override
@@ -188,16 +179,20 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         };
         gameHUD.registerTouchArea(chat);
         gameHUD.attachChild(chat);
-        Rectangle endTurn = new Rectangle(90, GameActivity.CAMERA_HEIGHT - 70, 50, 50, vbom)
+        endTurn = new ButtonSprite(90, GameActivity.CAMERA_HEIGHT - 80, resourcesManager.turnRegion, vbom)
         {
             @Override
             public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
                 if (pSceneTouchEvent.isActionUp() && !activity.player.turnEnded) {
                     new ActionTask(new Action("ENDTURN", activity.gameWrapper.game.gameId, activity.gameWrapper.activePlayerId), null, null).execute(SpaceCrackApplication.URL_ACTION);
+                    this.setVisible(false);
                 }
                 return true;
             }
         };
+        if (activity.player.turnEnded) {
+            endTurn.setVisible(false);
+        }
         gameHUD.registerTouchArea(endTurn);
         gameHUD.attachChild(endTurn);
         camera.setHUD(gameHUD);
@@ -234,6 +229,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         drawShips(game.player1, 0);
         drawShips(game.player2, 1);
         updateCommandPoints();
+        if (!activity.player.turnEnded && !endTurn.isVisible()) {
+            endTurn.setVisible(true);
+        }
     }
 
     private void drawColonies(Player player, int index) {
@@ -262,11 +260,14 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
 
                 @Override
                 public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
-                    switch (pSceneTouchEvent.getAction()) {
-                        case TouchEvent.ACTION_DOWN:
-                            finalMiniSpaceshipSprite.setVisible(!finalMiniSpaceshipSprite.isVisible());
+                    if (!dragging) {
+                        switch (pSceneTouchEvent.getAction()) {
+                            case TouchEvent.ACTION_UP:
+                                finalMiniSpaceshipSprite.setVisible(!finalMiniSpaceshipSprite.isVisible());
+                        }
+                        return true;
                     }
-                    return true;
+                    return false;
                 }
             };
 //            colonySprite.setScale(0.5f);
@@ -337,6 +338,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
                         case TouchEvent.ACTION_DOWN:
                             this.setScale(0.8f);
                             highlightConnectedPlantes(finalShip.planetName, 1);
+                            dragging = true;
                             break;
                         case TouchEvent.ACTION_MOVE:
                             this.setPosition(pSceneTouchEvent.getX() - this.getWidth() / 2, pSceneTouchEvent.getY() - this.getHeight() / 2);
@@ -370,6 +372,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
                                 this.setPosition((planet.x * GameActivity.SCALE_X) - 10, (planet.y * GameActivity.SCALE_Y) - 10);
                             }
                             highlightConnectedPlantes(finalShip.planetName, 0);
+                            dragging = false;
                             break;
                     }
                     return true;

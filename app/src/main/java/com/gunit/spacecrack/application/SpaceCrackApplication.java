@@ -3,8 +3,12 @@ package com.gunit.spacecrack.application;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 
+import com.facebook.FacebookException;
+import com.facebook.Session;
 import com.facebook.model.GraphUser;
+import com.facebook.widget.WebDialog;
 import com.gunit.spacecrack.model.Profile;
 import com.gunit.spacecrack.model.User;
 
@@ -27,7 +31,7 @@ public class SpaceCrackApplication extends Application {
     public static GraphUser graphUser;
 
     //Friends of logged in Facebook user
-    private static List<GraphUser> friends;
+    public static List<GraphUser> friends;
 
     public static String accessToken;
 
@@ -37,8 +41,8 @@ public class SpaceCrackApplication extends Application {
     //Network (IP address pc)
 //    public final static String IP_ADDRESS = "10.132.100.255";
 //    public final static String IP_ADDRESS = "10.0.3.2";
-    public static final String IP_ADDRESS = "192.168.0.143";
-//    public final static String IP_ADDRESS = "192.168.56.1";
+//    public static final String IP_ADDRESS = "192.168.0.143";
+    public final static String IP_ADDRESS = "192.168.56.1";
     public static final String DOMAIN = "http://" + IP_ADDRESS + ":8080";
     public static final String URL_LOGIN = DOMAIN + "/api/accesstokens";
     public static final String URL_REGISTER = DOMAIN + "/api/user";
@@ -71,4 +75,20 @@ public class SpaceCrackApplication extends Application {
         this.friends = friends;
     }
 
+
+//    Bundle params = new Bundle();
+//    params.putString("name", "Space Crack");
+//    params.putString("caption", "Space Crack");
+//    params.putString("description", "I've captured all the planets!");
+//    params.putString("picture", "http://www.italieinbedrijf.nl/wp-content/uploads/2012/12/Lamborghini-Logo.jpg");
+//
+//    WebDialog feedDialog = (new WebDialog.FeedDialogBuilder(getActivity(),
+//            Session.getActiveSession(), params))
+//            .setOnCompleteListener(new WebDialog.OnCompleteListener() {
+//                @Override
+//                public void onComplete(Bundle values, FacebookException error) {
+//
+//                }
+//            }).build();
+//    feedDialog.show();
 }

@@ -46,6 +46,7 @@
     <string name="password">Wachtwoord</string>
     <string name="password_match">Wachtwoorden moeten gelijk zijn</string>
     <string name="please_wait">Eventjes geduld</string>
+    <string name="processing_data">Verwerken gegevens</string>
     <string name="profile">Profiel</string>
     <string name="profile_edited">Profiel bewerkt</string>
     <string name="profile_fail">Profiel kon niet geladen worden</string>
@@ -59,6 +60,7 @@
     <string name="register_fail">Registratie mislukt</string>
     <string name="register_succes">Registratie gelukt</string>
     <string name="replays">Herhalingen</string>
+    <string name="retrieving_games">Spelletjes ophalen</string>
     <string name="save">Bewaar</string>
     <string name="search">Zoek</string>
     <string name="search_users">Zoek naar gebruikers</string>
@@ -73,6 +75,7 @@
     <string name="user_fail">Gebruiker kon niet geladen worden</string>
     <string name="user_not_found">Gebruiker kon niet gevonden worden</string>
     <string name="username">Gebruikersnaam</string>
+    <string name="your_turn">Uw beurt</string>
     <string name="welcome">Welkom!</string>
 
 </resources>

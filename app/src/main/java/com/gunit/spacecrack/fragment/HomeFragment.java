@@ -138,7 +138,6 @@ public class HomeFragment extends Fragment {
                     }
                 });
                 request.executeAsync();
-                //getFriends();
             }
         } else {
             if (SpaceCrackApplication.user.profile != null) {
@@ -151,25 +150,4 @@ public class HomeFragment extends Fragment {
             }
         }
     }
-
-    //Get the friendslist
-    private void getFriends(){
-        Session activeSession = Session.getActiveSession();
-        if(activeSession.getState().isOpened()){
-            Request friendRequest = Request.newMyFriendsRequest(activeSession,
-                    new Request.GraphUserListCallback(){
-                        @Override
-                        public void onCompleted(List<GraphUser> users,
-                                                Response response) {
-                            Log.i("INFO", response.toString());
-
-                        }
-                    });
-            Bundle params = new Bundle();
-            params.putString("fields", "id,name,picture");
-            friendRequest.setParameters(params);
-            friendRequest.executeAsync();
-        }
-    }
-
 }

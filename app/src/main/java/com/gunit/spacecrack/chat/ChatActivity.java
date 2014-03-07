@@ -41,13 +41,10 @@ public class ChatActivity extends ListActivity {
         // Setup our Firebase ref
         if (intent.getStringExtra("gameId") != null) {
             ref = new Firebase(SpaceCrackApplication.URL_FIREBASE_CHAT).child(intent.getStringExtra("gameId"));
-        } else {
-            ref = new Firebase(SpaceCrackApplication.URL_FIREBASE_CHAT).child("1");
         }
 
         // Make sure we have a username
         setupUsername();
-//        username = SpaceCrackApplication.profile.firstname;
 
         setTitle("Chatting as " + username);
 
@@ -122,9 +119,6 @@ public class ChatActivity extends ListActivity {
         SharedPreferences prefs = getApplication().getSharedPreferences("ChatPrefs", 0);
         username = prefs.getString("username", null);
         if (username == null) {
-//            Random r = new Random();
-//            // Assign a random user name if we don't have one saved.
-//            username = "JavaUser" + r.nextInt(100000);
             Intent intent = getIntent();
             username = intent.getStringExtra("username");
             prefs.edit().putString("username", username).commit();

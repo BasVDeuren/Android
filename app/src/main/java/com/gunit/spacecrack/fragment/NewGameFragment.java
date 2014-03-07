@@ -4,9 +4,11 @@ import android.app.Fragment;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
+import android.provider.ContactsContract.Contacts;
+import android.provider.ContactsContract.CommonDataKinds;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.facebook.FacebookException;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.model.GraphUser;
+import com.facebook.widget.WebDialog;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
@@ -53,6 +61,9 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
     private RadioButton rdbUsername;
     private RadioButton rdbEemail;
 
+    private final int CONTACT_PICKER_RESULT = 1;
+    private final int RESULT_OK = -1;
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_new_game, container, false);
         edtGameName = (EditText) view.findViewById(R.id.edt_newgame_gamename);
@@ -79,6 +90,8 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
 
         lstUsers = (ListView) view.findViewById(R.id.lst_newgame_users);
         lstUsers.setOnItemClickListener(this);
+
+//        List<String> users = getNameEmailDetails();
         return view;
     }
 
@@ -93,6 +106,20 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
                         new FindUserTask(true).execute(SpaceCrackApplication.URL_FIND_EMAIL + "/" + edtOpponent.getText().toString());
                     }
                 }
+            }
+        });
+        btnContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
+                contactPickerIntent.setType(CommonDataKinds.Email.CONTENT_TYPE);
+                startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
+            }
+        });
+        btnFacebook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFriends();
             }
         });
         btnRandom.setOnClickListener(new View.OnClickListener() {
@@ -118,36 +145,89 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == CONTACT_PICKER_RESULT) {
+                Cursor cursor = null;
+                String email;
+                String name;
+                try {
+                    Uri result = data.getData();
+//                    String[] projection = {ContactsContract.CommonDataKinds.Email.DATA};
+                    Log.i("Contact result", result.toString());
+                    String id = result.getLastPathSegment();
+                    cursor = getActivity().getContentResolver().query(CommonDataKinds.Email.CONTENT_URI, null, CommonDataKinds.Email.CONTACT_ID + "=?", new String[]{id}, null);
+//                    cursor = getActivity().getContentResolver().query(result, null, null, null, null);
+//                    int nameId = cursor.getColumnIndex(Contacts.DISPLAY_NAME);
+                    int emailId = cursor.getColumnIndex(CommonDataKinds.Email.DATA);
+                    if (cursor.moveToFirst()) {
+                        email = cursor.getString(emailId);
+//                        name = cursor.getString(nameId);
+                        Log.i("Email", email);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    if (cursor != null) {
+                        cursor.close();
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         selectedUser = (User) users.get(position);
         edtOpponent.setText(selectedUser.username);
     }
 
-    private List<String> getNameEmailDetails(){
-        List<String> names = new ArrayList<String>();
-        ContentResolver cr = getActivity().getContentResolver();
-        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,null, null, null, null);
-        if (cur.getCount() > 0) {
-            while (cur.moveToNext()) {
-                String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
-                Cursor cur1 = cr.query(
-                        ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
-                        ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
-                        new String[]{id}, null);
-                while (cur1.moveToNext()) {
-                    //to get the contact names
-                    String name=cur1.getString(cur1.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                    Log.e("Name :", name);
-                    String email = cur1.getString(cur1.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
-                    Log.e("Email", email);
-                    if(email!=null){
-                        names.add(name);
-                    }
-                }
-                cur1.close();
-            }
+//    private List<String> getNameEmailDetails(){
+//        List<String> names = new ArrayList<String>();
+//        ContentResolver cr = getActivity().getContentResolver();
+//        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,null, null, null, null);
+//        if (cur.getCount() > 0) {
+//            while (cur.moveToNext()) {
+//                String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
+//                Cursor cur1 = cr.query(
+//                        ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
+//                        ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
+//                        new String[]{id}, null);
+//                while (cur1.moveToNext()) {
+//                    //to get the contact names
+//                    String name=cur1.getString(cur1.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+//                    Log.e("Name :", name);
+//                    String email = cur1.getString(cur1.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+//                    Log.e("Email", email);
+//                    if(email!=null){
+//                        names.add(name);
+//                    }
+//                }
+//                cur1.close();
+//            }
+//        }
+//        return names;
+//    }
+
+    //Get the friendslist
+    private void getFriends(){
+        Session activeSession = Session.getActiveSession();
+        if(activeSession.getState().isOpened()){
+            Request friendRequest = Request.newMyFriendsRequest(activeSession,
+                    new Request.GraphUserListCallback(){
+                        @Override
+                        public void onCompleted(List<GraphUser> users,
+                                                Response response) {
+                            Log.i("INFO", response.toString());
+                            SpaceCrackApplication.friends = users;
+
+                        }
+                    });
+            Bundle params = new Bundle();
+            params.putString("fields", "id,name,picture");
+            friendRequest.setParameters(params);
+            friendRequest.executeAsync();
         }
-        return names;
     }
 
     //POST request to edit the profile

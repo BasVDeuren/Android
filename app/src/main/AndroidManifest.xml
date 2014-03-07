@@ -61,6 +61,15 @@
         <service
             android:name="com.gunit.spacecrack.service.SpaceCrackService"
             android:icon="@drawable/ic_launcher"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="com.gunit.spacecrack.service.START_SERVICE" />
+            </intent-filter>
+        </service>
+
+        <service android:name="com.gunit.spacecrack.service.TestService"
+            android:process=":spacecrack"
+            android:icon="@drawable/ic_launcher"
             android:label="@string/app_name" />
 
     </application>

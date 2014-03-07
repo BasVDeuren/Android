@@ -5,8 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.IBinder;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -67,16 +68,25 @@ public class GameActivity extends BaseGameActivity {
 
     private boolean gameStarted;
     private boolean mapLoaded;
+    private boolean firstPLayer;
 
     private SpaceCrackService spaceCrackService;
     private boolean boundToService = false;
 
     @Override
+    protected void onCreate(Bundle pSavedInstanceState) {
+        super.onCreate(pSavedInstanceState);
+        Log.d("GameActivity", "Create");
+        loadData();
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
-        loadData();
+        Log.d("GameActivity", "Start");
         //Bind to the service
         Intent intent = new Intent(this, SpaceCrackService.class);
+        intent.putExtra("username", SpaceCrackApplication.user.username);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -85,6 +95,8 @@ public class GameActivity extends BaseGameActivity {
         if (boundToService) {
             unbindService(serviceConnection);
         }
+        Log.d("GameActivity", "Stop");
+
         super.onStop();
     }
 
@@ -109,10 +121,13 @@ public class GameActivity extends BaseGameActivity {
     @Override
     public synchronized void onGameCreated() {
         super.onGameCreated();
+        Log.d("GameActivity", "Game created");
+
     }
 
     @Override
     public synchronized void onResumeGame() {
+        Log.d("GameActivity", "Resume Game");
         if (this.mEngine != null)
             super.onResumeGame();
     }
@@ -128,12 +143,14 @@ public class GameActivity extends BaseGameActivity {
         } else if (intent.getIntExtra("gameId", 0) != 0 ) {
             new GetActiveGame().execute(SpaceCrackApplication.URL_ACTIVEGAME + "/" + intent.getIntExtra("gameId", 0));
         } else {
-            new CreateGameTask("test", 2).execute(SpaceCrackApplication.URL_GAME);
+            Toast.makeText(this, getString(R.string.game_not_loaded), Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 
     @Override
     public Engine onCreateEngine(EngineOptions pEngineOptions) {
+        Log.d("GameActivity", "Engine");
         return new LimitedFPSEngine(pEngineOptions, FPS_LIMIT);
     }
 
@@ -160,12 +177,16 @@ public class GameActivity extends BaseGameActivity {
         ResourcesManager.getInstance().init(this);
         ResourcesManager.getInstance().loadFonts();
         pOnCreateResourcesCallback.onCreateResourcesFinished();
+        Log.d("GameActivity", "Create Resources");
+
     }
 
     @Override
     public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) throws Exception {
 //        SceneManager.getInstance().createSplashScene(pOnCreateSceneCallback);
         SceneManager.getInstance().createLoadingScene(pOnCreateSceneCallback);
+        Log.d("GameActivity", "Create Scene");
+
     }
 
     @Override
@@ -180,13 +201,18 @@ public class GameActivity extends BaseGameActivity {
         pOnPopulateSceneCallback.onPopulateSceneFinished();
     }
 
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        System.exit(0);
-//    }
+    @Override
+    protected void onDestroy() {
+        Log.d("Gameactivity", "Destroy");
+        super.onDestroy();
+    }
 
-//    @Override
+    @Override
+    protected void onPause() {
+        Log.i("Gameactivity", "Pause");
+        super.onPause();
+    }
+    //    @Override
 //    public boolean onKeyDown(int keyCode, KeyEvent event)
 //    {
 //        if (keyCode == KeyEvent.KEYCODE_BACK)
@@ -204,8 +230,9 @@ public class GameActivity extends BaseGameActivity {
     private void startGame () {
         if (mapLoaded && gameStarted) {
 //            SceneManager.getInstance().loadMenuScene(mEngine);
-            spaceCrackService.addFirebaseListener(SpaceCrackApplication.URL_FIREBASE_CHAT, String.valueOf(gameWrapper.game.gameId));
-//            spaceCrackService.addFirebaseListener(SpaceCrackApplication.URL_FIREBASE_CHAT, String.valueOf(1));
+            spaceCrackService.addChatListener(SpaceCrackApplication.URL_FIREBASE_CHAT, String.valueOf(gameWrapper.game.gameId));
+            spaceCrackService.addGameListener(gameWrapper.firebaseGameURL, player.playerId, firstPLayer);
+//            spaceCrackService.addChatListener(SpaceCrackApplication.URL_FIREBASE_CHAT, String.valueOf(1));
 
             SceneManager.getInstance().loadGameScene(mEngine);
         }
@@ -292,8 +319,10 @@ public class GameActivity extends BaseGameActivity {
                     gameWrapper = gson.fromJson(result, GameWrapper.class);
                     if (gameWrapper.activePlayerId == gameWrapper.game.player1.playerId) {
                         player = gameWrapper.game.player1;
+                        firstPLayer = true;
                     } else {
                         player = gameWrapper.game.player2;
+                        firstPLayer = false;
                     }
                     gameStarted = true;
                     startGame();

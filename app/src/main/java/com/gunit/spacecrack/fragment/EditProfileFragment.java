@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -56,6 +57,8 @@ public class EditProfileFragment extends Fragment {
     private Context context;
     private final String TAG = "Edit profile";
     private SharedPreferences sharedPreferences;
+
+    private ProgressDialog progressDialog;
 
     //Datepicker
     Calendar calendar;
@@ -202,31 +205,6 @@ public class EditProfileFragment extends Fragment {
         return inSampleSize;
     }
 
-    private Bitmap decodeUri(Uri selectedImage) throws FileNotFoundException {
-        BitmapFactory.Options o = new BitmapFactory.Options();
-        o.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(
-                getActivity().getContentResolver().openInputStream(selectedImage), null, o);
-
-        final int REQUIRED_SIZE = 100;
-
-        int width_tmp = o.outWidth, height_tmp = o.outHeight;
-        int scale = 1;
-        while (true) {
-            if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE) {
-                break;
-            }
-            width_tmp /= 2;
-            height_tmp /= 2;
-            scale *= 2;
-        }
-
-        BitmapFactory.Options o2 = new BitmapFactory.Options();
-        o2.inSampleSize = scale;
-        return BitmapFactory.decodeStream(
-                getActivity().getContentResolver().openInputStream(selectedImage), null, o2);
-    }
-
     private class StartDatePicker extends DialogFragment implements DatePickerDialog.OnDateSetListener{
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -283,6 +261,7 @@ public class EditProfileFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             btnSave.setEnabled(false);
+            progressDialog = ProgressDialog.show(getActivity(), getString(R.string.please_wait), getString(R.string.processing_data));
         }
 
         @Override
@@ -316,6 +295,7 @@ public class EditProfileFragment extends Fragment {
         @Override
         protected void onPostExecute (String result)
         {
+            progressDialog.dismiss();
             if (result != null) {
                 try {
                     Gson gson = new Gson();

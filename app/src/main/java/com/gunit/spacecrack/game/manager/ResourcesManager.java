@@ -1,5 +1,6 @@
 package com.gunit.spacecrack.game.manager;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 
 import com.gunit.spacecrack.game.GameActivity;
@@ -54,6 +55,7 @@ public class ResourcesManager {
     public ITextureRegion miniSpaceshipPlayer1Region;
     public ITextureRegion miniSpaceshipPLayer2Region;
     public ITextureRegion chatRegion;
+    public ITextureRegion turnRegion;
     private BuildableBitmapTextureAtlas gameTextureAtlas;
 
     private ResourcesManager() {
@@ -133,6 +135,7 @@ public class ResourcesManager {
         colonyFlagRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, gameActivity, "playerflag.png", 2, 1);
         castleRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, gameActivity, "castle.png", 2, 1);
         chatRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "chat.png");
+        turnRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "turn.png");
 
         try {
             gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));

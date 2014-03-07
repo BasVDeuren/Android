@@ -1,6 +1,7 @@
 package com.gunit.spacecrack.fragment;
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ public class ActiveGamesFragment extends Fragment implements AdapterView.OnItemC
 
     private ListView lstGames;
     private List games;
+    private ProgressDialog progressDialog;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_active_games, container, false);
@@ -55,6 +57,12 @@ public class ActiveGamesFragment extends Fragment implements AdapterView.OnItemC
     private class GetGamesTask extends AsyncTask<String, Void, String> {
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = ProgressDialog.show(getActivity(), getString(R.string.please_wait), getString(R.string.retrieving_games));
+        }
+
+        @Override
         protected String doInBackground (String...url)
         {
             return RestService.getRequest(url[0]);
@@ -63,6 +71,7 @@ public class ActiveGamesFragment extends Fragment implements AdapterView.OnItemC
         @Override
         protected void onPostExecute (String result)
         {
+            progressDialog.dismiss();
             if (result != null) {
                 try {
                     Gson gson = new Gson();

@@ -1,7 +1,6 @@
 package com.gunit.spacecrack.service;
 
 import android.app.ActivityManager;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -16,17 +15,18 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
+import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.ValueEventListener;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.gunit.spacecrack.R;
+import com.gunit.spacecrack.activity.SplashScreenActivity;
 import com.gunit.spacecrack.chat.Chat;
 import com.gunit.spacecrack.chat.ChatActivity;
+import com.gunit.spacecrack.game.GameActivity;
+import com.gunit.spacecrack.model.Game;
 
-import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,33 +38,47 @@ public class SpaceCrackService extends Service {
 
     private NotificationCompat.Builder builder;
     private NotificationManager notificationManager;
-    private int chatNotification;
+    private int notificationId;
     private Firebase firebase;
     private String username;
     private String gameId;
     private final IBinder binder = new LocalBinder();
-    private Map<String, ValueEventListener> valueEventListeners;
+    private Map<Integer, ValueEventListener> valueEventListeners;
+    private Map<String, ChildEventListener> childEventListeners;
     private SharedPreferences sharedPreferences;
     private boolean notifications;
+    private int activePLayer;
     private Gson gson;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        valueEventListeners = new HashMap<String, ValueEventListener>();
+        valueEventListeners = new HashMap<Integer, ValueEventListener>();
+        childEventListeners = new HashMap<String, ChildEventListener>();
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         gson = new Gson();
+
+//        Runnable helloRunnable = new Runnable() {
+//            public void run() {
+//                Log.i("Service", "Hello world");
+//            }
+//        };
+//
+//        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+//        executor.scheduleAtFixedRate(helloRunnable, 0, 1, TimeUnit.SECONDS);
     }
 
     @Override
     public void onDestroy() {
-        notificationManager.cancel(chatNotification);
+        notificationManager.cancel(notificationId);
         super.onDestroy();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        username = intent.getStringExtra("username");
+        if (intent != null) {
+            username = intent.getStringExtra("username");
+        }
         return Service.START_REDELIVER_INTENT;
     }
 
@@ -73,16 +87,25 @@ public class SpaceCrackService extends Service {
         return binder;
     }
 
-    public void addFirebaseListener(String url, String gameId) {
-        if (valueEventListeners.get(gameId) == null) {
-            this.gameId = gameId;
-            firebase = new Firebase(url + "/" + gameId);
+    public void addGameListener(String url, final int playerId, final boolean first) {
+        if (valueEventListeners.get(playerId) == null) {
+            firebase = new Firebase(url);
             ValueEventListener valueEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     notifications = sharedPreferences.getBoolean("pref_notifications", true);
                     if (!isForeground("com.gunit.spacecrack") && notifications) {
-                        showNotification();
+                        Game game = gson.fromJson(dataSnapshot.getValue().toString(), Game.class);
+                        if (first) {
+                            if (game.player2.turnEnded) {
+                                showNotification(game.name, getText(R.string.your_turn).toString() ,false);
+                            }
+                        } else {
+                            if (game.player1.turnEnded) {
+                                showNotification(game.name, getText(R.string.your_turn).toString() ,false);
+                            }
+                        }
+
                     }
                 }
 
@@ -91,34 +114,90 @@ public class SpaceCrackService extends Service {
 
                 }
             };
-            valueEventListeners.put(gameId, valueEventListener);
+            valueEventListeners.put(playerId, valueEventListener);
             firebase.addValueEventListener(valueEventListener);
         }
     }
 
-    public void removeFirebaseListener(String gameId) {
-        firebase.removeEventListener(valueEventListeners.get(gameId));
+    public void addChatListener(String url, String gameId) {
+        if (childEventListeners.get(gameId) == null) {
+            this.gameId = gameId;
+            firebase = new Firebase(url + "/" + gameId);
+            ChildEventListener childEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    try {
+                        notifications = sharedPreferences.getBoolean("pref_notifications", true);
+                        Log.i("Chat", dataSnapshot.getValue().toString());
+                        Chat chat = gson.fromJson(dataSnapshot.getValue().toString(), Chat.class);
+                        Log.i("Chat object", chat.getFrom());
+                        if (!isForeground("com.gunit.spacecrack") && notifications) {
+                            showNotification(chat.getFrom(), chat.getBody(), true);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled() {
+
+                }
+            };
+            childEventListeners.put(gameId, childEventListener);
+            firebase.addChildEventListener(childEventListener);
+        }
     }
 
-    private void showNotification() {
-        chatNotification = R.string.new_message;
+    public void removeFirebaseListener(String gameId) {
+//        firebase.removeEventListener(valueEventListeners.get(gameId));
+        firebase.removeEventListener(childEventListeners.get(gameId));
+    }
+
+    private void showNotification(String title, String text, boolean chat) {
+        notificationId = R.string.new_message;
         builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_launcher)
-                .setContentTitle(getText(chatNotification))
+                .setContentTitle(title)
+                .setContentText(text)
                 .setAutoCancel(true);
 
-        Intent chatIntent = new Intent(this, ChatActivity.class);
-        chatIntent.putExtra("gameId", gameId);
-        chatIntent.putExtra("username", username);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(ChatActivity.class);
-        stackBuilder.addNextIntent(chatIntent);
+        if (chat) {
+            Intent chatIntent = new Intent(this, SplashScreenActivity.class);
+            chatIntent.putExtra("task", "chat");
+            chatIntent.putExtra("gameId", gameId);
+            chatIntent.putExtra("username", username);
+            stackBuilder.addParentStack(SplashScreenActivity.class);
+            stackBuilder.addNextIntent(chatIntent);
+        } else {
+            Intent gameIntent = new Intent(this, SplashScreenActivity.class);
+            gameIntent.putExtra("task", "game");
+            gameIntent.putExtra("gameId", Integer.valueOf(gameId));
+            stackBuilder.addParentStack(SplashScreenActivity.class);
+            stackBuilder.addNextIntent(gameIntent);
+        }
 
         PendingIntent chatPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(chatPendingIntent);
 
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(chatNotification, builder.build());
+        notificationManager.notify(notificationId, builder.build());
     }
 
     private boolean isForeground(String PackageName){

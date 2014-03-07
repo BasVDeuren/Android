@@ -23,6 +23,7 @@ import com.gunit.spacecrack.fragment.HomeFragment;
 import com.gunit.spacecrack.fragment.LoginFragment;
 import com.gunit.spacecrack.game.GameActivity;
 import com.gunit.spacecrack.service.SpaceCrackService;
+import com.gunit.spacecrack.service.TestService;
 
 import java.util.List;
 
@@ -40,6 +41,9 @@ public class HomeActivity extends Activity {
                     .add(R.id.container, new HomeFragment(), "Home")
                     .commit();
         }
+
+//        Intent intent = new Intent(this, TestService.class);
+//        startService(intent);
     }
 
     @Override
