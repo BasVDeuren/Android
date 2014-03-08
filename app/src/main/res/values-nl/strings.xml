@@ -10,8 +10,10 @@
     <string name="background">Achtergrond</string>
     <string name="birth_date">Geboortedatum</string>
     <string name="chat">Chat</string>
-    <string name="choose_opponent">Kies tegensctander</string>
-    <string name="commandpoints_fail">Te weinig commandpoints</string>
+    <string name="check_this_out">Bekijk dit eens!</string>
+    <string name="choose_opponent">Kies tegenstander</string>
+    <string name="commandpoints">Commandopunten</string>
+    <string name="commandpoints_fail">Te weinig commandopunten</string>
     <string name="contact">Contact</string>
     <string name="create_game">Spel aanmaken</string>
     <string name="edit">Bewerk</string>
@@ -39,12 +41,18 @@
     <string name="name_of_game">Naam van het spel</string>
     <string name="new_game">Nieuw spel</string>
     <string name="new_message">Nieuw bericht</string>
+    <string name="new_password">Nieuw wachtwoord</string>
     <string name="no_connection">Geen internet connectie</string>
     <string name="notifications">Notificaties</string>
     <string name="notifications_enable">Notificaties inschakelen</string>
+    <string name="old_password">Oud wachtwoord</string>
     <string name="opponent">Tegenstander</string>
     <string name="password">Wachtwoord</string>
+    <string name="password_error">Wachtwoord niet opgeslagen</string>
     <string name="password_match">Wachtwoorden moeten gelijk zijn</string>
+    <string name="password_saved">Wachtwoord opgeslagen</string>
+    <string name="player1_turn">Speler 1 is aan de beurt</string>
+    <string name="player2_turn">Speler 2 is aan de beurt</string>
     <string name="please_wait">Eventjes geduld</string>
     <string name="processing_data">Verwerken gegevens</string>
     <string name="profile">Profiel</string>
@@ -64,6 +72,7 @@
     <string name="save">Bewaar</string>
     <string name="search">Zoek</string>
     <string name="search_users">Zoek naar gebruikers</string>
+    <string name="share_via">Deel via</string>
     <string name="statistics">Statistieken</string>
     <string name="title_activity_game">GameActivity</string>
     <string name="title_activity_home">HomeActivity</string>
@@ -75,6 +84,7 @@
     <string name="user_fail">Gebruiker kon niet geladen worden</string>
     <string name="user_not_found">Gebruiker kon niet gevonden worden</string>
     <string name="username">Gebruikersnaam</string>
+    <string name="valid_email_error">Vul een geldig email adres in</string>
     <string name="your_turn">Uw beurt</string>
     <string name="welcome">Welkom!</string>
 

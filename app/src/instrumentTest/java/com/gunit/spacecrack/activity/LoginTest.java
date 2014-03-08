@@ -30,7 +30,7 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
     public void testActivityStart() throws Exception {
         solo.assertCurrentActivity("Current activity should be LoginActivity", LoginActivity.class);
         Fragment loginFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("Login");
-        assertTrue("RegisterFragment should be visible", loginFragment.isVisible());
+        assertTrue("LoginFragment should be visible", loginFragment.isVisible());
     }
 
     public void testLoginSucces() throws Exception {

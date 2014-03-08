@@ -29,7 +29,9 @@ public class ProfileFragment extends Fragment {
     private TextView txtGender;
     private TextView txtSetup;
     private LinearLayout lltProfileInfo;
+    private LinearLayout lltProfileEdit;
     private Button btnEdit;
+    private Button btnPassword;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,6 +44,7 @@ public class ProfileFragment extends Fragment {
         txtGender = (TextView) rootView.findViewById(R.id.txt_profile_gender);
         txtSetup = (TextView) rootView.findViewById(R.id.txt_profile_setup);
         lltProfileInfo = (LinearLayout) rootView.findViewById(R.id.llt_profile_info);
+        lltProfileEdit = (LinearLayout) rootView.findViewById(R.id.llt_profile_edit);
         if (SpaceCrackApplication.user.profile.firstname == null && SpaceCrackApplication.user.profile.lastname == null && SpaceCrackApplication.graphUser == null) {
             txtSetup.setVisibility(View.VISIBLE);
             lltProfileInfo.setVisibility(View.GONE);
@@ -55,10 +58,18 @@ public class ProfileFragment extends Fragment {
                         .commit();
             }
         });
-
+        btnPassword = (Button) rootView.findViewById(R.id.btn_profile_password);
+        btnPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getFragmentManager().beginTransaction()
+                        .replace(R.id.container, new PasswordFragment(), "Password")
+                        .commit();
+            }
+        });
 
         if (SpaceCrackApplication.graphUser != null) {
-            btnEdit.setVisibility(View.GONE);
+            lltProfileEdit.setVisibility(View.GONE);
             fbPictureView.setVisibility(View.VISIBLE);
             imgProfilePicture.setVisibility(View.GONE);
             fbPictureView.setProfileId(SpaceCrackApplication.graphUser.getId());

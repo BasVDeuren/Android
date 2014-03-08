@@ -96,6 +96,13 @@
 
                 </LinearLayout>
 
+            <Button
+                android:layout_width="@dimen/default_size"
+                android:layout_height="match_parent"
+                android:id="@+id/btn_newgame_create"
+                android:text="@string/create_game"
+                android:layout_gravity="bottom|center_horizontal"/>
+
         </LinearLayout>
 
 
@@ -105,14 +112,6 @@
             android:layout_marginBottom="50dp"
             android:id="@+id/lst_newgame_users"
             android:layout_toRightOf="@+id/llt_newgame_settings"/>
-
-        <Button
-            android:layout_width="@dimen/default_size"
-            android:layout_height="wrap_content"
-            android:id="@+id/btn_newgame_create"
-            android:text="@string/create_game"
-            android:layout_alignParentBottom="true"
-            android:layout_centerInParent="true"/>
 
     </RelativeLayout>
 

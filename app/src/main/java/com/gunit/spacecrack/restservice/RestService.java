@@ -219,9 +219,9 @@ public class RestService {
         return result;
     }
 
-    public static boolean editProfile(JSONObject profile) {
+    public static boolean editProfile(String url, JSONObject profile) {
         boolean result = false;
-        HttpPost httpPost = new HttpPost(SpaceCrackApplication.URL_PROFILE);
+        HttpPost httpPost = new HttpPost(url);
         HttpContext httpContext = new BasicHttpContext();
 
         HttpParams httpParams = new BasicHttpParams();

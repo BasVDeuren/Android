@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,11 +19,12 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.gunit.spacecrack.R;
-import com.gunit.spacecrack.activity.LoginActivity;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.activity.HomeActivity;
+import com.gunit.spacecrack.interfacerequest.IUserRequest;
 import com.gunit.spacecrack.model.User;
 import com.gunit.spacecrack.restservice.RestService;
+import com.gunit.spacecrack.task.UserTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,18 +32,19 @@ import org.json.JSONObject;
 /**
  * Created by Dimitri on 20/02/14.
  */
-public class RegisterFragment extends Fragment {
+public class RegisterFragment extends Fragment implements IUserRequest {
 
     private Button btnRegister;
-    private EditText txtUsername;
-    private EditText txtPassword;
-    private EditText txtConfirmPassword;
-    private EditText txtEmail;
+    private EditText edtUsername;
+    private EditText edtPassword;
+    private EditText edtConfirmPassword;
+    private EditText edtEmail;
 
     private Context context;
 
     private static final String TAG = "RegisterFragment";
     private ProgressDialog progressDialog;
+    private IUserRequest userRequest;
 
 
     @Override
@@ -52,17 +53,21 @@ public class RegisterFragment extends Fragment {
 
         context = getActivity();
 
-        txtUsername = (EditText) view.findViewById(R.id.edt_register_username);
-        txtPassword = (EditText) view.findViewById(R.id.edt_register_password);
-        txtConfirmPassword = (EditText) view.findViewById(R.id.edt_register_password_confirm);
-        txtEmail = (EditText) view.findViewById(R.id.edt_register_email);
+        edtUsername = (EditText) view.findViewById(R.id.edt_register_username);
+        edtPassword = (EditText) view.findViewById(R.id.edt_register_password);
+        edtConfirmPassword = (EditText) view.findViewById(R.id.edt_register_password_confirm);
+        edtEmail = (EditText) view.findViewById(R.id.edt_register_email);
         btnRegister = (Button) view.findViewById(R.id.btn_register_register);
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!txtUsername.getText().toString().equals("") && !txtPassword.getText().toString().equals("") && !txtConfirmPassword.getText().toString().equals("") && !txtEmail.getText().toString().equals("")) {
-                    if (checkPasswords(txtPassword.getText().toString(), txtConfirmPassword.getText().toString())) {
-                        new RegisterTask(txtUsername.getText().toString(), txtPassword.getText().toString(), txtConfirmPassword.getText().toString(), txtEmail.getText().toString()).execute(SpaceCrackApplication.URL_REGISTER);
+                if (!edtUsername.getText().toString().equals("") && !edtPassword.getText().toString().equals("") && !edtConfirmPassword.getText().toString().equals("") && !edtEmail.getText().toString().equals("")) {
+                    if (checkPasswords(edtPassword.getText().toString(), edtConfirmPassword.getText().toString())) {
+                        if (SpaceCrackApplication.isValidEmail(edtEmail.getText().toString())) {
+                            new RegisterTask(edtUsername.getText().toString(), edtPassword.getText().toString(), edtConfirmPassword.getText().toString(), edtEmail.getText().toString()).execute(SpaceCrackApplication.URL_REGISTER);
+                        } else {
+                            Toast.makeText(getActivity(), getString(R.string.valid_email_error), Toast.LENGTH_SHORT).show();
+                        }
                     } else {
                         Toast.makeText(getActivity(), getString(R.string.password_match), Toast.LENGTH_SHORT).show();
                     }
@@ -71,6 +76,7 @@ public class RegisterFragment extends Fragment {
                 }
             }
         });
+        userRequest = this;
 
         return view;
     }
@@ -79,8 +85,41 @@ public class RegisterFragment extends Fragment {
         return password.equals(confirmPassword);
     }
 
+    @Override
+    public void startTask() {
+        btnRegister.setEnabled(false);
+        progressDialog = ProgressDialog.show(getActivity(), getString(R.string.please_wait), getString(R.string.registrating));
+    }
+
+    @Override
+    public void userCallback(String result) {
+        if (result != null) {
+            try {
+                Gson gson = new Gson();
+                SpaceCrackApplication.user = gson.fromJson(result, User.class);
+
+                if (SpaceCrackApplication.user.profile.image != null) {
+                    //Get the image from the Data URI
+                    String image = SpaceCrackApplication.user.profile.image.substring(SpaceCrackApplication.user.profile.image.indexOf(",") + 1);
+                    byte[] decodedString = Base64.decode(image, 0);
+                    SpaceCrackApplication.profilePicture = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                }
+
+                Intent intent = new Intent(getActivity(), HomeActivity.class);
+                startActivity(intent);
+                getActivity().finish();
+            } catch (JsonParseException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Toast.makeText(context, getResources().getText(R.string.profile_fail), Toast.LENGTH_SHORT).show();
+        }
+        btnRegister.setEnabled(true);
+        progressDialog.dismiss();
+    }
+
     //POST request to postRequest the user
-    public class RegisterTask extends AsyncTask<String, Void, String> {
+    private class RegisterTask extends AsyncTask<String, Void, String> {
 
         private JSONObject newUser;
         private String email;
@@ -126,51 +165,7 @@ public class RegisterFragment extends Fragment {
             editor.putString("password", password);
             editor.commit();
             if (result != null) {
-                new GetUser().execute(SpaceCrackApplication.URL_USER);
-            }
-            btnRegister.setEnabled(true);
-            progressDialog.dismiss();
-        }
-    }
-
-    //GET request to User
-    private class GetUser extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            btnRegister.setEnabled(false);
-            progressDialog = ProgressDialog.show(getActivity(), getString(R.string.please_wait), getString(R.string.registrating));
-        }
-
-        @Override
-        protected String doInBackground (String...url)
-        {
-            return RestService.getRequest(url[0]);
-        }
-
-        @Override
-        protected void onPostExecute (String result)
-        {
-            if (result != null) {
-                try {
-                    Gson gson = new Gson();
-                    SpaceCrackApplication.user = gson.fromJson(result, User.class);
-
-                    if (SpaceCrackApplication.user.profile.image != null) {
-                        //Get the image from the Data URI
-                        String image = SpaceCrackApplication.user.profile.image.substring(SpaceCrackApplication.user.profile.image.indexOf(",") + 1);
-                        byte[] decodedString = Base64.decode(image, 0);
-                        SpaceCrackApplication.profilePicture = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                    }
-
-                    Intent intent = new Intent(getActivity(), HomeActivity.class);
-                    startActivity(intent);
-                    getActivity().finish();
-                } catch (JsonParseException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Toast.makeText(context, getResources().getText(R.string.profile_fail), Toast.LENGTH_SHORT).show();
+                new UserTask(userRequest).execute(SpaceCrackApplication.URL_USER);
             }
             btnRegister.setEnabled(true);
             progressDialog.dismiss();

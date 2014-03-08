@@ -55,17 +55,24 @@ public class GameAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.list_game_item, null);
             viewHolder = new ViewHolder();
             viewHolder.txtGameName = (TextView) convertView.findViewById(R.id.txt_listgames_name);
+            viewHolder.txtTurn = (TextView) convertView.findViewById(R.id.txt_listgames_turn);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
         viewHolder.txtGameName.setText(game.name);
+//        if (game.player1.turnEnded) {
+//            viewHolder.txtTurn.setText(R.string.player2_turn);
+//        } else {
+//            viewHolder.txtTurn.setText(R.string.player1_turn);
+//        }
 
         return convertView;
     }
 
     private class ViewHolder {
         TextView txtGameName;
+        TextView txtTurn;
     }
 }

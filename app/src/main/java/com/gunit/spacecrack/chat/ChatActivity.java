@@ -19,8 +19,6 @@ import com.firebase.client.ValueEventListener;
 import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
 
-import java.util.Random;
-
 public class ChatActivity extends ListActivity {
 
     private String username;
@@ -79,7 +77,7 @@ public class ChatActivity extends ListActivity {
         // Setup our view and list adapter. Ensure it scrolls to the bottom as data changes
         final ListView listView = getListView();
         // Tell our list adapter that we only want 50 messages at a time
-        chatListAdapter = new ChatListAdapter(ref.limit(50), this, R.layout.chat_message, username);
+        chatListAdapter = new ChatListAdapter(ref.limit(50), this, R.layout.list_chat_item, username);
         listView.setAdapter(chatListAdapter);
         chatListAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override

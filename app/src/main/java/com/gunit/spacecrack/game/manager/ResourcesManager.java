@@ -4,6 +4,10 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 
 import com.gunit.spacecrack.game.GameActivity;
+import com.gunit.spacecrack.game.pool.PlanetPool;
+import com.gunit.spacecrack.game.pool.ShipPool;
+import com.gunit.spacecrack.game.sprite.PlanetSprite;
+import com.gunit.spacecrack.game.sprite.ShipSprite;
 
 import org.andengine.engine.Engine;
 import org.andengine.engine.camera.SmoothCamera;
@@ -56,7 +60,7 @@ public class ResourcesManager {
     public ITextureRegion miniSpaceshipPLayer2Region;
     public ITextureRegion chatRegion;
     public ITextureRegion turnRegion;
-    private BuildableBitmapTextureAtlas gameTextureAtlas;
+    public BuildableBitmapTextureAtlas gameTextureAtlas;
 
     private ResourcesManager() {
 
@@ -143,6 +147,7 @@ public class ResourcesManager {
         } catch (final ITextureAtlasBuilder.TextureAtlasBuilderException e) {
             Debug.e(e);
         }
+
     }
 
 

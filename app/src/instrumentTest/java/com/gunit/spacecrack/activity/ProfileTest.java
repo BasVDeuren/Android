@@ -40,7 +40,7 @@ public class ProfileTest extends ActivityInstrumentationTestCase2<LoginActivity>
     }
 
     public void testEditProfile() throws Exception {
-        solo.clickOnButton(solo.getString(R.string.edit));
+        solo.clickOnButton(0);
         solo.waitForFragmentByTag("Edit Profile");
         Fragment editProfileFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("Edit Profile");
         assertTrue("EditProfileFragment should be visible", editProfileFragment.isVisible());

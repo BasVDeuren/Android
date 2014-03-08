@@ -232,8 +232,6 @@ public class EditProfileFragment extends Fragment {
             String byte64Img = "";
             if (image != null) {
                 //Convert image to Base64 String
-//                File file = new File(image);
-//                Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 image.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 byte[] byteArray = stream.toByteArray();
@@ -267,7 +265,7 @@ public class EditProfileFragment extends Fragment {
         @Override
         protected Boolean doInBackground (String...url)
         {
-            return RestService.editProfile(profile);
+            return RestService.editProfile(url[0], profile);
         }
 
         @Override
@@ -295,7 +293,6 @@ public class EditProfileFragment extends Fragment {
         @Override
         protected void onPostExecute (String result)
         {
-            progressDialog.dismiss();
             if (result != null) {
                 try {
                     Gson gson = new Gson();
@@ -308,16 +305,17 @@ public class EditProfileFragment extends Fragment {
                         SpaceCrackApplication.profilePicture = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                     }
 
-                    //Return to the Profile
-                    getActivity().getFragmentManager().beginTransaction()
-                            .replace(R.id.container, new ProfileFragment(), "Profile")
-                            .commit();
                 } catch (JsonParseException e) {
                     e.printStackTrace();
                 }
             } else {
                 Toast.makeText(getActivity(), getResources().getText(R.string.profile_fail), Toast.LENGTH_SHORT).show();
             }
+            progressDialog.dismiss();
+            //Return to the Profile
+            getActivity().getFragmentManager().beginTransaction()
+                    .replace(R.id.container, new ProfileFragment(), "Profile")
+                    .commit();
         }
     }
 }

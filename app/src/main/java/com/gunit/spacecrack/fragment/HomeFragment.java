@@ -39,6 +39,7 @@ public class HomeFragment extends Fragment {
     private Button btnActiveGames;
     private IconButton btnLogout;
     private IconButton btnSettings;
+    private IconButton btnShare;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,9 +49,10 @@ public class HomeFragment extends Fragment {
         txtName = (TextView) view.findViewById(R.id.txt_home_welcome);
         lltProfile = (LinearLayout) view.findViewById(R.id.llt_home_profile);
 
-        btnSettings = (IconButton) view.findViewById(R.id.btn_home_settings);
         btnNewGame = (Button) view.findViewById(R.id.btn_home_newgame);
         btnActiveGames = (Button) view.findViewById(R.id.btn_home_activegames);
+        btnShare = (IconButton) view.findViewById(R.id.btn_home_share);
+        btnSettings = (IconButton) view.findViewById(R.id.btn_home_settings);
         btnLogout = (IconButton) view.findViewById(R.id.btn_home_logout);
 
         addListeners();
@@ -64,6 +66,12 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateAccount();
+    }
+
     private void addListeners() {
         lltProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,15 +82,6 @@ public class HomeFragment extends Fragment {
                 } else {
                     Toast.makeText(getActivity(), getResources().getText(R.string.profile_not_available), Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
-        btnSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().getFragmentManager().beginTransaction()
-                        .replace(R.id.container, new SettingsFragment(), "Settings")
-                        .addToBackStack("HomeFragment")
-                        .commit();
             }
         });
         btnNewGame.setOnClickListener(new View.OnClickListener() {
@@ -99,6 +98,25 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 getActivity().getFragmentManager().beginTransaction()
                         .replace(R.id.container, new ActiveGamesFragment(), "Active Games")
+                        .addToBackStack("HomeFragment")
+                        .commit();
+            }
+        });
+        btnShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
+                intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.check_this_out));
+                startActivity(Intent.createChooser(intent, getString(R.string.share_via)));
+            }
+        });
+        btnSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getFragmentManager().beginTransaction()
+                        .replace(R.id.container, new SettingsFragment(), "Settings")
                         .addToBackStack("HomeFragment")
                         .commit();
             }

@@ -29,8 +29,6 @@ import java.util.List;
 
 public class HomeActivity extends Activity {
 
-    private final String TAG = HomeActivity.class.getSimpleName();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,13 +39,6 @@ public class HomeActivity extends Activity {
                     .add(R.id.container, new HomeFragment(), "Home")
                     .commit();
         }
-
-//        Intent intent = new Intent(this, TestService.class);
-//        startService(intent);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
 }

@@ -31,7 +31,7 @@ public class EditProfileTest extends ActivityInstrumentationTestCase2<LoginActiv
         solo.waitForActivity(HomeActivity.class);
         solo.clickOnView(solo.getView(R.id.llt_home_profile));
         solo.waitForFragmentByTag("Profile");
-        solo.clickOnButton(solo.getString(R.string.edit));
+        solo.clickOnButton(0);
         solo.waitForFragmentByTag("Edit Profile");
     }
 
@@ -47,7 +47,7 @@ public class EditProfileTest extends ActivityInstrumentationTestCase2<LoginActiv
         solo.enterText(0, "Robo");
         solo.clearEditText(1);
         solo.enterText(1, "Tium");
-        solo.clickOnButton(solo.getString(R.string.save));
+        solo.clickOnButton(0);
         solo.waitForFragmentByTag("Profile");
         Fragment editProfileFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("Edit Profile");
         assertTrue("NewGameFragment should be visible", editProfileFragment.isVisible());
