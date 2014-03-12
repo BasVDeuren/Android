@@ -6,6 +6,7 @@ package com.gunit.spacecrack.model;
 public class Game {
     public int gameId;
     public String name;
+    public int loserPlayerId;
     public Player player1;
     public Player player2;
     public int turnCounter;

@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.facebook.Request;
@@ -32,6 +33,8 @@ public class SplashScreenActivity extends Activity implements ILoginRequest, IUs
     private SharedPreferences sharedPreferences;
     private String email;
     private String password;
+
+    private final String TAG = "SplashScreenActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +108,9 @@ public class SplashScreenActivity extends Activity implements ILoginRequest, IUs
     }
 
     private void goLogin () {
+        if (Session.getActiveSession() != null) {
+            Session.getActiveSession().closeAndClearTokenInformation();
+        }
         Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
         startActivity(intent);
         //Close this activity so it won't show up again
@@ -125,8 +131,13 @@ public class SplashScreenActivity extends Activity implements ILoginRequest, IUs
                 //Get the image from the Data URI
                 if (SpaceCrackApplication.user.profile.image != null) {
                     String image = SpaceCrackApplication.user.profile.image.substring(SpaceCrackApplication.user.profile.image.indexOf(",") + 1);
-                    byte[] decodedString = Base64.decode(image, 0);
-                    SpaceCrackApplication.profilePicture = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    try {
+                        byte[] decodedString = Base64.decode(image, 0);
+                        SpaceCrackApplication.profilePicture = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    } catch (IllegalArgumentException e) {
+                        Log.i(TAG, "Image could not be rendered from Base64");
+                        e.printStackTrace();
+                    }
                 }
                 proceedApp();
             } catch (JsonParseException e) {

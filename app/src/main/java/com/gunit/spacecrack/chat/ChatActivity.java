@@ -1,6 +1,7 @@
 package com.gunit.spacecrack.chat;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
@@ -18,6 +19,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.ValueEventListener;
 import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
+import com.gunit.spacecrack.service.SpaceCrackService;
 
 public class ChatActivity extends ListActivity {
 
@@ -65,15 +67,16 @@ public class ChatActivity extends ListActivity {
                 sendMessage();
             }
         });
-
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if (username == null) {
-            setupUsername();
-        }
+//        if (username == null) {
+//            setupUsername();
+//        }
+        username = getString(R.string.username);
+
         // Setup our view and list adapter. Ensure it scrolls to the bottom as data changes
         final ListView listView = getListView();
         // Tell our list adapter that we only want 50 messages at a time

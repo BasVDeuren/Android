@@ -9,6 +9,7 @@
     <string name="avatar">Avatar</string>
     <string name="background">Achtergrond</string>
     <string name="birth_date">Geboortedatum</string>
+    <string name="captured_all_planets">Alle planeten overgenomen!</string>
     <string name="chat">Chat</string>
     <string name="check_this_out">Bekijk dit eens!</string>
     <string name="choose_opponent">Kies tegenstander</string>
@@ -16,6 +17,7 @@
     <string name="commandpoints_fail">Te weinig commandopunten</string>
     <string name="contact">Contact</string>
     <string name="create_game">Spel aanmaken</string>
+    <string name="defeated">Verloren</string>
     <string name="edit">Bewerk</string>
     <string name="edited_failed">Berwerking mislukt</string>
     <string name="email">E-mail</string>
@@ -31,11 +33,13 @@
     <string name="general_settings">Algemene instellingen</string>
     <string name="hello_world">Hello world!</string>
     <string name="last_name">Familienaam</string>
+    <string name="loading">Laden</string>
     <string name="login">Aanmelden</string>
     <string name="login_fail">Aanmelden mislukt</string>
     <string name="loggin_in">Aanmelden</string>
     <string name="login_succes">Aanmelden gelukt</string>
     <string name="logout">Afmelden</string>
+    <string name="lost_all_planets">Alle planeten verloren</string>
     <string name="male">Man</string>
     <string name="multitouch_support">Uw toestel ondersteunt multi touch niet</string>
     <string name="name_of_game">Naam van het spel</string>
@@ -51,6 +55,7 @@
     <string name="password_error">Wachtwoord niet opgeslagen</string>
     <string name="password_match">Wachtwoorden moeten gelijk zijn</string>
     <string name="password_saved">Wachtwoord opgeslagen</string>
+    <string name="play_a_game">Ik daag je uit in een match Space Crack!</string>
     <string name="player1_turn">Speler 1 is aan de beurt</string>
     <string name="player2_turn">Speler 2 is aan de beurt</string>
     <string name="please_wait">Eventjes geduld</string>
@@ -73,6 +78,7 @@
     <string name="search">Zoek</string>
     <string name="search_users">Zoek naar gebruikers</string>
     <string name="share_via">Deel via</string>
+    <string name="something_went_wrong">Er ging iets fout</string>
     <string name="statistics">Statistieken</string>
     <string name="title_activity_game">GameActivity</string>
     <string name="title_activity_home">HomeActivity</string>
@@ -85,7 +91,10 @@
     <string name="user_not_found">Gebruiker kon niet gevonden worden</string>
     <string name="username">Gebruikersnaam</string>
     <string name="valid_email_error">Vul een geldig email adres in</string>
-    <string name="your_turn">Uw beurt</string>
+    <string name="victory">Victory!</string>
     <string name="welcome">Welkom!</string>
+    <string name="you_lost">Je bent verloren</string>
+    <string name="you_won">Je bent gewonnen!</string>
+    <string name="your_turn">Uw beurt</string>
 
 </resources>

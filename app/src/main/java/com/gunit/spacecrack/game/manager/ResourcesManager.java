@@ -60,6 +60,10 @@ public class ResourcesManager {
     public ITextureRegion miniSpaceshipPLayer2Region;
     public ITextureRegion chatRegion;
     public ITextureRegion turnRegion;
+    public ITextureRegion monkeyRegion;
+    public ITextureRegion facebookRegion;
+    public ITextureRegion facebookPressedRegion;
+    public ITextureRegion quitRegion;
     public BuildableBitmapTextureAtlas gameTextureAtlas;
 
     private ResourcesManager() {
@@ -140,6 +144,9 @@ public class ResourcesManager {
         castleRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, gameActivity, "castle.png", 2, 1);
         chatRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "chat.png");
         turnRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "turn.png");
+        monkeyRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "monkey_winner.png");
+        facebookRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "fb_icon.png");
+        facebookPressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "fb_icon_pressed.png");
 
         try {
             gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));

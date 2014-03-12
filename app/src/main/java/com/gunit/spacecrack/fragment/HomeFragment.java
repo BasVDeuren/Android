@@ -24,6 +24,7 @@ import com.gunit.spacecrack.activity.LoginActivity;
 import com.gunit.spacecrack.activity.ProfileActivity;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.service.SpaceCrackService;
+import com.gunit.spacecrack.service.TestService;
 
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class HomeFragment extends Fragment {
     private LinearLayout lltProfile;
     private Button btnNewGame;
     private Button btnActiveGames;
+    private Button btnReplay;
     private IconButton btnLogout;
     private IconButton btnSettings;
     private IconButton btnShare;
@@ -51,6 +53,7 @@ public class HomeFragment extends Fragment {
 
         btnNewGame = (Button) view.findViewById(R.id.btn_home_newgame);
         btnActiveGames = (Button) view.findViewById(R.id.btn_home_activegames);
+        btnReplay = (Button) view.findViewById(R.id.btn_home_replay);
         btnShare = (IconButton) view.findViewById(R.id.btn_home_share);
         btnSettings = (IconButton) view.findViewById(R.id.btn_home_settings);
         btnLogout = (IconButton) view.findViewById(R.id.btn_home_logout);
@@ -62,6 +65,8 @@ public class HomeFragment extends Fragment {
         Intent intent = new Intent(getActivity(), SpaceCrackService.class);
         intent.putExtra("username", SpaceCrackApplication.user.username);
         getActivity().startService(intent);
+
+//        getActivity().startService(new Intent(TestService.class.getName()));
 
         return view;
     }
@@ -98,6 +103,15 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 getActivity().getFragmentManager().beginTransaction()
                         .replace(R.id.container, new ActiveGamesFragment(), "Active Games")
+                        .addToBackStack("HomeFragment")
+                        .commit();
+            }
+        });
+        btnReplay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getFragmentManager().beginTransaction()
+                        .replace(R.id.container, new ReplayFragment(), "Replay")
                         .addToBackStack("HomeFragment")
                         .commit();
             }

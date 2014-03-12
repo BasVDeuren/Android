@@ -2,9 +2,13 @@ package com.gunit.spacecrack.game.scene;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.facebook.FacebookException;
+import com.facebook.Session;
+import com.facebook.widget.WebDialog;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.ValueEventListener;
@@ -25,8 +29,6 @@ import com.gunit.spacecrack.restservice.RestService;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
-import org.andengine.engine.handler.timer.ITimerCallback;
-import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.primitive.Line;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
@@ -34,12 +36,8 @@ import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.ButtonSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.sprite.TiledSprite;
-import org.andengine.entity.sprite.batch.DynamicSpriteBatch;
-import org.andengine.entity.sprite.batch.SpriteBatch;
 import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
-import org.andengine.entity.util.FPSCounter;
-import org.andengine.entity.util.FPSLogger;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.input.touch.detector.PinchZoomDetector;
 import org.andengine.input.touch.detector.ScrollDetector;
@@ -50,9 +48,10 @@ import org.andengine.util.HorizontalAlign;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.microedition.khronos.opengles.GL10;
 
 /**
  * Created by Dimitri on 24/02/14.
@@ -242,6 +241,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         updateCommandPoints();
         if (!activity.player.turnEnded && !endTurn.isVisible()) {
             endTurn.setVisible(true);
+        }
+        if (game.loserPlayerId > 0) {
+            endGame(game);
         }
     }
 
@@ -461,6 +463,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
                     detachChild(sprite);
                 }
                 for (Sprite sprite : colonySprites) {
+                    gameScene.unregisterTouchArea(sprite);
                     sprite.clearEntityModifiers();
                     sprite.clearUpdateHandlers();
                     sprite.dispose();
@@ -473,10 +476,85 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         });
     }
 
-
     private void updateCommandPoints()
     {
         txtCommand.setText("Commandpoints: " + activity.player.commandPoints);
+    }
+
+    private void endGame(final Game game) {
+        camera.setHUD(null);
+        camera.setCenterDirect(GameActivity.CAMERA_WIDTH / 2, GameActivity.CAMERA_HEIGHT / 2);
+        camera.setZoomFactor(1f);
+
+        activity.runOnUpdateThread(new Runnable() {
+            @Override
+            public void run() {
+                for (Sprite sprite : shipSprites) {
+                    gameScene.unregisterTouchArea(sprite);
+                    sprite.clearEntityModifiers();
+                    sprite.clearUpdateHandlers();
+                }
+                for (Sprite sprite : colonySprites) {
+                    gameScene.unregisterTouchArea(sprite);
+                    sprite.clearEntityModifiers();
+                    sprite.clearUpdateHandlers();
+                }
+            }
+        });
+
+        Rectangle endScreen = new Rectangle((activity.CAMERA_WIDTH / 2) - 200, (activity.CAMERA_HEIGHT / 2) - 100, 400, 200, vbom);
+        endScreen.setColor(0.24f, 0.27f, 0.3f);
+        endScreen.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        endScreen.setAlpha(0.2f);
+
+        if (Session.getActiveSession() != null) {
+            ButtonSprite facebook = new ButtonSprite(((endScreen.getWidth() / 2) - 25), (endScreen.getHeight() / 2 + 40), resourcesManager.facebookRegion, resourcesManager.facebookPressedRegion, vbom);
+            facebook.setOnClickListener(new ButtonSprite.OnClickListener() {
+                @Override
+                public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX, float pTouchAreaLocalY) {
+                    activity.runOnUiThread(new Runnable() {
+                        public void run() {
+                            Bundle params = new Bundle();
+                            params.putString("name", activity.getString(R.string.app_name));
+                            if (game.loserPlayerId == activity.player.playerId) {
+                                params.putString("caption", activity.getString(R.string.defeated));
+                                params.putString("description", activity.getString(R.string.lost_all_planets));
+                            } else {
+                                params.putString("caption", activity.getString(R.string.victory));
+                                params.putString("description", activity.getString(R.string.captured_all_planets));
+                            }
+                            params.putString("picture", "http://www.italieinbedrijf.nl/wp-content/uploads/2012/12/Lamborghini-Logo.jpg");
+
+                            WebDialog feedDialog = (new WebDialog.FeedDialogBuilder(activity,
+                                    Session.getActiveSession(), params))
+                                    .setOnCompleteListener(new WebDialog.OnCompleteListener() {
+                                        @Override
+                                        public void onComplete(Bundle values, FacebookException error) {
+
+                                        }
+                                    }).build();
+                            feedDialog.show();
+                        }
+                    });
+                }
+            });
+            endScreen.attachChild(facebook);
+            this.registerTouchArea(facebook);
+        }
+
+
+        Sprite monkey = new Sprite(((endScreen.getWidth() - resourcesManager.monkeyRegion.getWidth())/2),  endScreen.getHeight() / 2 - 60, resourcesManager.monkeyRegion, vbom);
+        monkey.setScale(1.5f);
+        Text endStatus;
+        if (game.loserPlayerId == activity.player.playerId) {
+            endStatus = new Text(0, 0, resourcesManager.font, activity.getText(R.string.you_lost), vbom);
+        } else {
+            endStatus = new Text(0, 0, resourcesManager.font, activity.getText(R.string.you_won), vbom);
+        }
+        endStatus.setPosition((endScreen.getWidth() - endStatus.getWidth()) / 2, (endScreen.getHeight() - endStatus.getHeight()) / 2);
+        endScreen.attachChild(endStatus);
+        endScreen.attachChild(monkey);
+        this.attachChild(endScreen);
     }
 
     //POST request
@@ -518,7 +596,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
                 }
 
             } else {
-                Toast.makeText(activity, "Something went wrong...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, activity.getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
             }
         }
     }

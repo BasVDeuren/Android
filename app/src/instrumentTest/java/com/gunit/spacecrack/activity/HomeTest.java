@@ -57,6 +57,20 @@ public class HomeTest extends ActivityInstrumentationTestCase2<LoginActivity> {
         assertTrue("NewGameFragment should be visible", newGameFragment.isVisible());
     }
 
+    public void testActiveGames() throws Exception {
+        solo.clickOnButton(solo.getString(R.string.new_game));
+        solo.waitForFragmentByTag("New Game");
+        Fragment activeGamesFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("Active Games");
+        assertTrue("ActiveGamesFragment should be visible", activeGamesFragment.isVisible());
+    }
+
+    public void testReplay() throws Exception {
+        solo.clickOnButton(solo.getString(R.string.new_game));
+        solo.waitForFragmentByTag("New Game");
+        Fragment replayFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("Replay");
+        assertTrue("ReplayFragment should be visible", replayFragment.isVisible());
+    }
+
     @Override
     public void tearDown() throws Exception {
         solo.finishOpenedActivities();

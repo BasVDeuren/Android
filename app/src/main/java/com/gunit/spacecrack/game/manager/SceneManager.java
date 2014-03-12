@@ -4,6 +4,7 @@ import com.gunit.spacecrack.game.scene.BaseScene;
 import com.gunit.spacecrack.game.scene.GameScene;
 import com.gunit.spacecrack.game.scene.LoadingScene;
 import com.gunit.spacecrack.game.scene.MainMenuScene;
+import com.gunit.spacecrack.game.scene.ReplayScene;
 import com.gunit.spacecrack.game.scene.SplashScene;
 
 import org.andengine.engine.Engine;
@@ -19,6 +20,7 @@ public class SceneManager {
     private BaseScene splashScene;
     private BaseScene menuScene;
     private BaseScene gameScene;
+    private BaseScene replayScene;
     private BaseScene loadingScene;
 
     private static final SceneManager INSTANCE = new SceneManager();
@@ -135,6 +137,20 @@ public class SceneManager {
                 ResourcesManager.getInstance().loadGameResources();
                 gameScene = new GameScene();
                 setScene(gameScene);
+            }
+        }));
+    }
+
+    public void loadReplayScene(final Engine engine) {
+        loadingScene = new LoadingScene();
+        setScene(loadingScene);
+        engine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
+            @Override
+            public void onTimePassed(TimerHandler pTimerHandler) {
+                engine.unregisterUpdateHandler(pTimerHandler);
+                ResourcesManager.getInstance().loadGameResources();
+                replayScene = new ReplayScene();
+                setScene(replayScene);
             }
         }));
     }

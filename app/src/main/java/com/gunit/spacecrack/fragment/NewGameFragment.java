@@ -21,10 +21,13 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.facebook.FacebookException;
+import com.facebook.FacebookOperationCanceledException;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.model.GraphUser;
+import com.facebook.widget.WebDialog;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
@@ -116,7 +119,7 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
         btnFacebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFriends();
+                sendRequestDialog();
             }
         });
         btnRandom.setOnClickListener(new View.OnClickListener() {
@@ -138,7 +141,6 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
                 }
             }
         });
-
     }
 
     @Override
@@ -199,7 +201,49 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
         }
     }
 
-    //POST request to edit the profile
+    private void sendRequestDialog() {
+        Bundle params = new Bundle();
+        params.putString("message", getString(R.string.play_a_game));
+
+        WebDialog requestsDialog = (
+                new WebDialog.RequestsDialogBuilder(getActivity(),
+                        Session.getActiveSession(),
+                        params))
+                .setOnCompleteListener(new WebDialog.OnCompleteListener() {
+
+                    @Override
+                    public void onComplete(Bundle values,
+                                           FacebookException error) {
+                        if (error != null) {
+                            if (error instanceof FacebookOperationCanceledException) {
+                                Toast.makeText(getActivity().getApplicationContext(),
+                                        "Request cancelled",
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getActivity().getApplicationContext(),
+                                        "Network Error",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            final String requestId = values.getString("request");
+                            if (requestId != null) {
+                                Toast.makeText(getActivity().getApplicationContext(),
+                                        "Request sent",
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getActivity().getApplicationContext(),
+                                        "Request cancelled",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+
+                })
+                .build();
+        requestsDialog.show();
+    }
+
+    //GET request to find the users
     private class FindUserTask extends AsyncTask<String, Void, String> {
 
         private boolean multiple;

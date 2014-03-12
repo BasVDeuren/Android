@@ -50,10 +50,11 @@ public class ActiveGamesFragment extends Fragment implements AdapterView.OnItemC
         GameViewModel game = (GameViewModel) games.get(position);
         Intent intent = new Intent(getActivity(), GameActivity.class);
         intent.putExtra("gameId", game.gameId);
+        intent.putExtra("replay", false);
         startActivity(intent);
     }
 
-    //POST request to edit the profile
+    //GET request to get the games
     private class GetGamesTask extends AsyncTask<String, Void, String> {
 
         @Override

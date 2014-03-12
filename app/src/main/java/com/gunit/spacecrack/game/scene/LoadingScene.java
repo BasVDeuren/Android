@@ -1,5 +1,6 @@
 package com.gunit.spacecrack.game.scene;
 
+import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.game.manager.SceneManager;
 
 import org.andengine.entity.scene.background.Background;
@@ -14,6 +15,8 @@ public class LoadingScene extends BaseScene {
     @Override
     public void createScene() {
         setBackground(new Background(Color.BLACK));
+        Text loading = new Text(0, 0, resourcesManager.font, activity.getText(R.string.loading), vbom);
+        loading.setPosition(((activity.CAMERA_WIDTH - loading.getWidth()) / 2), (activity.CAMERA_HEIGHT - loading.getHeight()) / 2);
         attachChild(new Text(400, 240, resourcesManager.font, "Loading...", vbom));
     }
 

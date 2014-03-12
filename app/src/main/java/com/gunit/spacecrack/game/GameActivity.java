@@ -17,6 +17,7 @@ import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.game.manager.ResourcesManager;
 import com.gunit.spacecrack.game.manager.SceneManager;
 import com.gunit.spacecrack.json.GameWrapper;
+import com.gunit.spacecrack.json.RevisionListViewModel;
 import com.gunit.spacecrack.model.Planet;
 import com.gunit.spacecrack.model.Player;
 import com.gunit.spacecrack.model.SpaceCrackMap;
@@ -38,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -59,7 +61,7 @@ public class GameActivity extends BaseGameActivity {
     public GameWrapper gameWrapper;
     public Player player;
     public Map<String, Planet> planets;
-
+    public List<Integer> revisions;
     // Camera movement speeds
     public final float maxVelocityX = 500;
     public final float maxVelocityY = 500;
@@ -69,6 +71,8 @@ public class GameActivity extends BaseGameActivity {
     private boolean gameStarted;
     private boolean mapLoaded;
     private boolean firstPLayer;
+    public boolean replay;
+    public int gameId;
 
     private SpaceCrackService spaceCrackService;
     private boolean boundToService = false;
@@ -87,6 +91,7 @@ public class GameActivity extends BaseGameActivity {
         //Bind to the service
         Intent intent = new Intent(this, SpaceCrackService.class);
         intent.putExtra("username", SpaceCrackApplication.user.username);
+        startService(intent);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -141,7 +146,13 @@ public class GameActivity extends BaseGameActivity {
         if (intent.getStringExtra("gameName") != null && intent.getIntExtra("opponent", 0) != 0) {
             new CreateGameTask(intent.getStringExtra("gameName"), intent.getIntExtra("opponent", 0)).execute(SpaceCrackApplication.URL_GAME);
         } else if (intent.getIntExtra("gameId", 0) != 0 ) {
-            new GetActiveGame().execute(SpaceCrackApplication.URL_ACTIVEGAME + "/" + intent.getIntExtra("gameId", 0));
+            if (intent.getBooleanExtra("replay", false)) {
+                replay = true;
+                gameId = intent.getIntExtra("gameId", 0);
+                new GetRevisions().execute(SpaceCrackApplication.URL_REPLAY + "/" + intent.getIntExtra("gameId", 0));
+            } else {
+                new GetActiveGame().execute(SpaceCrackApplication.URL_ACTIVEGAME + "/" + intent.getIntExtra("gameId", 0));
+            }
         } else {
             Toast.makeText(this, getString(R.string.game_not_loaded), Toast.LENGTH_SHORT).show();
             finish();
@@ -204,6 +215,9 @@ public class GameActivity extends BaseGameActivity {
     @Override
     protected void onDestroy() {
         Log.d("Gameactivity", "Destroy");
+//        if (this.isGameLoaded()) {
+//            System.exit(0);
+//        }
         super.onDestroy();
     }
 
@@ -230,11 +244,15 @@ public class GameActivity extends BaseGameActivity {
     private void startGame () {
         if (mapLoaded && gameStarted) {
 //            SceneManager.getInstance().loadMenuScene(mEngine);
-            spaceCrackService.addChatListener(SpaceCrackApplication.URL_FIREBASE_CHAT, String.valueOf(gameWrapper.game.gameId));
-            spaceCrackService.addGameListener(gameWrapper.firebaseGameURL, player.playerId, firstPLayer);
-//            spaceCrackService.addChatListener(SpaceCrackApplication.URL_FIREBASE_CHAT, String.valueOf(1));
-
-            SceneManager.getInstance().loadGameScene(mEngine);
+            mapLoaded = false;
+            gameStarted = false;
+            if (replay) {
+                SceneManager.getInstance().loadReplayScene(mEngine);
+            } else {
+                spaceCrackService.addChatListener(SpaceCrackApplication.URL_FIREBASE_CHAT, String.valueOf(gameWrapper.game.gameId));
+                spaceCrackService.addGameListener(gameWrapper.firebaseGameURL, player.playerId, firstPLayer);
+                SceneManager.getInstance().loadGameScene(mEngine);
+            }
         }
     }
 
@@ -324,6 +342,30 @@ public class GameActivity extends BaseGameActivity {
                         player = gameWrapper.game.player2;
                         firstPLayer = false;
                     }
+                    gameStarted = true;
+                    startGame();
+                } catch (JsonParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private class GetRevisions extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground (String...url)
+        {
+            return RestService.getRequest(url[0]);
+        }
+
+        @Override
+        protected void onPostExecute (String result)
+        {
+            if (result != null) {
+                try {
+                    Gson gson = new Gson();
+                    RevisionListViewModel revisionListViewModel = gson.fromJson(result, RevisionListViewModel.class);
+                    revisions = revisionListViewModel.revisions;
                     gameStarted = true;
                     startGame();
                 } catch (JsonParseException e) {

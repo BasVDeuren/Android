@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/btn_home_replay"
             android:text="@string/replays"
-            android:enabled="false"/>
+            android:enabled="true"/>
 
     </LinearLayout>
 

@@ -1,6 +1,7 @@
 package com.gunit.spacecrack.service;
 
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -10,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -22,14 +24,19 @@ import com.firebase.client.ValueEventListener;
 import com.google.gson.Gson;
 import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.activity.SplashScreenActivity;
+import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.chat.Chat;
 import com.gunit.spacecrack.chat.ChatActivity;
 import com.gunit.spacecrack.game.GameActivity;
+import com.gunit.spacecrack.json.MapWrapper;
 import com.gunit.spacecrack.model.Game;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Dimitri on 4/03/14.
@@ -53,6 +60,7 @@ public class SpaceCrackService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.i("Service", "Create");
         valueEventListeners = new HashMap<Integer, ValueEventListener>();
         childEventListeners = new HashMap<String, ChildEventListener>();
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -70,21 +78,46 @@ public class SpaceCrackService extends Service {
 
     @Override
     public void onDestroy() {
-        notificationManager.cancel(notificationId);
         super.onDestroy();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i("Service", "StartCommand");
         if (intent != null) {
             username = intent.getStringExtra("username");
+//            addGameListener(SpaceCrackApplication.URL_FIREBASE_CHAT + "/1", 1, true);
         }
         return Service.START_REDELIVER_INTENT;
     }
 
     @Override
     public IBinder onBind(Intent intent) {
+        Log.i("Service", "Bind");
         return binder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.i("Service", "Unbind");
+        return super.onUnbind(intent);
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent){
+        Log.i("Service", "Task Removed");
+        saveListeners();
+        Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
+        restartServiceIntent.setPackage(getPackageName());
+
+        PendingIntent restartServicePendingIntent = PendingIntent.getService(getApplicationContext(), 1, restartServiceIntent, PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager alarmService = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        alarmService.set(
+                AlarmManager.ELAPSED_REALTIME,
+                SystemClock.elapsedRealtime() + 1000,
+                restartServicePendingIntent);
+
+        super.onTaskRemoved(rootIntent);
     }
 
     public void addGameListener(String url, final int playerId, final boolean first) {
@@ -93,19 +126,22 @@ public class SpaceCrackService extends Service {
             ValueEventListener valueEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    notifications = sharedPreferences.getBoolean("pref_notifications", true);
-                    if (!isForeground("com.gunit.spacecrack") && notifications) {
-                        Game game = gson.fromJson(dataSnapshot.getValue().toString(), Game.class);
-                        if (first) {
-                            if (game.player2.turnEnded) {
-                                showNotification(game.name, getText(R.string.your_turn).toString() ,false);
-                            }
-                        } else {
-                            if (game.player1.turnEnded) {
-                                showNotification(game.name, getText(R.string.your_turn).toString() ,false);
+                    try {
+                        notifications = sharedPreferences.getBoolean("pref_notifications", true);
+                        if (!isForeground("com.gunit.spacecrack") && notifications) {
+                            Game game = gson.fromJson(dataSnapshot.getValue().toString(), Game.class);
+                            if (first) {
+                                if (game.player2.turnEnded) {
+                                    showNotification(game.name, getText(R.string.your_turn).toString(), false);
+                                }
+                            } else {
+                                if (game.player1.turnEnded) {
+                                    showNotification(game.name, getText(R.string.your_turn).toString(), false);
+                                }
                             }
                         }
-
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
 
@@ -200,19 +236,19 @@ public class SpaceCrackService extends Service {
         notificationManager.notify(notificationId, builder.build());
     }
 
-    private boolean isForeground(String PackageName){
+    private boolean isForeground(String PackageName) {
         // Get the Activity Manager
         ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
 
         // Get a list of running tasks, we are only interested in the last one,
         // the top most so we give a 1 as parameter so we only get the topmost.
-        List< ActivityManager.RunningTaskInfo > task = manager.getRunningTasks(1);
+        List<ActivityManager.RunningTaskInfo> task = manager.getRunningTasks(1);
 
         // Get the info we need for comparison.
         ComponentName componentInfo = task.get(0).topActivity;
 
         // Check if it matches our package name.
-        if(componentInfo.getPackageName().equals(PackageName)) return true;
+        if (componentInfo.getPackageName().equals(PackageName)) return true;
 
         // If not then our app is not on the foreground.
         return false;
@@ -222,5 +258,14 @@ public class SpaceCrackService extends Service {
         public SpaceCrackService getService() {
             return SpaceCrackService.this;
         }
+    }
+
+    private void saveListeners() {
+        Log.i("Service", "Save listeners");
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        MapWrapper childEventListenerWrapper = new MapWrapper();
+        childEventListenerWrapper.childEventListenerHashMap = childEventListeners;
+        String childWrapper = gson.toJson(childEventListenerWrapper);
+        editor.putString("childWrapper", childWrapper);
     }
 }
