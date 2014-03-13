@@ -58,15 +58,15 @@ public class HomeTest extends ActivityInstrumentationTestCase2<LoginActivity> {
     }
 
     public void testActiveGames() throws Exception {
-        solo.clickOnButton(solo.getString(R.string.new_game));
-        solo.waitForFragmentByTag("New Game");
-        Fragment activeGamesFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("Active Games");
-        assertTrue("ActiveGamesFragment should be visible", activeGamesFragment.isVisible());
+        solo.clickOnButton(solo.getString(R.string.lobby));
+        solo.waitForFragmentByTag("Lobby");
+        Fragment lobbyFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("Lobby");
+        assertTrue("LobbyFragment should be visible", lobbyFragment.isVisible());
     }
 
     public void testReplay() throws Exception {
-        solo.clickOnButton(solo.getString(R.string.new_game));
-        solo.waitForFragmentByTag("New Game");
+        solo.clickOnButton(solo.getString(R.string.replays));
+        solo.waitForFragmentByTag("Replay");
         Fragment replayFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("Replay");
         assertTrue("ReplayFragment should be visible", replayFragment.isVisible());
     }

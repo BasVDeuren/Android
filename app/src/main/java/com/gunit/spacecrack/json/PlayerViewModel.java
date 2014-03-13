@@ -10,5 +10,8 @@ public class PlayerViewModel {
     public List<ColonyViewModel> colonies;
     public List<ShipViewModel> ships;
     public int commandPoints;
+    public boolean requestAccepted;
     public boolean turnEnded;
+    public int profileId;
+    public String playerName;
 }

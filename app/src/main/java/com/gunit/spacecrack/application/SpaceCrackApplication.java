@@ -36,7 +36,7 @@ public class SpaceCrackApplication extends Application {
 
     public static String accessToken;
 
-    public static Pattern emailRegex = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+    public static Pattern emailRegex = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     public final static int NETWORK_TIMEOUT = 12000;
     //Localhost emulator
@@ -59,6 +59,8 @@ public class SpaceCrackApplication extends Application {
     public static final String URL_FIND_EMAIL = DOMAIN + "/api/auth/findusersbyemail";
     public static final String URL_FIND_USERID = DOMAIN + "/api/auth/findUserByUserId";
     public static final String URL_REPLAY = DOMAIN + "/api/auth/replay";
+    public static final String URL_STATISTICS = DOMAIN + "/api/auth/statistics";
+    public static final String URL_GAMEINVITE = DOMAIN + "/api/auth/game/invite";
 
     public static final String URL_FIREBASE_CHAT = "https://amber-fire-3394.firebaseio.com";
 

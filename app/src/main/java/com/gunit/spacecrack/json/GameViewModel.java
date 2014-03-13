@@ -6,7 +6,8 @@ package com.gunit.spacecrack.json;
 public class GameViewModel {
     public int gameId;
     public String name;
+    public int loserPlayerId;
+    public int actionNumber;
     public PlayerViewModel player1;
     public PlayerViewModel player2;
-    public int turnCounter;
 }

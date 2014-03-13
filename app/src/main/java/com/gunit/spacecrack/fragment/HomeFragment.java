@@ -1,8 +1,8 @@
 package com.gunit.spacecrack.fragment;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +38,7 @@ public class HomeFragment extends Fragment {
     private LinearLayout lltProfile;
     private Button btnNewGame;
     private Button btnActiveGames;
+    private Button btnStatistics;
     private Button btnReplay;
     private IconButton btnLogout;
     private IconButton btnSettings;
@@ -53,6 +54,7 @@ public class HomeFragment extends Fragment {
 
         btnNewGame = (Button) view.findViewById(R.id.btn_home_newgame);
         btnActiveGames = (Button) view.findViewById(R.id.btn_home_activegames);
+        btnStatistics = (Button) view.findViewById(R.id.btn_home_statistics);
         btnReplay = (Button) view.findViewById(R.id.btn_home_replay);
         btnShare = (IconButton) view.findViewById(R.id.btn_home_share);
         btnSettings = (IconButton) view.findViewById(R.id.btn_home_settings);
@@ -92,7 +94,7 @@ public class HomeFragment extends Fragment {
         btnNewGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getFragmentManager().beginTransaction()
+                getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.container, new NewGameFragment(), "New Game")
                         .addToBackStack("HomeFragment")
                         .commit();
@@ -101,8 +103,17 @@ public class HomeFragment extends Fragment {
         btnActiveGames.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getFragmentManager().beginTransaction()
-                        .replace(R.id.container, new ActiveGamesFragment(), "Active Games")
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, new LobbyFragment(), "Lobby")
+                        .addToBackStack("HomeFragment")
+                        .commit();
+            }
+        });
+        btnStatistics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, new StatisticsFragment(), "Statistics")
                         .addToBackStack("HomeFragment")
                         .commit();
             }
@@ -110,7 +121,7 @@ public class HomeFragment extends Fragment {
         btnReplay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getFragmentManager().beginTransaction()
+                getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.container, new ReplayFragment(), "Replay")
                         .addToBackStack("HomeFragment")
                         .commit();
@@ -172,7 +183,7 @@ public class HomeFragment extends Fragment {
                 request.executeAsync();
             }
         } else {
-            if (SpaceCrackApplication.user.profile != null) {
+            if (SpaceCrackApplication.user != null && SpaceCrackApplication.user.profile != null) {
                 if (SpaceCrackApplication.user.profile.firstname != null && SpaceCrackApplication.user.profile.lastname != null) {
                     txtName.setText(SpaceCrackApplication.user.profile.firstname + " " + SpaceCrackApplication.user.profile.lastname);
                 }

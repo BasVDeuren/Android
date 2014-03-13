@@ -4,8 +4,11 @@
     <string name="action_settings">Settings</string>
     <string name="active_games">Active games</string>
     <string name="age">Age</string>
+    <string name="amount_of_games">Amount of games</string>
     <string name="app_id">649165391811913</string>
     <string name="app_name">Space Crack</string>
+    <string name="average_colonies">Average amount of colonies per win</string>
+    <string name="average_ships">Average amount of ships per win</string>
     <string name="avatar">Avatar</string>
     <string name="background">Background</string>
     <string name="birth_date">Birth date</string>
@@ -13,6 +16,7 @@
     <string name="chat">Chat</string>
     <string name="check_this_out">Check this out!</string>
     <string name="choose_opponent">Choose opponent</string>
+    <string name="close_game">Close the game?</string>
     <string name="commandpoints">Commandpoints</string>
     <string name="commandpoints_fail">Too few commandpoints</string>
     <string name="contact">Contact</string>
@@ -32,8 +36,12 @@
     <string name="gender">Gender</string>
     <string name="general_settings">General settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="invited_games">Invited games</string>
+    <string name="invitation">Invitation</string>
+    <string name="join_game">Would you like to join the game?</string>
     <string name="last_name">Last name</string>
     <string name="loading">Loading</string>
+    <string name="lobby">Lobby</string>
     <string name="login">Login</string>
     <string name="loggin_in">Loggin in</string>
     <string name="login_fail">Login failed</string>
@@ -46,6 +54,7 @@
     <string name="new_game">New game</string>
     <string name="new_message">New message from </string>
     <string name="new_password">New password</string>
+    <string name="no">No</string>
     <string name="no_connection">No internet connection</string>
     <string name="notifications">Notifitcations</string>
     <string name="notifications_enable">Enable notifications</string>
@@ -55,6 +64,7 @@
     <string name="password_error">Password not saved</string>
     <string name="password_match">Passwords must match</string>
     <string name="password_saved">Password saved</string>
+    <string name="pending_requests">Pending requests</string>
     <string name="play_a_game">Come join me in a battle of Space Crack!</string>
     <string name="player1_turn">Player 1 its turn</string>
     <string name="player2_turn">Player 2 its turn</string>
@@ -93,6 +103,8 @@
     <string name="valid_email_error">Please enter a valid email address</string>
     <string name="victory">Victory!</string>
     <string name="welcome">Welcome!</string>
+    <string name="win_ratio">Win ratio</string>
+    <string name="yes">Yes</string>
     <string name="you_lost">You lost</string>
     <string name="you_won">You won!</string>
     <string name="your_turn">Your turn</string>

@@ -3,18 +3,14 @@ package com.gunit.spacecrack.game.scene;
 import android.content.Intent;
 
 import com.gunit.spacecrack.chat.ChatActivity;
-import com.gunit.spacecrack.game.GameActivity;
 import com.gunit.spacecrack.game.manager.ResourcesManager;
 import com.gunit.spacecrack.game.manager.SceneManager;
-import com.gunit.spacecrack.game.uicontrols.InputText;
 
-import org.andengine.engine.camera.Camera;
 import org.andengine.entity.scene.menu.MenuScene;
 import org.andengine.entity.scene.menu.item.IMenuItem;
 import org.andengine.entity.scene.menu.item.SpriteMenuItem;
 import org.andengine.entity.scene.menu.item.decorator.ScaleMenuItemDecorator;
 import org.andengine.entity.sprite.Sprite;
-import org.andengine.opengl.util.GLState;
 
 /**
  * Created by Dimitri on 24/02/14.
@@ -84,7 +80,7 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
                 return true;
             case MENU_OPTIONS:
                 Intent intent = new Intent(activity, ChatActivity.class);
-                intent.putExtra("gameId", activity.gameWrapper.game.gameId);
+                intent.putExtra("gameId", activity.gameActivePlayerWrapper.game.gameId);
                 activity.startActivity(intent);
                 return true;
             default:

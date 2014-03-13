@@ -12,7 +12,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gunit.spacecrack.R;
+import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.json.GameViewModel;
+import com.gunit.spacecrack.json.PlayerViewModel;
+import com.gunit.spacecrack.model.Profile;
 import com.gunit.spacecrack.model.User;
 
 import java.util.List;
@@ -47,7 +50,7 @@ public class GameAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder = null;
+        ViewHolder viewHolder;
         GameViewModel game = (GameViewModel) getItem(position);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
@@ -55,24 +58,31 @@ public class GameAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.list_game_item, null);
             viewHolder = new ViewHolder();
             viewHolder.txtGameName = (TextView) convertView.findViewById(R.id.txt_listgames_name);
-            viewHolder.txtTurn = (TextView) convertView.findViewById(R.id.txt_listgames_turn);
+            viewHolder.txtOpponent = (TextView) convertView.findViewById(R.id.txt_listgames_opponent);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
         viewHolder.txtGameName.setText(game.name);
-//        if (game.player1.turnEnded) {
-//            viewHolder.txtTurn.setText(R.string.player2_turn);
-//        } else {
-//            viewHolder.txtTurn.setText(R.string.player1_turn);
-//        }
+        PlayerViewModel opponent = getOpponentProfile(game);
+        viewHolder.txtOpponent.setText(opponent.playerName);
 
         return convertView;
     }
 
     private class ViewHolder {
         TextView txtGameName;
-        TextView txtTurn;
+        TextView txtOpponent;
+    }
+
+    private PlayerViewModel getOpponentProfile(GameViewModel game) {
+        PlayerViewModel opponent;
+        if (game.player1.profileId == SpaceCrackApplication.user.profile.profileId) {
+            opponent = game.player2;
+        } else {
+            opponent = game.player1;
+        }
+        return opponent;
     }
 }

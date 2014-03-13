@@ -9,5 +9,5 @@ public class Game {
     public int loserPlayerId;
     public Player player1;
     public Player player2;
-    public int turnCounter;
+    public int actionNumber;
 }

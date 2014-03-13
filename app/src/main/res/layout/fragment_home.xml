@@ -65,7 +65,7 @@
             android:layout_width="@dimen/default_size"
             android:layout_height="wrap_content"
             android:id="@+id/btn_home_activegames"
-            android:text="@string/active_games"
+            android:text="@string/lobby"
             android:enabled="true"/>
 
         <Button
@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/btn_home_statistics"
             android:text="@string/statistics"
-            android:enabled="false"/>
+            android:enabled="true"/>
 
         <Button
             android:layout_width="@dimen/default_size"

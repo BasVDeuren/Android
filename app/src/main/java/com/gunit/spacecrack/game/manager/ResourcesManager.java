@@ -64,6 +64,7 @@ public class ResourcesManager {
     public ITextureRegion facebookRegion;
     public ITextureRegion facebookPressedRegion;
     public ITextureRegion quitRegion;
+    public ITextureRegion cancelRegion;
     public BuildableBitmapTextureAtlas gameTextureAtlas;
 
     private ResourcesManager() {
@@ -147,6 +148,7 @@ public class ResourcesManager {
         monkeyRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "monkey_winner.png");
         facebookRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "fb_icon.png");
         facebookPressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "fb_icon_pressed.png");
+        cancelRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "cancel.png");
 
         try {
             gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));

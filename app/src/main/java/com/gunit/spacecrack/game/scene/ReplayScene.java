@@ -1,20 +1,16 @@
 package com.gunit.spacecrack.game.scene;
 
+import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Bundle;
 
-import com.facebook.FacebookException;
-import com.facebook.Session;
-import com.facebook.widget.WebDialog;
-import com.firebase.client.Firebase;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.gunit.spacecrack.R;
+import com.gunit.spacecrack.activity.HomeActivity;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.game.GameActivity;
 import com.gunit.spacecrack.game.manager.ResourcesManager;
 import com.gunit.spacecrack.game.manager.SceneManager;
-import com.gunit.spacecrack.json.RevisionListViewModel;
 import com.gunit.spacecrack.model.Colony;
 import com.gunit.spacecrack.model.Game;
 import com.gunit.spacecrack.model.Planet;
@@ -22,8 +18,6 @@ import com.gunit.spacecrack.model.Player;
 import com.gunit.spacecrack.model.Ship;
 import com.gunit.spacecrack.restservice.RestService;
 
-import org.andengine.engine.camera.Camera;
-import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.primitive.Line;
@@ -39,7 +33,6 @@ import org.andengine.input.touch.TouchEvent;
 import org.andengine.input.touch.detector.PinchZoomDetector;
 import org.andengine.input.touch.detector.ScrollDetector;
 import org.andengine.input.touch.detector.SurfaceScrollDetector;
-import org.andengine.opengl.util.GLState;
 import org.andengine.util.HorizontalAlign;
 
 import java.util.ArrayList;
@@ -54,20 +47,22 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class ReplayScene extends BaseScene implements IOnSceneTouchListener, PinchZoomDetector.IPinchZoomDetectorListener, ScrollDetector.IScrollDetectorListener {
 
-    private Scene gameScene;
+    private Scene replayScene;
     private PinchZoomDetector pinchZoomDetector;
     private final float MIN_ZOOM_FACTOR = 1f;
     private final float MAX_ZOOM_FACTOR = 3f;
     private float zoomFactor;
     private SurfaceScrollDetector scrollDetector;
     private Map<String, TiledSprite> planetSprites;
+    private Rectangle exitScene;
+    private boolean backPressed = true;
 
     private List<Sprite> shipSprites;
     private List<Sprite> colonySprites;
 
     @Override
     public void createScene() {
-        gameScene = this;
+        replayScene = this;
 
         shipSprites = new ArrayList<Sprite>();
         colonySprites = new ArrayList<Sprite>();
@@ -92,8 +87,63 @@ public class ReplayScene extends BaseScene implements IOnSceneTouchListener, Pin
 
     @Override
     public void onBackKeyPressed() {
-        SceneManager.getInstance().loadLoadingScene();
-        activity.finish();
+        if (backPressed) {
+            exitScene = new Rectangle((activity.CAMERA_WIDTH / 2) - 200, (activity.CAMERA_HEIGHT / 2) - 100, 400, 200, vbom);
+            exitScene.setColor(0.24f, 0.27f, 0.3f);
+            exitScene.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+            exitScene.setAlpha(0.8f);
+
+            Text text = new Text(0, 0, resourcesManager.font, activity.getText(R.string.close_game), vbom);
+            text.setPosition(((exitScene.getWidth() - text.getWidth()) / 2), (exitScene.getHeight() - text.getHeight()) / 2);
+            exitScene.attachChild(text);
+
+            ButtonSprite btnConfirm = new ButtonSprite(0, 0, resourcesManager.turnRegion, vbom);
+            btnConfirm.setPosition(((exitScene.getWidth() - btnConfirm.getWidth()) / 2) - 50, exitScene.getHeight() - 50);
+            btnConfirm.setOnClickListener(new ButtonSprite.OnClickListener() {
+                @Override
+                public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX, float pTouchAreaLocalY) {
+                    Intent intent = new Intent(activity.getApplicationContext(), HomeActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.putExtra("EXIT", true);
+                    activity.startActivity(intent);
+                }
+            });
+            ButtonSprite btnCancel = new ButtonSprite(0, 0, resourcesManager.cancelRegion, vbom);
+            btnCancel.setPosition(((exitScene.getWidth() - btnCancel.getWidth()) / 2) + 50, exitScene.getHeight() - 50);
+            btnCancel.setOnClickListener(new ButtonSprite.OnClickListener() {
+                @Override
+                public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX, float pTouchAreaLocalY) {
+                    activity.runOnUpdateThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!exitScene.isDisposed()) {
+                                exitScene.dispose();
+                            }
+                            replayScene.detachChild(exitScene);
+                        }
+                    });
+                }
+            });
+
+            this.registerTouchArea(btnConfirm);
+            this.registerTouchArea(btnCancel);
+            exitScene.attachChild(btnConfirm);
+            exitScene.attachChild(btnCancel);
+            this.attachChild(exitScene);
+        } else {
+            activity.runOnUpdateThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (!exitScene.isDisposed()) {
+                        exitScene.dispose();
+                    }
+                    replayScene.detachChild(exitScene);
+                }
+            });
+        }
+
+        backPressed = !backPressed;
+
     }
 
     @Override
@@ -171,22 +221,13 @@ public class ReplayScene extends BaseScene implements IOnSceneTouchListener, Pin
 
     private void drawColonies(Player player, int index) {
         TiledSprite colonySprite;
-        Sprite miniSpaceshipSprite;
 
         if (player.colonies != null) {
             for (Colony colony : player.colonies) {
                 Sprite planetSprite = planetSprites.get(colony.planetName);
 
-                colonySprite = new TiledSprite(-2, -25, resourcesManager.castleRegion, vbom)
-                {
-                    @Override
-                    protected void preDraw(GLState glState, Camera camera1) {
-                        super.preDraw(glState, camera1);
-                        glState.enableDither();
-                    }
-                };
+                colonySprite = createTiledSprite(-2, -25, resourcesManager.castleRegion, vbom, index);
                 colonySprite.setCullingEnabled(true);
-                colonySprite.setCurrentTileIndex(index);
 
                 colonySprites.add(colonySprite);
                 planetSprite.attachChild(colonySprite);
@@ -202,7 +243,7 @@ public class ReplayScene extends BaseScene implements IOnSceneTouchListener, Pin
             for (Ship ship : player.ships) {
                 final Planet planet = activity.planets.get(ship.planetName);
                 final Ship finalShip = ship;
-                shipSprite = createTiledSprite((planet.x * GameActivity.SCALE_X) - 10, (planet.y * GameActivity.SCALE_Y) - 10, resourcesManager.spaceshipRegion, vbom, 0);
+                shipSprite = createTiledSprite((planet.x * GameActivity.SCALE_X) - 10, (planet.y * GameActivity.SCALE_Y) - 10, resourcesManager.spaceshipRegion, vbom, index);
                 shipSprite.setScale(0.5f);
                 shipSprite.setCullingEnabled(true);
 
@@ -222,14 +263,14 @@ public class ReplayScene extends BaseScene implements IOnSceneTouchListener, Pin
             @Override
             public void run() {
                 for (Sprite sprite : shipSprites) {
-                    gameScene.unregisterTouchArea(sprite);
+                    replayScene.unregisterTouchArea(sprite);
                     sprite.clearEntityModifiers();
                     sprite.clearUpdateHandlers();
                     sprite.dispose();
                     detachChild(sprite);
                 }
                 for (Sprite sprite : colonySprites) {
-                    gameScene.unregisterTouchArea(sprite);
+                    replayScene.unregisterTouchArea(sprite);
                     sprite.clearEntityModifiers();
                     sprite.clearUpdateHandlers();
                     sprite.dispose();
@@ -246,22 +287,6 @@ public class ReplayScene extends BaseScene implements IOnSceneTouchListener, Pin
         camera.setHUD(null);
         camera.setCenterDirect(GameActivity.CAMERA_WIDTH / 2, GameActivity.CAMERA_HEIGHT / 2);
         camera.setZoomFactor(1f);
-
-        activity.runOnUpdateThread(new Runnable() {
-            @Override
-            public void run() {
-                for (Sprite sprite : shipSprites) {
-                    gameScene.unregisterTouchArea(sprite);
-                    sprite.clearEntityModifiers();
-                    sprite.clearUpdateHandlers();
-                }
-                for (Sprite sprite : colonySprites) {
-                    gameScene.unregisterTouchArea(sprite);
-                    sprite.clearEntityModifiers();
-                    sprite.clearUpdateHandlers();
-                }
-            }
-        });
 
         Rectangle endScreen = new Rectangle((activity.CAMERA_WIDTH / 2) - 200, (activity.CAMERA_HEIGHT / 2) - 100, 400, 200, vbom);
         endScreen.setColor(0.24f, 0.27f, 0.3f);

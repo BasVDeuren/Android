@@ -6,4 +6,5 @@ package com.gunit.spacecrack.json;
 public class ColonyViewModel {
     public int colonyId;
     public String planetName;
+    public int strength;
 }

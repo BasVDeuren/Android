@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class Player {
     public int playerId;
+    public String playerName;
     public Profile profile;
     public List<Colony> colonies;
     public List<Ship> ships;

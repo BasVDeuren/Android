@@ -8,6 +8,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -258,6 +259,84 @@ public class RestService {
                 Log.i(TAG, "Profile edited");
             } else {
                 Log.i(TAG, "Profile not edited");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        httpClient.getConnectionManager().shutdown();
+        return result;
+    }
+
+    public static int acceptInvite(String url) {
+        int result = 0;
+        HttpPost httpPost = new HttpPost(url);
+        HttpParams httpParams = new BasicHttpParams();
+        HttpConnectionParams.setConnectionTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
+        HttpConnectionParams.setSoTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
+        HttpClient httpClient = new DefaultHttpClient(httpParams);
+
+        CookieStore cookieStore = ((DefaultHttpClient) httpClient).getCookieStore();
+        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
+
+        cookie.setDomain(SpaceCrackApplication.IP_ADDRESS);
+        cookie.setPath("/");
+        cookieStore.addCookie(cookie);
+        ((DefaultHttpClient) httpClient).setCookieStore(cookieStore);
+
+        httpPost.setHeader("accept", "application/json");
+        httpPost.setHeader("Content-type", "application/json");
+
+        try {
+            // Execute HTTP Post Request
+            HttpResponse response = httpClient.execute(httpPost);
+
+            //Check the Status code of the response
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                result = statusCode;
+                Log.i(TAG, "Request succeeded");
+            } else {
+                Log.i(TAG, "Request failed");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        httpClient.getConnectionManager().shutdown();
+        return result;
+    }
+
+    public static int declineInvite(String url) {
+        int result = 0;
+        HttpDelete httpDelete = new HttpDelete(url);
+        HttpParams httpParams = new BasicHttpParams();
+        HttpConnectionParams.setConnectionTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
+        HttpConnectionParams.setSoTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
+        HttpClient httpClient = new DefaultHttpClient(httpParams);
+
+        CookieStore cookieStore = ((DefaultHttpClient) httpClient).getCookieStore();
+        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
+
+        cookie.setDomain(SpaceCrackApplication.IP_ADDRESS);
+        cookie.setPath("/");
+        cookieStore.addCookie(cookie);
+        ((DefaultHttpClient) httpClient).setCookieStore(cookieStore);
+
+        httpDelete.setHeader("accept", "application/json");
+        httpDelete.setHeader("Content-type", "application/json");
+
+        try {
+            // Execute HTTP Post Request
+            HttpResponse response = httpClient.execute(httpDelete);
+
+            //Check the Status code of the response
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                result = statusCode;
+                Log.i(TAG, "Request succeeded");
+            } else {
+                Log.i(TAG, "Request failed");
             }
 
         } catch (Exception e) {

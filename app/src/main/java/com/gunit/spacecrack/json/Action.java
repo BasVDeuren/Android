@@ -11,8 +11,8 @@ public class Action {
     public String destinationPlanetName;
     public int gameId;
     public int playerId;
-    public Ship ship;
-    public Colony colony;
+    public ShipViewModel ship;
+    public ColonyViewModel colony;
 
     public Action (String actionType, int gameId, int playerId) {
         this.actionType = actionType;
@@ -20,7 +20,7 @@ public class Action {
         this.playerId = playerId;
     }
 
-    public Action(String actionType, String destinationPlanetName, int gameId, int playerId, Ship ship) {
+    public Action(String actionType, String destinationPlanetName, int gameId, int playerId, ShipViewModel ship) {
         this.actionType = actionType;
         this.destinationPlanetName = destinationPlanetName;
         this.gameId = gameId;
@@ -28,7 +28,7 @@ public class Action {
         this.ship = ship;
     }
 
-    public Action(String actionType, Colony colony, int gameId, int playerId) {
+    public Action(String actionType, ColonyViewModel colony, int gameId, int playerId) {
         this.actionType = actionType;
         this.colony = colony;
         this.gameId = gameId;

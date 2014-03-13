@@ -16,7 +16,8 @@ import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.game.manager.ResourcesManager;
 import com.gunit.spacecrack.game.manager.SceneManager;
-import com.gunit.spacecrack.json.GameWrapper;
+import com.gunit.spacecrack.json.GameActivePlayerWrapper;
+import com.gunit.spacecrack.json.PlayerViewModel;
 import com.gunit.spacecrack.json.RevisionListViewModel;
 import com.gunit.spacecrack.model.Planet;
 import com.gunit.spacecrack.model.Player;
@@ -58,8 +59,8 @@ public class GameActivity extends BaseGameActivity {
     private ResourcesManager resourceManager;
 
     public SpaceCrackMap spaceCrackMap;
-    public GameWrapper gameWrapper;
-    public Player player;
+    public GameActivePlayerWrapper gameActivePlayerWrapper;
+    public PlayerViewModel player;
     public Map<String, Planet> planets;
     public List<Integer> revisions;
     // Camera movement speeds
@@ -105,6 +106,15 @@ public class GameActivity extends BaseGameActivity {
         super.onStop();
     }
 
+    @Override
+    protected synchronized void onResume() {
+        super.onResume();
+        if (mEngine != null && !mEngine.isRunning()) {
+            mEngine.start();
+        }
+    }
+
+
     /** Defines callbacks for service binding, passed to bindService() */
     private ServiceConnection serviceConnection = new ServiceConnection() {
 
@@ -127,7 +137,6 @@ public class GameActivity extends BaseGameActivity {
     public synchronized void onGameCreated() {
         super.onGameCreated();
         Log.d("GameActivity", "Game created");
-
     }
 
     @Override
@@ -225,6 +234,9 @@ public class GameActivity extends BaseGameActivity {
     protected void onPause() {
         Log.i("Gameactivity", "Pause");
         super.onPause();
+        if (mEngine != null && mEngine.isRunning()) {
+            mEngine.stop();
+        }
     }
     //    @Override
 //    public boolean onKeyDown(int keyCode, KeyEvent event)
@@ -249,8 +261,8 @@ public class GameActivity extends BaseGameActivity {
             if (replay) {
                 SceneManager.getInstance().loadReplayScene(mEngine);
             } else {
-                spaceCrackService.addChatListener(SpaceCrackApplication.URL_FIREBASE_CHAT, String.valueOf(gameWrapper.game.gameId));
-                spaceCrackService.addGameListener(gameWrapper.firebaseGameURL, player.playerId, firstPLayer);
+                spaceCrackService.addChatListener(SpaceCrackApplication.URL_FIREBASE_CHAT, String.valueOf(gameActivePlayerWrapper.game.gameId));
+                spaceCrackService.addGameListener(gameActivePlayerWrapper.firebaseGameURL, player.playerId, firstPLayer);
                 SceneManager.getInstance().loadGameScene(mEngine);
             }
         }
@@ -334,12 +346,13 @@ public class GameActivity extends BaseGameActivity {
                 Toast.makeText(GameActivity.this, "Data received", Toast.LENGTH_SHORT).show();
                 try {
                     Gson gson = new Gson();
-                    gameWrapper = gson.fromJson(result, GameWrapper.class);
-                    if (gameWrapper.activePlayerId == gameWrapper.game.player1.playerId) {
-                        player = gameWrapper.game.player1;
+                    Log.i("Game JSON", result);
+                    gameActivePlayerWrapper = gson.fromJson(result, GameActivePlayerWrapper.class);
+                    if (gameActivePlayerWrapper.activePlayerId == gameActivePlayerWrapper.game.player1.playerId) {
+                        player = gameActivePlayerWrapper.game.player1;
                         firstPLayer = true;
                     } else {
-                        player = gameWrapper.game.player2;
+                        player = gameActivePlayerWrapper.game.player2;
                         firstPLayer = false;
                     }
                     gameStarted = true;
