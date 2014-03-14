@@ -20,17 +20,12 @@ import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.chat.ChatActivity;
 import com.gunit.spacecrack.game.GameActivity;
 import com.gunit.spacecrack.game.manager.ResourcesManager;
-import com.gunit.spacecrack.game.manager.SceneManager;
 import com.gunit.spacecrack.json.Action;
 import com.gunit.spacecrack.json.ColonyViewModel;
 import com.gunit.spacecrack.json.GameViewModel;
 import com.gunit.spacecrack.json.PlayerViewModel;
 import com.gunit.spacecrack.json.ShipViewModel;
-import com.gunit.spacecrack.model.Colony;
-import com.gunit.spacecrack.model.Game;
 import com.gunit.spacecrack.model.Planet;
-import com.gunit.spacecrack.model.Player;
-import com.gunit.spacecrack.model.Ship;
 import com.gunit.spacecrack.restservice.RestService;
 
 import org.andengine.engine.camera.Camera;
@@ -596,7 +591,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         endScreen.setAlpha(0.8f);
 
         if (Session.getActiveSession() != null) {
-            ButtonSprite facebook = new ButtonSprite(((endScreen.getWidth() / 2) - 25), (endScreen.getHeight() / 2 + 40), resourcesManager.facebookRegion, resourcesManager.facebookPressedRegion, vbom);
+            ButtonSprite facebook = new ButtonSprite(((endScreen.getWidth() / 2) - 75), (endScreen.getHeight() / 2 + 30), resourcesManager.facebookRegion, resourcesManager.facebookPressedRegion, vbom);
             facebook.setOnClickListener(new ButtonSprite.OnClickListener() {
                 @Override
                 public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX, float pTouchAreaLocalY) {
@@ -630,7 +625,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
             this.registerTouchArea(facebook);
         }
 
-        ButtonSprite quit = new ButtonSprite(((endScreen.getWidth() / 2) + 25), (endScreen.getHeight() / 2 + 40), resourcesManager.quitRegion, vbom);
+        ButtonSprite quit = new ButtonSprite(((endScreen.getWidth() / 2) + 25), (endScreen.getHeight() / 2 + 30), resourcesManager.quitRegion, vbom);
         quit.setOnClickListener(new ButtonSprite.OnClickListener() {
             @Override
             public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX, float pTouchAreaLocalY) {

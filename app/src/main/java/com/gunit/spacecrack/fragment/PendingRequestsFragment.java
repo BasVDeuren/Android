@@ -6,13 +6,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.adapter.GameAdapter;
-import com.gunit.spacecrack.json.GameViewModel;
 
 import java.util.List;
 

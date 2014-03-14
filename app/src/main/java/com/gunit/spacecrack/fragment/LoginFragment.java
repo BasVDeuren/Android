@@ -21,11 +21,11 @@ import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
+import com.gunit.spacecrack.R;
+import com.gunit.spacecrack.activity.HomeActivity;
+import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.interfacerequest.ILoginRequest;
 import com.gunit.spacecrack.interfacerequest.IUserRequest;
-import com.gunit.spacecrack.R;
-import com.gunit.spacecrack.application.SpaceCrackApplication;
-import com.gunit.spacecrack.activity.HomeActivity;
 import com.gunit.spacecrack.model.User;
 import com.gunit.spacecrack.restservice.RestService;
 import com.gunit.spacecrack.task.LoginTask;
@@ -74,7 +74,7 @@ public class LoginFragment extends Fragment implements ILoginRequest, IUserReque
         btnRegister = (Button) view.findViewById(R.id.btn_login_register);
         btnFacebook = (LoginButton) view.findViewById(R.id.btn_login_facebook);
         //Set the permissions
-        btnFacebook.setReadPermissions(Arrays.asList("email", "user_birthday"));
+        btnFacebook.setReadPermissions(Arrays.asList("email", "user_birthday", "user_photos"));
 
         facebookLogin = false;
         addListeners();
@@ -115,10 +115,9 @@ public class LoginFragment extends Fragment implements ILoginRequest, IUserReque
             public void onUserInfoFetched(GraphUser user) {
                 SpaceCrackApplication.graphUser = user;
                 if (user != null) {
-                    SpaceCrackApplication.graphUser = user;
                     facebookLogin = true;
                     email = (String) SpaceCrackApplication.graphUser.asMap().get("email");
-                    password = SpaceCrackApplication.hashPassword("facebook" + user.getId());
+                    password = "facebook" + user.getId();
                     new LoginTask(email, password, loginFragment).execute(SpaceCrackApplication.URL_LOGIN);
                 }
             }
@@ -146,7 +145,7 @@ public class LoginFragment extends Fragment implements ILoginRequest, IUserReque
             Log.i(TAG, "Login success");
             new UserTask(userCall).execute(SpaceCrackApplication.URL_USER);
         } else if (facebookLogin) {
-            new RegisterTask(SpaceCrackApplication.graphUser.getName(), SpaceCrackApplication.hashPassword("facebook" + SpaceCrackApplication.graphUser.getId()), SpaceCrackApplication.hashPassword("facebook" + SpaceCrackApplication.graphUser.getId()), (String) SpaceCrackApplication.graphUser.asMap().get("email")).execute(SpaceCrackApplication.URL_REGISTER);
+            new RegisterTask(SpaceCrackApplication.graphUser.getName().replaceAll("\\s","_"), "facebook" + SpaceCrackApplication.graphUser.getId(), "facebook" + SpaceCrackApplication.graphUser.getId(), (String) SpaceCrackApplication.graphUser.asMap().get("email")).execute(SpaceCrackApplication.URL_REGISTER);
         }
 
         Log.i(TAG, "Login failed");
@@ -233,13 +232,38 @@ public class LoginFragment extends Fragment implements ILoginRequest, IUserReque
         {
             //Register newUser
             String accessToken = RestService.postRequestWithoutAccessToken(url[0], newUser);
-            //If newUser has been registered, login
+            //If newUser has been registered, login and update profile
             if (accessToken != null) {
                 JSONObject loginUser = new JSONObject();
+                JSONObject profile = new JSONObject();
                 try {
                     loginUser.put("email", newUser.get("email"));
                     loginUser.put("password", newUser.get("password"));
                     accessToken = RestService.postRequestWithoutAccessToken(SpaceCrackApplication.URL_LOGIN, loginUser);
+                    SpaceCrackApplication.accessToken = accessToken;
+
+                    //Get the URL of the Facebook profilepicture
+                    String profilePictureUrl = SpaceCrackApplication.getFacebookPictureUrl();
+                    String picture = null;
+                    if (profilePictureUrl != null) {
+                        String jsonString = RestService.getRequest(profilePictureUrl);
+                        if (jsonString != null) {
+                            jsonString = jsonString.replace("\\/", "/");
+                            JSONObject jsonObject = new JSONObject(jsonString);
+                            picture = jsonObject.getJSONObject("data").getString("url");
+                        }
+                    }
+                    profile.put("dayOfBirth", SpaceCrackApplication.getLocalDate(SpaceCrackApplication.graphUser.getBirthday()));
+                    profile.put("email", SpaceCrackApplication.graphUser.asMap().get("email"));
+                    profile.put("firstname", SpaceCrackApplication.graphUser.getFirstName());
+                    profile.put("lastname", SpaceCrackApplication.graphUser.getLastName());
+                    if (picture != null) {
+                        profile.put("image", picture);
+                    } else {
+                        profile.put("image", "");
+                    }
+                    Log.i("FacebookProfile", profile.toString());
+                    RestService.postRequest(SpaceCrackApplication.URL_PROFILE, profile);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -255,6 +279,7 @@ public class LoginFragment extends Fragment implements ILoginRequest, IUserReque
             if (result != null) {
                 new UserTask(userCall).execute(SpaceCrackApplication.URL_USER);
             } else {
+                facebookLogin = false;
                 Toast.makeText(getActivity(), getString(R.string.email_register), Toast.LENGTH_SHORT).show();
                 if (Session.getActiveSession() != null) {
                     Session.getActiveSession().closeAndClearTokenInformation();

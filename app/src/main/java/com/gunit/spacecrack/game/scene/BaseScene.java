@@ -1,10 +1,7 @@
 package com.gunit.spacecrack.game.scene;
 
-import android.app.Activity;
-
 import com.gunit.spacecrack.game.GameActivity;
 import com.gunit.spacecrack.game.manager.ResourcesManager;
-import com.gunit.spacecrack.game.manager.SceneManager;
 
 import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;

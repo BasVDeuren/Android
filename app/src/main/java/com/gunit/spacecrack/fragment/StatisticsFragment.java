@@ -12,11 +12,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
-import com.gunit.spacecrack.json.RevisionListViewModel;
 import com.gunit.spacecrack.json.StatisticsViewModel;
 import com.gunit.spacecrack.restservice.RestService;
-
-import org.andengine.entity.text.Text;
 
 /**
  * Created by Dimitri on 7/03/14.

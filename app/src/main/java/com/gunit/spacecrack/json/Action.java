@@ -1,8 +1,5 @@
 package com.gunit.spacecrack.json;
 
-import com.gunit.spacecrack.model.Colony;
-import com.gunit.spacecrack.model.Ship;
-
 /**
  * Created by Dimitri on 28/02/14.
  */

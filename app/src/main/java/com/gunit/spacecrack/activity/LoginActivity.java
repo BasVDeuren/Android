@@ -1,13 +1,11 @@
 package com.gunit.spacecrack.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.facebook.Session;
 import com.gunit.spacecrack.R;
-import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.fragment.LoginFragment;
 
 /**

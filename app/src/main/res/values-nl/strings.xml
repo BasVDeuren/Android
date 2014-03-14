@@ -55,6 +55,7 @@
     <string name="help_win_condition">Het spel is gedaan wanneer 1 van de spelers geen kolonies meer heeft, in dat geval is de andere speler gewonnen.</string>
     <string name="incredible_strategy_game">Ongelooflijk strategie spel!</string>
     <string name="invitation">Uitnodiging</string>
+    <string name="invitation_accepted">Uitnodiging geaccepteerd</string>
     <string name="invited_games">Uitgenodigde spellen</string>
     <string name="join_game">Wil je graag ingaan op deze invitatie?</string>
     <string name="last_name">Familienaam</string>

@@ -1,7 +1,6 @@
 package com.gunit.spacecrack.game.scene;
 
 import com.gunit.spacecrack.R;
-import com.gunit.spacecrack.game.manager.SceneManager;
 
 import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.text.Text;

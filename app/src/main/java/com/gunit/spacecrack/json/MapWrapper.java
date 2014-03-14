@@ -2,7 +2,6 @@ package com.gunit.spacecrack.json;
 
 import com.firebase.client.ChildEventListener;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**

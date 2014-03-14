@@ -25,10 +25,7 @@ import android.widget.Toast;
 
 import com.facebook.FacebookException;
 import com.facebook.FacebookOperationCanceledException;
-import com.facebook.Request;
-import com.facebook.Response;
 import com.facebook.Session;
-import com.facebook.model.GraphUser;
 import com.facebook.widget.WebDialog;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;

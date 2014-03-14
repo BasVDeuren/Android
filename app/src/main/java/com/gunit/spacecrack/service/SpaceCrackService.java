@@ -5,7 +5,6 @@ import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,21 +23,14 @@ import com.firebase.client.ValueEventListener;
 import com.google.gson.Gson;
 import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.activity.SplashScreenActivity;
-import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.chat.Chat;
-import com.gunit.spacecrack.chat.ChatActivity;
-import com.gunit.spacecrack.game.GameActivity;
-import com.gunit.spacecrack.json.MapWrapper;
 import com.gunit.spacecrack.model.Game;
 import com.gunit.spacecrack.model.Invite;
+import com.gunit.spacecrack.model.Message;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Dimitri on 4/03/14.
@@ -55,12 +47,14 @@ public class SpaceCrackService extends Service {
     private Firebase gameFirebase;
     private Firebase chatFirebase;
     private Firebase inviteFirebase;
+    private Firebase messageFirebase;
     private String username;
     private String gameId;
     private final IBinder binder = new LocalBinder();
     private Map<Integer, ValueEventListener> valueEventListeners;
     private Map<String, ChildEventListener> childEventListeners;
     private ChildEventListener inviteEventListener;
+    private ChildEventListener messageEventListener;
     private SharedPreferences sharedPreferences;
     private boolean notifications;
     private int activePLayer;
@@ -69,6 +63,10 @@ public class SpaceCrackService extends Service {
     private final int GAME_NOTIFICATION = 0;
     private final int CHAT_NOTIFICATION = 1;
     private final int INVITE_NOTIFICATION = 2;
+    private final int MESSAGE_NOTIFICATION = 3;
+
+    private final String CHAT_ACTIVITY = "ChatActivity";
+    private final String GAME_ACTIVITY = "GameActivity";
 
     @Override
     public void onCreate() {
@@ -114,7 +112,6 @@ public class SpaceCrackService extends Service {
     @Override
     public void onTaskRemoved(Intent rootIntent){
         Log.i("Service", "Task Removed");
-        saveListeners();
         Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
         restartServiceIntent.setPackage(getPackageName());
 
@@ -136,7 +133,7 @@ public class SpaceCrackService extends Service {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     try {
                         notifications = sharedPreferences.getBoolean("pref_notifications", true);
-                        if (notifications) {
+                        if (notifications && !getRunningActivity().contains(GAME_ACTIVITY)) {
                             Game game = gson.fromJson(dataSnapshot.getValue().toString(), Game.class);
                             if (first) {
                                 if (game.player2.turnEnded) {
@@ -175,7 +172,7 @@ public class SpaceCrackService extends Service {
                         Log.i("Chat", dataSnapshot.getValue().toString());
                         Chat chat = gson.fromJson(dataSnapshot.getValue().toString(), Chat.class);
                         Log.i("Chat object", chat.getFrom());
-                        if (notifications) {
+                        if (notifications && !getRunningActivity().contains(CHAT_ACTIVITY)) {
                             showNotification(chat.getFrom(), chat.getBody(), CHAT_NOTIFICATION, null, null);
                         }
                     } catch (Exception e) {
@@ -211,24 +208,18 @@ public class SpaceCrackService extends Service {
     public void addInviteListener(String url) {
         if (inviteEventListener == null) {
             inviteFirebase = new Firebase(url);
-            ChildEventListener childEventListener = new ChildEventListener() {
+            inviteEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     try {
                         notifications = sharedPreferences.getBoolean("pref_notifications", true);
                         Log.i("Datasnapshot", dataSnapshot.getName());
                         Log.i("Invite", dataSnapshot.getValue().toString());
-//                        Object invite = dataSnapshot.getValue();
                         Invite invite = gson.fromJson(dataSnapshot.getValue().toString(), Invite.class);
 
                         if (notifications) {
-//                            String readString = String.valueOf(((Map)invite).get("read"));
-//                            boolean read = Boolean.valueOf(readString);
-//                            if (!read) {
-//                                showNotification(getString(R.string.invitation), (String)((Map)invite).get("inviter"), INVITE_NOTIFICATION, invite);
-//                            }
                             if (!invite.read) {
-                                  showNotification(getString(R.string.invitation), invite.inviter, INVITE_NOTIFICATION, invite, dataSnapshot.getName());
+                                showNotification(getString(R.string.invitation), invite.inviter, INVITE_NOTIFICATION, invite, dataSnapshot.getName());
                             }
                         }
                     } catch (Exception e) {
@@ -256,8 +247,53 @@ public class SpaceCrackService extends Service {
 
                 }
             };
-            inviteEventListener = childEventListener;
-            inviteFirebase.addChildEventListener(childEventListener);
+            inviteFirebase.addChildEventListener(inviteEventListener);
+        }
+    }
+
+    public void addMessageListener(String url) {
+        if (messageEventListener == null) {
+            messageFirebase = new Firebase(url);
+            messageEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    try {
+                        notifications = sharedPreferences.getBoolean("pref_notifications", true);
+                        Log.i("Datasnapshot", dataSnapshot.getName());
+                        Log.i("Invite", dataSnapshot.getValue().toString());
+                        Message message = gson.fromJson(dataSnapshot.getValue().toString(), Message.class);
+
+                        if (notifications) {
+                            if (!message.read) {
+                                showNotification(getString(R.string.invitation_accepted), message.receiver, MESSAGE_NOTIFICATION, message, dataSnapshot.getName());
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled() {
+
+                }
+            };
+            inviteFirebase.addChildEventListener(messageEventListener);
         }
     }
 
@@ -299,6 +335,19 @@ public class SpaceCrackService extends Service {
                 stackBuilder.addParentStack(SplashScreenActivity.class);
                 stackBuilder.addNextIntent(inviteIntent);
                 break;
+            case MESSAGE_NOTIFICATION :
+                if (name != null) {
+                    Message message = (Message) object;
+                    message.read = true;
+                    Map<String, Object> updates = new HashMap<String, Object>();
+                    updates.put("read", true);
+                    messageFirebase.child(name).updateChildren(updates);
+                }
+                Intent messageIntent = new Intent(this, SplashScreenActivity.class);
+                messageIntent.putExtra("task", "accepted");
+                stackBuilder.addParentStack(SplashScreenActivity.class);
+                stackBuilder.addNextIntent(messageIntent);
+                break;
         }
 
         PendingIntent chatPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -317,12 +366,10 @@ public class SpaceCrackService extends Service {
         }
     }
 
-    private void saveListeners() {
-        Log.i("Service", "Save listeners");
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        MapWrapper childEventListenerWrapper = new MapWrapper();
-        childEventListenerWrapper.childEventListenerHashMap = childEventListeners;
-        String childWrapper = gson.toJson(childEventListenerWrapper);
-        editor.putString("childWrapper", childWrapper);
+    private String getRunningActivity() {
+        ActivityManager activityManager = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> taskInfo = activityManager.getRunningTasks(1);
+        Log.i("Running activity", taskInfo.get(0).topActivity.getShortClassName());
+        return taskInfo.get(0).topActivity.getClassName();
     }
 }

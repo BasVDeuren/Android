@@ -1,7 +1,6 @@
 package com.gunit.spacecrack.chat;
 
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
@@ -13,14 +12,12 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.ValueEventListener;
 import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
-import com.gunit.spacecrack.service.SpaceCrackService;
 
 public class ChatActivity extends ListActivity {
 

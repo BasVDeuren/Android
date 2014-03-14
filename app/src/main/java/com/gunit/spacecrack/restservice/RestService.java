@@ -17,8 +17,6 @@ import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -165,9 +163,9 @@ public class RestService {
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == 200) {
                 result = true;
-                Log.i(TAG, "Profile edited");
+                Log.i(TAG, "POST request succeeded");
             } else {
-                Log.i(TAG, "Profile not edited");
+                Log.i(TAG, "POST request failed");
             }
 
         } catch (Exception e) {

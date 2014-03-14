@@ -7,8 +7,6 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
-import android.widget.Space;
 
 import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
@@ -34,6 +32,10 @@ public class HomeActivity extends FragmentActivity {
             System.exit(0);
             finish();
         } else if (intent.getBooleanExtra("invite", false)) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, new LobbyFragment(), "Lobby")
+                    .commit();
+        } else if (intent.getBooleanExtra("accepted", false)) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new LobbyFragment(), "Lobby")
                     .commit();

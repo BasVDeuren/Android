@@ -117,7 +117,6 @@ public class GameActivity extends BaseGameActivity {
         }
     }
 
-
     /** Defines callbacks for service binding, passed to bindService() */
     private ServiceConnection serviceConnection = new ServiceConnection() {
 

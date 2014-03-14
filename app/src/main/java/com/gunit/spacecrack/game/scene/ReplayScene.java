@@ -10,7 +10,6 @@ import com.gunit.spacecrack.activity.HomeActivity;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.game.GameActivity;
 import com.gunit.spacecrack.game.manager.ResourcesManager;
-import com.gunit.spacecrack.game.manager.SceneManager;
 import com.gunit.spacecrack.model.Colony;
 import com.gunit.spacecrack.model.Game;
 import com.gunit.spacecrack.model.Planet;
@@ -303,7 +302,7 @@ public class ReplayScene extends BaseScene implements IOnSceneTouchListener, Pin
         } else {
             endStatus = new Text(0, 0, resourcesManager.font, activity.getText(R.string.you_won), vbom);
         }
-        ButtonSprite quit = new ButtonSprite(((endScreen.getWidth() / 2)), (endScreen.getHeight() / 2 + 40), resourcesManager.quitRegion, vbom);
+        ButtonSprite quit = new ButtonSprite(((endScreen.getWidth() / 2) - 25), (endScreen.getHeight() / 2 + 30), resourcesManager.quitRegion, vbom);
         quit.setOnClickListener(new ButtonSprite.OnClickListener() {
             @Override
             public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX, float pTouchAreaLocalY) {

@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gunit.spacecrack.R;
-import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.model.User;
 
 import java.util.List;

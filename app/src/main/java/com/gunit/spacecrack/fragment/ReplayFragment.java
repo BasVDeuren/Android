@@ -18,15 +18,12 @@ import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.adapter.GameAdapter;
-import com.gunit.spacecrack.adapter.UserAdapter;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.game.GameActivity;
 import com.gunit.spacecrack.json.GameViewModel;
-import com.gunit.spacecrack.model.User;
 import com.gunit.spacecrack.restservice.RestService;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,14 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.IconTextView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
-import com.google.gson.reflect.TypeToken;
 import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.adapter.GameAdapter;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
@@ -29,7 +24,8 @@ import com.gunit.spacecrack.game.GameActivity;
 import com.gunit.spacecrack.json.GameViewModel;
 import com.gunit.spacecrack.restservice.RestService;
 
-import java.lang.reflect.Type;
+import org.apache.http.HttpStatus;
+
 import java.util.List;
 
 /**
@@ -121,7 +117,7 @@ public class InvitedGamesFragment extends Fragment implements AdapterView.OnItem
         protected void onPostExecute (Integer result)
         {
             progressDialog.dismiss();
-            if (result == 200) {
+            if (result == HttpStatus.SC_OK) {
                 Intent intent = new Intent(getActivity(), GameActivity.class);
                 intent.putExtra("gameId", gameId);
                 intent.putExtra("replay", false);

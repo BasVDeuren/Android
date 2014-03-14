@@ -1,26 +1,16 @@
 package com.gunit.spacecrack.application;
 
 import android.app.Application;
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Bundle;
 
-import com.facebook.FacebookException;
-import com.facebook.Session;
 import com.facebook.model.GraphUser;
-import com.facebook.widget.WebDialog;
-import com.gunit.spacecrack.model.Profile;
 import com.gunit.spacecrack.model.User;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -32,15 +22,12 @@ import java.util.regex.Pattern;
  */
 public class SpaceCrackApplication extends Application {
 
-    // Logged in User
+    //Logged in User
     public static User user;
     public static Bitmap profilePicture;
 
     //Logged in Facebook user
     public static GraphUser graphUser;
-
-    //Friends of logged in Facebook user
-    public static List<GraphUser> friends;
 
     public static String accessToken;
 
@@ -49,12 +36,11 @@ public class SpaceCrackApplication extends Application {
 
     public final static int NETWORK_TIMEOUT = 12000;
     //Localhost emulator
-//    public final static String IP_ADDRESS = "10.0.2.2";
+    public final static String IP_ADDRESS = "10.0.2.2";
     //Network (IP address pc)
-//    public final static String IP_ADDRESS = "10.132.100.255";
-//    public final static String IP_ADDRESS = "10.0.3.2";
-    public static final String IP_ADDRESS = "192.168.0.143";
+//    public static final String IP_ADDRESS = "192.168.0.143";
 //    public final static String IP_ADDRESS = "192.168.56.1";
+
     public static final String DOMAIN = "http://" + IP_ADDRESS + ":8080";
     public static final String URL_LOGIN = DOMAIN + "/api/accesstokens";
     public static final String URL_REGISTER = DOMAIN + "/api/user";
@@ -75,21 +61,18 @@ public class SpaceCrackApplication extends Application {
     public static final String URL_FIREBASE_CHAT = "https://amber-fire-3394.firebaseio.com";
     public static final String URL_FIREBASE_INVITES = "https://vivid-fire-9476.firebaseio.com/invites";
 
+    public static String getFacebookPictureUrl () {
+        if (graphUser != null) {
+            return "http://graph.facebook.com/" + graphUser.getId() + "/picture?type=large&redirect=false";
+        }
+        return null;
+    }
+
     public static void logout() {
         user = null;
         profilePicture = null;
         graphUser = null;
-        friends = null;
         accessToken = null;
-    }
-
-
-    public List<GraphUser> getFriends() {
-        return friends;
-    }
-
-    public void setFriends(List<GraphUser> friends) {
-        this.friends = friends;
     }
 
     public static boolean isValidEmail (String email) {
@@ -121,5 +104,18 @@ public class SpaceCrackApplication extends Application {
         }
 
         return hashedString;
+    }
+
+    public static String getLocalDate (String dateString) {
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat localFormat = new SimpleDateFormat("dd-MM-yyyy");
+        try {
+            Date date = format.parse(dateString);
+            return localFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return dateString;
+
     }
 }

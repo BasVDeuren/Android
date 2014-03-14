@@ -105,6 +105,9 @@ public class SplashScreenActivity extends Activity implements ILoginRequest, IUs
             } else if (intent.getStringExtra("task").equals("invite")) {
                 startIntent = new Intent(SplashScreenActivity.this, HomeActivity.class);
                 startIntent.putExtra("invite", true);
+            } else if (intent.getStringExtra("task").equals("accepted")) {
+                startIntent = new Intent(SplashScreenActivity.this, HomeActivity.class);
+                startIntent.putExtra("accepted", true);
             }
         }
 
