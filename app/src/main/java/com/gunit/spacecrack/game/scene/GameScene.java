@@ -15,6 +15,7 @@ import com.firebase.client.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.gunit.spacecrack.R;
+import com.gunit.spacecrack.activity.HomeActivity;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.chat.ChatActivity;
 import com.gunit.spacecrack.game.GameActivity;
@@ -61,6 +62,10 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * Created by Dimitri on 24/02/14.
  */
+
+/**
+ * GameScene will display an active game, and allows user input on the game itself
+ */
 public class GameScene extends BaseScene implements IOnSceneTouchListener, PinchZoomDetector.IPinchZoomDetectorListener, ScrollDetector.IScrollDetectorListener {
 
     private Scene gameScene;
@@ -79,9 +84,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
     private List<Sprite> shipSprites;
     private List<Sprite> colonySprites;
 
+    private Rectangle exitScene;
+    private boolean backPressed = true;
     private boolean dragging = false;
 
-    ButtonSprite btnEndTurn;
+    private ButtonSprite btnEndTurn;
 
     private Firebase ref;
 
@@ -93,6 +100,110 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         colonySprites = new ArrayList<Sprite>();
 
         //Register Firebase listener
+        registerFirebase();
+
+        //Draw the game
+        createBackground();
+        createHUD();
+
+        Log.d("Engine runnning", String.valueOf(engine.isRunning()));
+
+        drawLines();
+        drawPlanets();
+        drawPlayers(activity.gameActivePlayerWrapper.game);
+
+        //Detect touch controls
+        this.setOnSceneTouchListener(this);
+        scrollDetector = new SurfaceScrollDetector(this);
+        pinchZoomDetector = new PinchZoomDetector(this);
+        pinchZoomDetector.setEnabled(true);
+        this.setOnSceneTouchListener(this);
+        this.setTouchAreaBindingOnActionMoveEnabled(true);
+
+    }
+
+    /**
+     * Displays an overlay asking for the confirmation of the user
+     */
+    @Override
+    public void onBackKeyPressed() {
+        camera.setCenterDirect(GameActivity.CAMERA_WIDTH / 2, GameActivity.CAMERA_HEIGHT / 2);
+        camera.setZoomFactor(1f);
+        if (backPressed) {
+            //Create the overlay and show it
+            exitScene = new Rectangle((activity.CAMERA_WIDTH / 2) - 200, (activity.CAMERA_HEIGHT / 2) - 100, 400, 200, vbom);
+            exitScene.setColor(0.24f, 0.27f, 0.3f);
+            exitScene.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+            exitScene.setAlpha(0.8f);
+
+            Text text = new Text(0, 0, resourcesManager.font, activity.getText(R.string.close_game), vbom);
+            text.setPosition(((exitScene.getWidth() - text.getWidth()) / 2), (exitScene.getHeight() - text.getHeight()) / 2);
+            exitScene.attachChild(text);
+
+            ButtonSprite btnConfirm = new ButtonSprite(0, 0, resourcesManager.turnRegion, vbom);
+            btnConfirm.setPosition(((exitScene.getWidth() - btnConfirm.getWidth()) / 2) - 50, exitScene.getHeight() - 50);
+            btnConfirm.setOnClickListener(new ButtonSprite.OnClickListener() {
+                @Override
+                public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX, float pTouchAreaLocalY) {
+                    Intent intent = new Intent(activity, HomeActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.putExtra("EXIT", true);
+                    activity.startActivity(intent);
+                    activity.finish();
+                }
+            });
+            ButtonSprite btnCancel = new ButtonSprite(0, 0, resourcesManager.cancelRegion, vbom);
+            btnCancel.setPosition(((exitScene.getWidth() - btnCancel.getWidth()) / 2) + 50, exitScene.getHeight() - 50);
+            btnCancel.setOnClickListener(new ButtonSprite.OnClickListener() {
+                @Override
+                public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX, float pTouchAreaLocalY) {
+                    activity.runOnUpdateThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!exitScene.isDisposed()) {
+                                exitScene.dispose();
+                            }
+                            gameScene.detachChild(exitScene);
+                        }
+                    });
+                }
+            });
+
+            this.registerTouchArea(btnConfirm);
+            this.registerTouchArea(btnCancel);
+            exitScene.attachChild(btnConfirm);
+            exitScene.attachChild(btnCancel);
+            this.attachChild(exitScene);
+        } else {
+            //Hide the overlay
+            activity.runOnUpdateThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (!exitScene.isDisposed()) {
+                        exitScene.dispose();
+                    }
+                    gameScene.detachChild(exitScene);
+                }
+            });
+        }
+
+        backPressed = !backPressed;
+    }
+
+    /**
+     * Unload the resources and reset the camera
+     */
+    @Override
+    public void disposeScene() {
+        camera.setHUD(null);
+        camera.setCenterDirect(GameActivity.CAMERA_WIDTH / 2, GameActivity.CAMERA_HEIGHT / 2);
+        camera.setZoomFactor(1f);
+        ResourcesManager.getInstance().unloadGameResources();
+        this.detachSelf();
+        this.dispose();
+    }
+
+    private void registerFirebase() {
         ref = new Firebase(activity.gameActivePlayerWrapper.firebaseGameURL);
         ref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -122,54 +233,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
 
             }
         });
-
-        //Draw the game
-        createBackground();
-        createHUD();
-
-        Log.d("Engine runnning", String.valueOf(engine.isRunning()));
-
-        drawLines();
-        drawPlanets();
-        drawPlayers(activity.gameActivePlayerWrapper.game);
-
-        //Detect touch controls
-        this.setOnSceneTouchListener(this);
-        scrollDetector = new SurfaceScrollDetector(this);
-        pinchZoomDetector = new PinchZoomDetector(this);
-        pinchZoomDetector.setEnabled(true);
-        this.setOnSceneTouchListener(this);
-        this.setTouchAreaBindingOnActionMoveEnabled(true);
-
-    }
-
-    @Override
-    public void onBackKeyPressed() {
-//        SceneManager.getInstance().loadMenuScene(engine);
-//        resourcesManager.unloadGameResources();
-        SceneManager.getInstance().loadLoadingScene();
-        activity.finish();
-    }
-
-    @Override
-    public SceneManager.SceneType getSceneType() {
-        return SceneManager.SceneType.SCENE_GAME;
-    }
-
-    @Override
-    public void disposeScene() {
-        camera.setHUD(null);
-        camera.setCenterDirect(GameActivity.CAMERA_WIDTH / 2, GameActivity.CAMERA_HEIGHT / 2);
-        camera.setZoomFactor(1f);
-        ResourcesManager.getInstance().unloadGameResources();
-        this.detachSelf();
-        this.dispose();
     }
 
     private void createBackground() {
         Sprite background = createSprite(0, 0, resourcesManager.gameBackgroundRegion, vbom);
         attachChild(background);
-//        this.setBackground(new Background(Color.BLACK));
     }
 
     private void createHUD() {
@@ -264,7 +332,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
             for (ColonyViewModel colony : player.colonies) {
                 Planet planet = activity.planets.get(colony.planetName);
                 Sprite planetSprite = planetSprites.get(colony.planetName);
-//            colonySprite = createTiledSprite((planet.x * GameActivity.SCALE_X) - 10, (planet.y * GameActivity.SCALE_Y) - 25, resourcesManager.colonyFlagRegion, vbom, index);
 
                 //Mini spaceship
                 miniSpaceshipSprite = drawMiniShip(index, colony);
@@ -293,7 +360,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
                         return false;
                     }
                 };
-//            colonySprite.setScale(0.5f);
                 colonySprite.setCullingEnabled(true);
                 colonySprite.setCurrentTileIndex(index);
                 if (player.playerId == activity.gameActivePlayerWrapper.activePlayerId) {
@@ -304,7 +370,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
                 colonySprite.attachChild(miniSpaceshipSprite);
                 colonySprites.add(colonySprite);
                 planetSprite.attachChild(colonySprite);
-//                attachChild(colonySprite);
             }
         }
     }
@@ -377,14 +442,15 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
                                 this.setScale(0.5f);
                                 Planet newPlanet = checkValidPosition(this, finalShip.planetName);
                                 if (newPlanet != null) {
-                                    if (checkCommandPoints(newPlanet.name)) {
-                                        if (!activity.player.turnEnded) {
+                                    if (!activity.player.turnEnded) {
+                                        if (checkCommandPoints(newPlanet.name)) {
                                             placeShip(this, planet, newPlanet, finalShip);
+
                                         } else {
                                             activity.runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    Toast.makeText(activity, activity.getResources().getString(R.string.turn_ended), Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(activity, activity.getResources().getString(R.string.commandpoints_fail), Toast.LENGTH_SHORT).show();
                                                 }
                                             });
                                             this.setPosition((planet.x * GameActivity.SCALE_X) - 10, (planet.y * GameActivity.SCALE_Y) - 10);
@@ -393,7 +459,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
                                         activity.runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                Toast.makeText(activity, activity.getResources().getString(R.string.commandpoints_fail), Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(activity, activity.getResources().getString(R.string.turn_ended), Toast.LENGTH_SHORT).show();
                                             }
                                         });
                                         this.setPosition((planet.x * GameActivity.SCALE_X) - 10, (planet.y * GameActivity.SCALE_Y) - 10);
@@ -460,6 +526,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         new ActionTask(new Action("MOVESHIP", newPlanet.name, activity.gameActivePlayerWrapper.game.gameId, activity.gameActivePlayerWrapper.activePlayerId, ship), shipSprite, oldPlanet).execute(SpaceCrackApplication.URL_ACTION);
     }
 
+    /**
+     * After each move, redraw the game with the new state
+     */
     private void resetPlayers() {
         activity.runOnUpdateThread(new Runnable() {
             @Override
@@ -487,14 +556,19 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
 
     private void updateCommandPoints()
     {
-        txtCommand.setText("Commandpoints: " + activity.player.commandPoints);
+        txtCommand.setText(activity.getString(R.string.commandpoints) + ": " + activity.player.commandPoints);
     }
 
+    /**
+     * End of the game, overlay will be created to informate the user about the winner
+     * @param game
+     */
     private void endGame(final GameViewModel game) {
         camera.setHUD(null);
         camera.setCenterDirect(GameActivity.CAMERA_WIDTH / 2, GameActivity.CAMERA_HEIGHT / 2);
         camera.setZoomFactor(1f);
 
+        //Make sure te user can't control the elements of the game anymore
         activity.runOnUpdateThread(new Runnable() {
             @Override
             public void run() {
@@ -511,6 +585,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
             }
         });
 
+        //Create the overlay
+        drawEndOverlay(game);
+    }
+
+    private void drawEndOverlay(final GameViewModel game) {
         Rectangle endScreen = new Rectangle((activity.CAMERA_WIDTH / 2) - 200, (activity.CAMERA_HEIGHT / 2) - 100, 400, 200, vbom);
         endScreen.setColor(0.24f, 0.27f, 0.3f);
         endScreen.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
@@ -551,8 +630,19 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
             this.registerTouchArea(facebook);
         }
 
+        ButtonSprite quit = new ButtonSprite(((endScreen.getWidth() / 2) + 25), (endScreen.getHeight() / 2 + 40), resourcesManager.quitRegion, vbom);
+        quit.setOnClickListener(new ButtonSprite.OnClickListener() {
+            @Override
+            public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX, float pTouchAreaLocalY) {
+                Intent intent = new Intent(activity, HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("EXIT", true);
+                activity.startActivity(intent);
+                activity.finish();
+            }
+        });
 
-        Sprite monkey = new Sprite(((endScreen.getWidth() - resourcesManager.monkeyRegion.getWidth())/2),  endScreen.getHeight() / 2 - 60, resourcesManager.monkeyRegion, vbom);
+        Sprite monkey = createSprite(((endScreen.getWidth() - resourcesManager.monkeyRegion.getWidth())/2),  endScreen.getHeight() / 2 - 60, resourcesManager.monkeyRegion, vbom);
         monkey.setScale(1.5f);
         Text endStatus;
         if (game.loserPlayerId == activity.player.playerId) {
@@ -563,11 +653,15 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         endStatus.setPosition((endScreen.getWidth() - endStatus.getWidth()) / 2, (endScreen.getHeight() - endStatus.getHeight()) / 2);
         endScreen.attachChild(endStatus);
         endScreen.attachChild(monkey);
+        endScreen.attachChild(quit);
+        this.registerTouchArea(quit);
         this.attachChild(endScreen);
     }
 
-    //POST request
-    public class ActionTask extends AsyncTask<String, Void, String> {
+    /**
+     * POST resuest with a certain action
+     */
+    private class ActionTask extends AsyncTask<String, Void, String> {
 
         private String actionString;
         private Gson gson;
@@ -594,13 +688,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
             if (result != null) {
                 if (shipSprite != null && planet !=null) {
                     if (result.equals("406")) {
-                        Toast.makeText(activity, "Move is not valid", Toast.LENGTH_SHORT).show();
+                        Log.i("GameActivity", "Move is not valid");
                         shipSprite.setPosition((planet.x * GameActivity.SCALE_X) - 10, (planet.y * GameActivity.SCALE_Y) - 10);
                     } else {
-                        Toast.makeText(activity, "Move valid", Toast.LENGTH_SHORT).show();
+                        Log.i("GameActivity", "Move valid");
                     }
                 } else {
-//                    Toast.makeText(activity, "Turn ended", Toast.LENGTH_SHORT).show();
                     Log.i("Result", result);
                 }
 
@@ -611,21 +704,15 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
     }
 
 
-
+    /**
+     * Register touch events on the Scene
+     * @param pScene The {@link Scene} that the {@link TouchEvent} has been dispatched to.
+     * @param pSceneTouchEvent The {@link TouchEvent} object containing full information about the event.
+     *
+     * @return
+     */
     @Override
     public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
-
-//        if (pSceneTouchEvent.isActionMove()) {
-////            float xDistance = Math.abs(camera.getCenterX() - pSceneTouchEvent.getX());
-////            float yDistance = Math.abs(camera.getCenterY() - pSceneTouchEvent.getY());
-////            float distance = xDistance + yDistance;
-////            float CAMERA_SPEED = 100;
-////            camera.setMaxVelocity((xDistance / distance) * CAMERA_SPEED, (yDistance / distance) * CAMERA_SPEED);
-////            camera.setCenter(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
-//            return true;
-//
-//        }
-
         if(this.pinchZoomDetector != null) {
             this.pinchZoomDetector.onTouchEvent(pSceneTouchEvent);
 
@@ -649,6 +736,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         zoomFactor = camera.getZoomFactor();
     }
 
+    /**
+     * While the user is pinching, zoom in/out on the Scene
+     * @param pPinchZoomDetector
+     * @param pTouchEvent
+     * @param pZoomFactor
+     */
     @Override
     public void onPinchZoom(PinchZoomDetector pPinchZoomDetector, TouchEvent pTouchEvent, float pZoomFactor) {
         if (pZoomFactor != 1)
@@ -674,6 +767,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
 
     }
 
+    /**
+     * If the user drags the screen, move the camera towards the desired position
+     * @param pScollDetector
+     * @param pPointerID
+     * @param pDistanceX
+     * @param pDistanceY
+     */
     @Override
     public void onScroll(ScrollDetector pScollDetector, int pPointerID, float pDistanceX, float pDistanceY) {
         final float zoomFactor = camera.getZoomFactor();

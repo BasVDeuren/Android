@@ -57,6 +57,15 @@ public class RegisterTest extends ActivityInstrumentationTestCase2<LoginActivity
         solo.assertCurrentActivity("Current activity should be LoginActivity", LoginActivity.class);
     }
 
+    public void testEmailFail() throws Exception {
+        solo.enterText(0, "Robotium2");
+        solo.enterText(1, "robotium");
+        solo.enterText(2, "robotium");
+        solo.enterText(3, "robotium");
+        solo.clickOnButton(solo.getString(R.string.register));
+        solo.assertCurrentActivity("Current activity should be LoginActivity", LoginActivity.class);
+    }
+
     @Override
     public void tearDown() throws Exception {
         solo.finishOpenedActivities();

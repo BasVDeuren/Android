@@ -25,6 +25,7 @@ import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.chat.ChatActivity;
 import com.gunit.spacecrack.game.GameActivity;
 import com.gunit.spacecrack.model.User;
+import com.gunit.spacecrack.service.SpaceCrackService;
 import com.gunit.spacecrack.task.LoginTask;
 import com.gunit.spacecrack.task.UserTask;
 
@@ -88,20 +89,25 @@ public class SplashScreenActivity extends Activity implements ILoginRequest, IUs
     }
 
     private void proceedApp() {
+        Intent service = new Intent(this, SpaceCrackService.class);
+        service.putExtra("username", SpaceCrackApplication.user.username);
+        startService(service);
         Intent intent = getIntent();
         Intent startIntent = new Intent(SplashScreenActivity.this, HomeActivity.class);
         if (intent.getStringExtra("task") != null) {
-            if (intent.getStringExtra("task") != null) {
-                if (intent.getStringExtra("task").equals("chat")) {
-                    startIntent = new Intent(SplashScreenActivity.this, ChatActivity.class);
-                    startIntent.putExtra("gameId", intent.getStringExtra("gameId"));
-                    startIntent.putExtra("username", intent.getStringExtra("username"));
-                } else if (intent.getStringExtra("task").equals("game")) {
-                    startIntent = new Intent(SplashScreenActivity.this, GameActivity.class);
-                    startIntent.putExtra("gameId", intent.getIntExtra("gameId", 0));
-                }
+            if (intent.getStringExtra("task").equals("chat")) {
+                startIntent = new Intent(SplashScreenActivity.this, ChatActivity.class);
+                startIntent.putExtra("gameId", intent.getStringExtra("gameId"));
+                startIntent.putExtra("username", intent.getStringExtra("username"));
+            } else if (intent.getStringExtra("task").equals("game")) {
+                startIntent = new Intent(SplashScreenActivity.this, GameActivity.class);
+                startIntent.putExtra("gameId", intent.getIntExtra("gameId", 0));
+            } else if (intent.getStringExtra("task").equals("invite")) {
+                startIntent = new Intent(SplashScreenActivity.this, HomeActivity.class);
+                startIntent.putExtra("invite", true);
             }
         }
+
         startActivity(startIntent);
         //Close this activity so it won't show up again
         finish();

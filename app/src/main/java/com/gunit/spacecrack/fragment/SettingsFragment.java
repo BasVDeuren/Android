@@ -13,6 +13,10 @@ import com.gunit.spacecrack.R;
 /**
  * Created by Dimitri on 4/03/14.
  */
+
+/**
+ * SettingsFragment to customize the user's preferences
+ */
 public class SettingsFragment extends PreferenceFragment {
 
     private SharedPreferences sharedPreferences;

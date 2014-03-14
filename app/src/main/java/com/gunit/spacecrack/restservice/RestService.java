@@ -29,30 +29,19 @@ import java.io.UnsupportedEncodingException;
 /**
  * Created by Dimitri on 20/02/14.
  */
+
+/**
+ * Manages all the calls to the REST Service of the server
+ */
 public class RestService {
 
     private static final String TAG = "REST Service";
-//    private static String accessTokenTemp = "%22gs323t2ddkk9v09ulacd3t4a7%22";
 
     public static String getRequest(String url) {
         String result = null;
+        HttpClient httpClient = getHttpClient(true);
         HttpGet httpGet = new HttpGet(url);
-        HttpParams httpParams = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
-        HttpConnectionParams.setSoTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
-        HttpClient httpClient = new DefaultHttpClient(httpParams);
-
-        CookieStore cookieStore = ((DefaultHttpClient) httpClient).getCookieStore();
-        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
-//        BasicClientCookie cookie = new BasicClientCookie("accessToken", accessTokenTemp);
-
-        cookie.setDomain(SpaceCrackApplication.IP_ADDRESS);
-        cookie.setPath("/");
-        cookieStore.addCookie(cookie);
-        ((DefaultHttpClient) httpClient).setCookieStore(cookieStore);
-
         httpGet.setHeader("Content-type", "application/json");
-//        httpGet.setHeader("Cookie", "accessToken=%22" + SpaceCrackApplication.accessToken + "%22");
 
         try {
             // Execute HTTP Get Request
@@ -65,11 +54,11 @@ public class RestService {
                 response.getEntity().writeTo(outputStream);
                 outputStream.close();
                 result = outputStream.toString();
-                Log.i(TAG, "Get request succeeded!");
+                Log.i(TAG, "GET request succeeded!");
             } else {
                 //Closes the connection.
                 response.getEntity().getContent().close();
-                Log.i(TAG, "Get request failed");
+                Log.i(TAG, "GET request failed");
             }
 
         } catch (Exception e) {
@@ -79,23 +68,10 @@ public class RestService {
         return result;
     }
 
-    public static String postRequest(String url, JSONObject user) {
+    public static String postRequestWithoutAccessToken(String url, JSONObject user) {
         String accessToken = null;
-        HttpPost httpPost = new HttpPost(url);
-        HttpParams httpParams = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
-        HttpConnectionParams.setSoTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
-        HttpClient httpClient = new DefaultHttpClient(httpParams);
-        StringEntity stringEntity = null;
-        try {
-            stringEntity = new StringEntity(user.toString());
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        httpPost.setHeader("accept", "application/json");
-        httpPost.setHeader("Content-type", "application/json");
-        httpPost.setEntity(stringEntity);
+        HttpClient httpClient = getHttpClient(false);
+        HttpPost httpPost = getHttpPost(url, user.toString());
 
         try {
             // Execute HTTP Post Request
@@ -112,9 +88,9 @@ public class RestService {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Log.i(TAG, "Request succeeded");
+                Log.i(TAG, "POST Request succeeded");
             } else {
-                Log.i(TAG, "Request failed");
+                Log.i(TAG, "POST Request failed");
             }
 
         } catch (Exception e) {
@@ -126,30 +102,8 @@ public class RestService {
 
     public static String postGame(String url, JSONObject user) {
         String result = null;
-        HttpPost httpPost = new HttpPost(url);
-        HttpParams httpParams = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
-        HttpConnectionParams.setSoTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
-        HttpClient httpClient = new DefaultHttpClient(httpParams);
-        StringEntity stringEntity = null;
-        try {
-            stringEntity = new StringEntity(user.toString());
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        CookieStore cookieStore = ((DefaultHttpClient) httpClient).getCookieStore();
-        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
-//        BasicClientCookie cookie = new BasicClientCookie("accessToken", accessTokenTemp);
-
-        cookie.setDomain(SpaceCrackApplication.IP_ADDRESS);
-        cookie.setPath("/");
-        cookieStore.addCookie(cookie);
-        ((DefaultHttpClient) httpClient).setCookieStore(cookieStore);
-
-        httpPost.setHeader("accept", "application/json");
-        httpPost.setHeader("Content-type", "application/json");
-        httpPost.setEntity(stringEntity);
+        HttpClient httpClient = getHttpClient(true);
+        HttpPost httpPost = getHttpPost(url, user.toString());
 
         try {
             // Execute HTTP Post Request
@@ -159,9 +113,9 @@ public class RestService {
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK) {
                 result = EntityUtils.toString(response.getEntity());
-                Log.i(TAG, "Request succeeded");
+                Log.i(TAG, "POST Game Request succeeded");
             } else {
-                Log.i(TAG, "Request failed");
+                Log.i(TAG, "POST Game Request failed");
             }
 
         } catch (Exception e) {
@@ -173,30 +127,8 @@ public class RestService {
 
     public static String postAction(String url, String action) {
         String result = null;
-        HttpPost httpPost = new HttpPost(url);
-        HttpParams httpParams = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
-        HttpConnectionParams.setSoTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
-        HttpClient httpClient = new DefaultHttpClient(httpParams);
-        StringEntity stringEntity = null;
-        try {
-            stringEntity = new StringEntity(action);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        CookieStore cookieStore = ((DefaultHttpClient) httpClient).getCookieStore();
-        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
-//        BasicClientCookie cookie = new BasicClientCookie("accessToken", accessTokenTemp);
-
-        cookie.setDomain(SpaceCrackApplication.IP_ADDRESS);
-        cookie.setPath("/");
-        cookieStore.addCookie(cookie);
-        ((DefaultHttpClient) httpClient).setCookieStore(cookieStore);
-
-        httpPost.setHeader("accept", "application/json");
-        httpPost.setHeader("Content-type", "application/json");
-        httpPost.setEntity(stringEntity);
+        HttpClient httpClient = getHttpClient(true);
+        HttpPost httpPost = getHttpPost(url, action);
 
         try {
             // Execute HTTP Post Request
@@ -206,11 +138,11 @@ public class RestService {
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK) {
                 result = EntityUtils.toString(response.getEntity());
-                Log.i(TAG, "Request succeeded");
+                Log.i(TAG, "POST Action Request succeeded");
             } else if (statusCode == 406) {
                 result = String.valueOf(statusCode);
             } else {
-                Log.i(TAG, "Request failed");
+                Log.i(TAG, "POST Action Request failed");
             }
 
         } catch (Exception e) {
@@ -220,37 +152,14 @@ public class RestService {
         return result;
     }
 
-    public static boolean editProfile(String url, JSONObject profile) {
+    public static boolean postRequest(String url, JSONObject jsonObject) {
         boolean result = false;
-        HttpPost httpPost = new HttpPost(url);
-        HttpContext httpContext = new BasicHttpContext();
-
-        HttpParams httpParams = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
-        HttpConnectionParams.setSoTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
-        HttpClient httpClient = new DefaultHttpClient(httpParams);
-
-        CookieStore cookieStore = ((DefaultHttpClient) httpClient).getCookieStore();
-        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
-        cookie.setDomain(SpaceCrackApplication.IP_ADDRESS);
-        cookie.setPath("/");
-        cookieStore.addCookie(cookie);
-        ((DefaultHttpClient) httpClient).setCookieStore(cookieStore);
-
-        StringEntity stringEntity = null;
-        try {
-            stringEntity = new StringEntity(profile.toString());
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        httpPost.setHeader("accept", "application/json");
-        httpPost.setHeader("Content-type", "application/json");
-        httpPost.setEntity(stringEntity);
+        HttpClient httpClient = getHttpClient(true);
+        HttpPost httpPost = getHttpPost(url, jsonObject.toString());
 
         try {
             // Execute HTTP Post Request
-            HttpResponse response = httpClient.execute(httpPost, httpContext);
+            HttpResponse response = httpClient.execute(httpPost);
 
             //Check the Status code of the response
             int statusCode = response.getStatusLine().getStatusCode();
@@ -270,22 +179,8 @@ public class RestService {
 
     public static int acceptInvite(String url) {
         int result = 0;
-        HttpPost httpPost = new HttpPost(url);
-        HttpParams httpParams = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
-        HttpConnectionParams.setSoTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
-        HttpClient httpClient = new DefaultHttpClient(httpParams);
-
-        CookieStore cookieStore = ((DefaultHttpClient) httpClient).getCookieStore();
-        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
-
-        cookie.setDomain(SpaceCrackApplication.IP_ADDRESS);
-        cookie.setPath("/");
-        cookieStore.addCookie(cookie);
-        ((DefaultHttpClient) httpClient).setCookieStore(cookieStore);
-
-        httpPost.setHeader("accept", "application/json");
-        httpPost.setHeader("Content-type", "application/json");
+        HttpClient httpClient = getHttpClient(true);
+        HttpPost httpPost = getHttpPost(url, null);
 
         try {
             // Execute HTTP Post Request
@@ -295,9 +190,9 @@ public class RestService {
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK) {
                 result = statusCode;
-                Log.i(TAG, "Request succeeded");
+                Log.i(TAG, "Accept Request succeeded");
             } else {
-                Log.i(TAG, "Request failed");
+                Log.i(TAG, "Accept Request failed");
             }
 
         } catch (Exception e) {
@@ -310,33 +205,22 @@ public class RestService {
     public static int declineInvite(String url) {
         int result = 0;
         HttpDelete httpDelete = new HttpDelete(url);
-        HttpParams httpParams = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
-        HttpConnectionParams.setSoTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
-        HttpClient httpClient = new DefaultHttpClient(httpParams);
-
-        CookieStore cookieStore = ((DefaultHttpClient) httpClient).getCookieStore();
-        BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
-
-        cookie.setDomain(SpaceCrackApplication.IP_ADDRESS);
-        cookie.setPath("/");
-        cookieStore.addCookie(cookie);
-        ((DefaultHttpClient) httpClient).setCookieStore(cookieStore);
+        HttpClient httpClient = getHttpClient(true);
 
         httpDelete.setHeader("accept", "application/json");
         httpDelete.setHeader("Content-type", "application/json");
 
         try {
-            // Execute HTTP Post Request
+            // Execute HTTP Delete Request
             HttpResponse response = httpClient.execute(httpDelete);
 
             //Check the Status code of the response
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK) {
                 result = statusCode;
-                Log.i(TAG, "Request succeeded");
+                Log.i(TAG, "Decline Request succeeded");
             } else {
-                Log.i(TAG, "Request failed");
+                Log.i(TAG, "Decline Request failed");
             }
 
         } catch (Exception e) {
@@ -344,5 +228,40 @@ public class RestService {
         }
         httpClient.getConnectionManager().shutdown();
         return result;
+    }
+
+    private static DefaultHttpClient getHttpClient(boolean addCookie) {
+        HttpParams httpParams = new BasicHttpParams();
+        HttpConnectionParams.setConnectionTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
+        HttpConnectionParams.setSoTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
+        DefaultHttpClient httpClient = new DefaultHttpClient(httpParams);
+
+        if (addCookie) {
+            CookieStore cookieStore = httpClient.getCookieStore();
+            BasicClientCookie cookie = new BasicClientCookie("accessToken", "%22" + SpaceCrackApplication.accessToken + "%22");
+
+            cookie.setDomain(SpaceCrackApplication.IP_ADDRESS);
+            cookie.setPath("/");
+            cookieStore.addCookie(cookie);
+            httpClient.setCookieStore(cookieStore);
+        }
+
+        return httpClient;
+    }
+
+    private static HttpPost getHttpPost(String url, String entity) {
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.setHeader("accept", "application/json");
+        httpPost.setHeader("Content-type", "application/json");
+        if (entity != null) {
+            StringEntity stringEntity = null;
+            try {
+                stringEntity = new StringEntity(entity);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            httpPost.setEntity(stringEntity);
+        }
+        return httpPost;
     }
 }

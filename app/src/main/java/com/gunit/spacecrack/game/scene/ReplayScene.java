@@ -45,6 +45,10 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * Created by Dimitri on 12/03/14.
  */
+
+/**
+ * ReplayScene shows the replay of a game, but doesn't allow user input on the game itself
+ */
 public class ReplayScene extends BaseScene implements IOnSceneTouchListener, PinchZoomDetector.IPinchZoomDetectorListener, ScrollDetector.IScrollDetectorListener {
 
     private Scene replayScene;
@@ -87,6 +91,8 @@ public class ReplayScene extends BaseScene implements IOnSceneTouchListener, Pin
 
     @Override
     public void onBackKeyPressed() {
+        camera.setCenterDirect(GameActivity.CAMERA_WIDTH / 2, GameActivity.CAMERA_HEIGHT / 2);
+        camera.setZoomFactor(1f);
         if (backPressed) {
             exitScene = new Rectangle((activity.CAMERA_WIDTH / 2) - 200, (activity.CAMERA_HEIGHT / 2) - 100, 400, 200, vbom);
             exitScene.setColor(0.24f, 0.27f, 0.3f);
@@ -102,10 +108,11 @@ public class ReplayScene extends BaseScene implements IOnSceneTouchListener, Pin
             btnConfirm.setOnClickListener(new ButtonSprite.OnClickListener() {
                 @Override
                 public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX, float pTouchAreaLocalY) {
-                    Intent intent = new Intent(activity.getApplicationContext(), HomeActivity.class);
+                    Intent intent = new Intent(activity, HomeActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra("EXIT", true);
                     activity.startActivity(intent);
+                    activity.finish();
                 }
             });
             ButtonSprite btnCancel = new ButtonSprite(0, 0, resourcesManager.cancelRegion, vbom);
@@ -144,11 +151,6 @@ public class ReplayScene extends BaseScene implements IOnSceneTouchListener, Pin
 
         backPressed = !backPressed;
 
-    }
-
-    @Override
-    public SceneManager.SceneType getSceneType() {
-        return SceneManager.SceneType.SCENE_GAME;
     }
 
     @Override
@@ -301,9 +303,23 @@ public class ReplayScene extends BaseScene implements IOnSceneTouchListener, Pin
         } else {
             endStatus = new Text(0, 0, resourcesManager.font, activity.getText(R.string.you_won), vbom);
         }
+        ButtonSprite quit = new ButtonSprite(((endScreen.getWidth() / 2)), (endScreen.getHeight() / 2 + 40), resourcesManager.quitRegion, vbom);
+        quit.setOnClickListener(new ButtonSprite.OnClickListener() {
+            @Override
+            public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX, float pTouchAreaLocalY) {
+                Intent intent = new Intent(activity, HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("EXIT", true);
+                activity.startActivity(intent);
+                activity.finish();
+            }
+        });
+
         endStatus.setPosition((endScreen.getWidth() - endStatus.getWidth()) / 2, (endScreen.getHeight() - endStatus.getHeight()) / 2);
         endScreen.attachChild(endStatus);
         endScreen.attachChild(monkey);
+        endScreen.attachChild(quit);
+        this.registerTouchArea(quit);
         this.attachChild(endScreen);
     }
 

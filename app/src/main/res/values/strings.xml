@@ -14,7 +14,6 @@
     <string name="birth_date">Birth date</string>
     <string name="captured_all_planets">Captured all the planets!</string>
     <string name="chat">Chat</string>
-    <string name="check_this_out">Check this out!</string>
     <string name="choose_opponent">Choose opponent</string>
     <string name="close_game">Close the game?</string>
     <string name="commandpoints">Commandpoints</string>
@@ -26,6 +25,8 @@
     <string name="edited_failed">Edited failed</string>
     <string name="email">E-mail</string>
     <string name="email_register">E-mail already registered</string>
+    <string name="email_sent">E-mail has been sent</string>
+    <string name="email_sent_error">E-mail has not been sent</string>
     <string name="facebook">Facebook</string>
     <string name="female">Female</string>
     <string name="fill_in_fields">Please fill in all the fields</string>
@@ -36,6 +37,23 @@
     <string name="gender">Gender</string>
     <string name="general_settings">General settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="help">Help</string>
+    <string name="help_active_playershiponplanet">- If the planet is occupied by a ship owned by the player, the two ships are combined into a new ship with a strength that is the sum of their strength.</string>
+    <string name="help_attack_same_strength">- If you attack a colony or ship with the same strength as your attacking ship\'s strength, both of the pieces will be destroyed. When this piece was a colony, a planet will be again unoccupied.</string>
+    <string name="help_build_ship">- Build a new ship at a planet they control</string>
+    <string name="help_build_ship_commandpointscost">- Build a ship: 3</string>
+    <string name="help_colonize_and_colonizecost">- When you have successfully moved a ship, you automatically colonize it, this has an extra cost of 1 command point.</string>
+    <string name="help_commandpoints_costs">- Each action costs a specific amount of command point:</string>
+    <string name="help_game_object">The object of the game is to destroy all of the opponents planets. On each turn, players are given a fixed number of command points and they can use those points to take several actions:</string>
+    <string name="help_move_ship">- Move a ship from one planet to a neighboring planet</string>
+    <string name="help_move_ship_commandpointscost">- Move a ship: 1</string>
+    <string name="help_move_ship_stories">When moving a ship, a number of things can happen:</string>
+    <string name="help_opponent_stronger_player_ship_on_planet">- If the planet is occupied by an opposing ship with a higher strength than the player\'s attacking ship, the player\'s attacking ship is destroyed and the defending ship\'s size is reduced the size of the attacking ship.</string>
+    <string name="help_opponent_weaker_player_ship_on_planet">- If the planet is occupied by an opposing ship with a lower strength than the player\'s ship, the defending ship is destroyed, the colony on the planet takes over the fight from the defending ship. If te ship\'s new reduced strength is higher than the colony strength, the ship\'s strength is reduced by the colony\'s strength and the player builds a colony on the planet.</string>
+    <string name="help_take_over_clean_planet">- If the planet is unoccupied by a ship or colony, he takes control of the planet and builds a colony on it.</string>
+    <string name="help_when_to_use_commandpoints">A player may make their moves at any time as long as they have the command points to do so. When all players have clicked the end turn button, the turn is ended and will receive new commandpoints.</string>
+    <string name="help_win_condition">The game is played out until one of the players has no more colonies left, then the other player is won.</string>
+    <string name="incredible_strategy_game">Incredible strategy game!</string>
     <string name="invited_games">Invited games</string>
     <string name="invitation">Invitation</string>
     <string name="join_game">Would you like to join the game?</string>
@@ -49,6 +67,7 @@
     <string name="logout">Log out</string>
     <string name="lost_all_planets">Lost all planets</string>
     <string name="male">Male</string>
+    <string name="moves">Moves</string>
     <string name="multitouch_support">Your device does not support multi touch</string>
     <string name="name_of_game">Name of game</string>
     <string name="new_game">New game</string>
@@ -56,8 +75,10 @@
     <string name="new_password">New password</string>
     <string name="no">No</string>
     <string name="no_connection">No internet connection</string>
+    <string name="no_games">No games found</string>
     <string name="notifications">Notifitcations</string>
     <string name="notifications_enable">Enable notifications</string>
+    <string name="object">Object</string>
     <string name="old_password">Old password</string>
     <string name="opponent">Opponent</string>
     <string name="password">Password</string>
@@ -87,9 +108,11 @@
     <string name="save">Save</string>
     <string name="search">Search</string>
     <string name="search_users">Search for users</string>
+    <string name="send_email">Send invitation email to this e-mailaddress?</string>
     <string name="share_via">Share via</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="statistics">Statistics</string>
+    <string name="symbols_not_allowed">Symbols are not allowed in the game\'s name</string>
     <string name="title_activity_game">GameActivity</string>
     <string name="title_activity_home">HomeActivity</string>
     <string name="title_activity_login">LoginActivity</string>
@@ -111,5 +134,6 @@
     <string name="title_activity_chat">ChatActivity</string>
     <string name="title_activity_contacts">ContactsActivity</string>
     <string name="title_activity_aidl">AidlActivity</string>
+    <string name="title_activity_settings">SettingsActivity</string>
 
 </resources>

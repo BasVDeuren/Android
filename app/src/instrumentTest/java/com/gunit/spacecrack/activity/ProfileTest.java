@@ -46,6 +46,13 @@ public class ProfileTest extends ActivityInstrumentationTestCase2<LoginActivity>
         assertTrue("EditProfileFragment should be visible", editProfileFragment.isVisible());
     }
 
+    public void testPassword() throws Exception {
+        solo.clickOnButton(1);
+        solo.waitForFragmentByTag("Password");
+        Fragment passwordFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("Password");
+        assertTrue("PasswordFragment should be visible", passwordFragment.isVisible());
+    }
+
     @Override
     public void tearDown() throws Exception {
         solo.finishOpenedActivities();

@@ -22,6 +22,10 @@ import org.json.JSONObject;
 /**
  * Created by Dimitri on 7/03/14.
  */
+
+/**
+ * Fragment to change the password
+ */
 public class PasswordFragment extends Fragment {
 
     private EditText edtOldPassword;
@@ -43,8 +47,11 @@ public class PasswordFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!edtOldPassword.getText().equals("") && !edtNewPassword.getText().equals("") && !edtRepeatPassword.getText().equals("")) {
-                    if (validPasswords()) {
-                        new PasswordTask(edtNewPassword.getText().toString(), edtRepeatPassword.getText().toString()).execute(SpaceCrackApplication.URL_USER);
+                    String oldPassword = SpaceCrackApplication.hashPassword(edtNewPassword.getText().toString());
+                    String newPassword = SpaceCrackApplication.hashPassword(edtNewPassword.getText().toString());
+                    String repeatedPassword = SpaceCrackApplication.hashPassword(edtRepeatPassword.getText().toString());
+                    if (validPasswords(oldPassword, newPassword, repeatedPassword)) {
+                        new PasswordTask(newPassword, repeatedPassword).execute(SpaceCrackApplication.URL_USER);
                     } else {
                         Toast.makeText(getActivity(), getString(R.string.password_match), Toast.LENGTH_SHORT).show();
                     }
@@ -56,10 +63,13 @@ public class PasswordFragment extends Fragment {
         return view;
     }
 
-    private boolean validPasswords () {
-        return edtOldPassword.getText().toString().equals(SpaceCrackApplication.user.password) && edtNewPassword.getText().toString().equals(edtRepeatPassword.getText().toString());
+    private boolean validPasswords (String oldPassword, String newPassword, String repeatedPassword) {
+        return oldPassword.equals(SpaceCrackApplication.user.password) && newPassword.equals(repeatedPassword);
     }
 
+    /**
+     * POST request to save the new password
+     */
     private class PasswordTask extends AsyncTask<String, Void, Boolean> {
 
         private JSONObject newUser;
@@ -87,7 +97,7 @@ public class PasswordFragment extends Fragment {
 
         @Override
         protected Boolean doInBackground(String... url) {
-            return RestService.editProfile(url[0], newUser);
+            return RestService.postRequest(url[0], newUser);
         }
 
         @Override

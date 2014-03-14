@@ -19,6 +19,10 @@ import java.util.List;
 /**
  * Created by Dimitri on 12/03/14.
  */
+
+/**
+ * Fragment to show all the Pending requests
+ */
 public class PendingRequestsFragment extends Fragment {
 
     private ListView lstGames;
@@ -35,6 +39,8 @@ public class PendingRequestsFragment extends Fragment {
         lstGames = (ListView) view.findViewById(R.id.lst_games_games);
         GameAdapter gameAdapter = new GameAdapter(getActivity(), games);
         lstGames.setAdapter(gameAdapter);
+        TextView txtNoGames = (TextView) view.findViewById(R.id.txt_lobby_no_games);
+        lstGames.setEmptyView(txtNoGames);
 
         return view;
     }

@@ -1,12 +1,10 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:gravity="center"
-    android:orientation="vertical">
+    android:paddingBottom="@dimen/activity_vertical_margin">
 
     <TextView
         android:layout_width="match_parent"
@@ -14,10 +12,38 @@
         android:id="@+id/txt_lobby_title"
         android:textSize="20sp" />
 
+    <IconTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:id="@+id/img_lobby_leftarrow"
+        android:text="{fa-chevron-left}"
+        android:textSize="20sp"/>
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/lst_games_games" />
+        android:id="@+id/lst_games_games"
+        android:layout_below="@+id/txt_lobby_title"
+        android:layout_toRightOf="@+id/img_lobby_leftarrow"/>
 
-</LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_lobby_no_games"
+        android:text="@string/no_games"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:layout_below="@id/lst_games_games"/>
+
+    <IconTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:id="@+id/img_lobby_rightarrow"
+        android:text="{fa-chevron-right}"
+        android:textSize="20sp"/>
+
+</RelativeLayout>
 

@@ -10,6 +10,10 @@ import java.util.List;
 /**
  * Created by Dimitri on 12/03/14.
  */
+
+/**
+ * Adapter used to display the desired Fragment in the LobbyFragment
+ */
 public class ViewPageAdapter extends FragmentStatePagerAdapter {
 
     private List<Fragment> fragments;

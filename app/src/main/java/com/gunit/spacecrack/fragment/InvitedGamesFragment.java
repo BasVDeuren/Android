@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.IconTextView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,9 +35,14 @@ import java.util.List;
 /**
  * Created by Dimitri on 12/03/14.
  */
+
+/**
+ * Fragment to show all the invitations to games
+ */
 public class InvitedGamesFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private ListView lstGames;
+    private IconTextView rightArrow;
     private List games;
     private ProgressDialog progressDialog;
 
@@ -45,11 +53,15 @@ public class InvitedGamesFragment extends Fragment implements AdapterView.OnItem
         TextView txtTitle = (TextView) view.findViewById(R.id.txt_lobby_title);
         txtTitle.setText(R.string.invited_games);
 
-        games = LobbyFragment.pendingGames;
+        rightArrow = (IconTextView) view.findViewById(R.id.img_lobby_rightarrow);
+        rightArrow.setVisibility(View.INVISIBLE);
+        games = LobbyFragment.invitedGames;
         lstGames = (ListView) view.findViewById(R.id.lst_games_games);
         GameAdapter gameAdapter = new GameAdapter(getActivity(), games);
         lstGames.setAdapter(gameAdapter);
         lstGames.setOnItemClickListener(this);
+        TextView txtNoGames = (TextView) view.findViewById(R.id.txt_lobby_no_games);
+        lstGames.setEmptyView(txtNoGames);
 
         return view;
     }
@@ -76,7 +88,9 @@ public class InvitedGamesFragment extends Fragment implements AdapterView.OnItem
         dialog.show();
     }
 
-    //GET request to get the games
+    /**
+     * POST/DELETE request accept/decline the invite
+     */
     private class InviteTask extends AsyncTask<String, Void, Integer> {
 
         private boolean accepted;

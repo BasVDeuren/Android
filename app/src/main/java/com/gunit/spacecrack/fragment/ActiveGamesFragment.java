@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,10 +21,15 @@ import java.util.List;
 /**
  * Created by Dimitri on 28/02/14.
  */
+
+/**
+ * Fragment to show all the active games of the user
+ */
 public class ActiveGamesFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private ListView lstGames;
     private List games;
+    private TextView leftArrow;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_games, container, false);
@@ -32,10 +38,14 @@ public class ActiveGamesFragment extends Fragment implements AdapterView.OnItemC
         txtTitle.setText(R.string.active_games);
 
         games = LobbyFragment.activeGames;
+        leftArrow = (TextView) view.findViewById(R.id.img_lobby_leftarrow);
+        leftArrow.setVisibility(View.INVISIBLE);
         lstGames = (ListView) view.findViewById(R.id.lst_games_games);
         GameAdapter gameAdapter = new GameAdapter(getActivity(), games);
         lstGames.setAdapter(gameAdapter);
         lstGames.setOnItemClickListener(this);
+        TextView txtNoGames = (TextView) view.findViewById(R.id.txt_lobby_no_games);
+        lstGames.setEmptyView(txtNoGames);
 
         return view;
     }

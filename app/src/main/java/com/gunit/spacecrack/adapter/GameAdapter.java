@@ -23,6 +23,10 @@ import java.util.List;
 /**
  * Created by Dimitri on 4/03/14.
  */
+
+/**
+ * Adapter for ListViews to display all the games
+ */
 public class GameAdapter extends BaseAdapter {
 
     private Context context;

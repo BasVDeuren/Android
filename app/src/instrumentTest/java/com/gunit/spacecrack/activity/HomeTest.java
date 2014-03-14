@@ -1,12 +1,10 @@
 package com.gunit.spacecrack.activity;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.test.ActivityInstrumentationTestCase2;
-import android.widget.ImageView;
 
 import com.gunit.spacecrack.R;
-import com.gunit.spacecrack.activity.HomeActivity;
-import com.gunit.spacecrack.activity.ProfileActivity;
 import com.robotium.solo.Solo;
 
 /**
@@ -27,13 +25,12 @@ public class HomeTest extends ActivityInstrumentationTestCase2<LoginActivity> {
         solo.enterText(0, "test@gmail.com");
         solo.enterText(1, "test");
         solo.clickOnButton(solo.getString(R.string.login));
-        solo.waitForActivity(HomeActivity.class);
+        solo.waitForFragmentByTag("Home");
     }
 
     public void testActivityStart() throws Exception {
         solo.assertCurrentActivity("Current activity should be HomeActivity", HomeActivity.class);
-        solo.waitForFragmentByTag("Home");
-        Fragment homeFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("Home");
+        Fragment homeFragment = ((FragmentActivity) solo.getCurrentActivity()).getSupportFragmentManager().findFragmentByTag("Home");
         assertTrue("HomeFragment should be visible", homeFragment.isVisible());
     }
 
@@ -43,31 +40,43 @@ public class HomeTest extends ActivityInstrumentationTestCase2<LoginActivity> {
         solo.assertCurrentActivity("Current activity should be ProfileActivity", ProfileActivity.class);
     }
 
+    public void testHelp() throws Exception {
+        solo.clickOnView(solo.getView(R.id.btn_home_help));
+        solo.waitForFragmentByTag("Help");
+        Fragment settingsFragment = ((FragmentActivity) solo.getCurrentActivity()).getSupportFragmentManager().findFragmentByTag("Help");
+        assertTrue("HelpFragment should be visible", settingsFragment.isVisible());
+    }
+
     public void testSettings() throws Exception {
         solo.clickOnView(solo.getView(R.id.btn_home_settings));
-        solo.waitForFragmentByTag("Settings");
-        Fragment settingsFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("Settings");
-        assertTrue("SettingsFragment should be visible", settingsFragment.isVisible());
+        solo.waitForActivity(SettingsActivity.class);
+        solo.assertCurrentActivity("Current activity should be SettingsActivity", SettingsActivity.class);
+    }
+
+    public void testLogout() throws Exception {
+        solo.clickOnView(solo.getView(R.id.btn_home_logout));
+        solo.waitForActivity(LoginActivity.class);
+        solo.assertCurrentActivity("Current activity should be LoginActivity", LoginActivity.class);
     }
 
     public void testNewGame() throws Exception {
-        solo.clickOnButton(solo.getString(R.string.new_game));
-        solo.waitForFragmentByTag("New Game");
-        Fragment newGameFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("New Game");
+        solo.clickOnView(solo.getView(R.id.btn_home_newgame));
+        solo.waitForFragmentByTag("NewGame");
+        Fragment newGameFragment = ((FragmentActivity) solo.getCurrentActivity()).getSupportFragmentManager().findFragmentByTag("NewGame");
         assertTrue("NewGameFragment should be visible", newGameFragment.isVisible());
     }
 
-    public void testActiveGames() throws Exception {
+    public void testLobby() throws Exception {
         solo.clickOnButton(solo.getString(R.string.lobby));
         solo.waitForFragmentByTag("Lobby");
-        Fragment lobbyFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("Lobby");
+        Fragment lobbyFragment = ((FragmentActivity) solo.getCurrentActivity()).getSupportFragmentManager().findFragmentByTag("Lobby");
         assertTrue("LobbyFragment should be visible", lobbyFragment.isVisible());
     }
 
     public void testReplay() throws Exception {
         solo.clickOnButton(solo.getString(R.string.replays));
         solo.waitForFragmentByTag("Replay");
-        Fragment replayFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("Replay");
+        Fragment replayFragment = ((FragmentActivity) solo.getCurrentActivity()).getSupportFragmentManager().findFragmentByTag("Replay");
         assertTrue("ReplayFragment should be visible", replayFragment.isVisible());
     }
 

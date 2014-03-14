@@ -15,7 +15,7 @@
     <application
         android:name="com.gunit.spacecrack.application.SpaceCrackApplication"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/spacecrack_icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
@@ -29,27 +29,26 @@
         </activity>
         <activity
             android:name="com.gunit.spacecrack.activity.LoginActivity"
-            android:label="@string/title_activity_login" >
+            android:label="@string/app_name" >
         </activity>
         <activity
             android:name="com.gunit.spacecrack.activity.HomeActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/title_activity_home" >
+            android:label="@string/app_name" >
         </activity>
         <activity
             android:name="com.gunit.spacecrack.activity.ProfileActivity"
-            android:label="@string/title_activity_profile" >
+            android:label="@string/app_name" >
         </activity>
         <activity
             android:name="com.gunit.spacecrack.game.GameActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
-            android:exported="true"
-            android:label="@string/title_activity_game"
+            android:label="@string/app_name"
+            android:launchMode="singleInstance"
             android:theme="@style/AppTheme.NoBackground" >
         </activity>
         <activity
             android:name="com.gunit.spacecrack.chat.ChatActivity"
-            android:label="@string/title_activity_chat" />
+            android:label="@string/app_name" />
         <activity
             android:name="com.facebook.LoginActivity"
             android:label="@string/app_name"
@@ -67,14 +66,6 @@
                 <action android:name="com.gunit.spacecrack.service.START_SERVICE" />
             </intent-filter>
         </service>
-        <service
-            android:name="com.gunit.spacecrack.service.TestService"
-            android:exported="false"
-            android:process=":remote" >
-            <intent-filter>
-                <action android:name="com.gunit.spacecrack.service.TestService" />
-            </intent-filter>
-        </service>
 
         <receiver android:name="com.gunit.spacecrack.broadcastreceiver.SpaceCrackReceiver" >
             <intent-filter>
@@ -82,6 +73,10 @@
             </intent-filter>
         </receiver>
 
+        <activity
+            android:name="com.gunit.spacecrack.activity.SettingsActivity"
+            android:label="@string/title_activity_settings" >
+        </activity>
     </application>
 
 </manifest>

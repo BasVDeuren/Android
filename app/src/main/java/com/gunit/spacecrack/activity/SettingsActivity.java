@@ -4,23 +4,19 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import com.gunit.spacecrack.R;
-import com.gunit.spacecrack.fragment.ProfileFragment;
+import com.gunit.spacecrack.fragment.SettingsFragment;
 
-/**
- * ProfileActivity used for Profile and Edit Profile
- */
-public class ProfileActivity extends Activity {
+public class SettingsActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_settings);
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new ProfileFragment(), "Profile")
+                    .add(R.id.container, new SettingsFragment(), "Settings")
                     .commit();
         }
     }
-
 }

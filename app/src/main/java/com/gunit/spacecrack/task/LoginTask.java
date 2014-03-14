@@ -42,7 +42,7 @@ public class LoginTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... params) {
-        return RestService.postRequest(SpaceCrackApplication.URL_LOGIN, user);
+        return RestService.postRequestWithoutAccessToken(SpaceCrackApplication.URL_LOGIN, user);
     }
 
     @Override

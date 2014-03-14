@@ -32,12 +32,14 @@
                 android:layout_width="@dimen/default_size"
                 android:layout_height="wrap_content"
                 android:id="@+id/edt_profile_first_name"
+                android:inputType="textPersonName"
                 android:hint="@string/first_name"/>
 
             <EditText
                 android:layout_width="@dimen/default_size"
                 android:layout_height="wrap_content"
                 android:id="@+id/edt_profile_last_name"
+                android:inputType="textPersonName"
                 android:hint="@string/last_name"/>
 
             <Button

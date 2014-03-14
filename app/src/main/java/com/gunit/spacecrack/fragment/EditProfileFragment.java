@@ -20,7 +20,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.IconButton;
 import android.widget.ImageView;
@@ -51,7 +50,7 @@ public class EditProfileFragment extends Fragment {
     private IconButton btnSave;
     private Bitmap btnNewPicture;
 
-    private int galleryResult;
+    private int galleryResult = -1;
     private String picturePath;
 
     private Context context;
@@ -111,7 +110,7 @@ public class EditProfileFragment extends Fragment {
         btnDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogFragment datePicker = new StartDatePicker();
+                DialogFragment datePicker = new DatePicker();
                 datePicker.show(getActivity().getFragmentManager(), "start_date_picker");
             }
         });
@@ -119,7 +118,7 @@ public class EditProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!edtFirstName.getText().toString().equals("") && !edtLastName.getText().toString().equals("") && !btnDate.getText().toString().equals(getResources().getText(R.string.birth_date))) {
-                    new EditTask(edtFirstName.getText().toString(), edtLastName.getText().toString(), SpaceCrackApplication.user.profile.email, btnDate.getText().toString(), btnNewPicture).execute(SpaceCrackApplication.URL_PROFILE);
+                    new EditProfileTask(edtFirstName.getText().toString(), edtLastName.getText().toString(), SpaceCrackApplication.user.profile.email, btnDate.getText().toString(), btnNewPicture).execute(SpaceCrackApplication.URL_PROFILE);
                 } else {
                     Toast.makeText(getActivity(), getResources().getString(R.string.fill_in_fields), Toast.LENGTH_SHORT).show();
                 }
@@ -127,6 +126,13 @@ public class EditProfileFragment extends Fragment {
         });
     }
 
+    /**
+     * Callback method from the Gallery
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -140,7 +146,6 @@ public class EditProfileFragment extends Fragment {
                 int columnIndex = cursor.getColumnIndex(filePathImage[0]);
                 picturePath = cursor.getString(columnIndex);
                 try {
-//                    imgProfilePicture.setImageBitmap(decodeUri(selectedImage));
                     btnNewPicture = decodeSampledBitmapFromUri(selectedImage, 200, 200);
                     imgProfilePicture.setImageBitmap(btnNewPicture);
                 } catch (FileNotFoundException e) {
@@ -149,23 +154,17 @@ public class EditProfileFragment extends Fragment {
             }
             cursor.close();
         }
-
-//        if (requestCode == galleryResult && data != null) {
-//            Uri selectedImage = data.getData();
-//            String[] filePathImage = {MediaStore.Images.Media.DATA};
-//            Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathImage, null, null, null);
-//
-//            if (cursor.moveToFirst()) {
-//                int columnIndex = cursor.getColumnIndex(filePathImage[0]);
-//                picturePath = cursor.getString(columnIndex);
-//                imgProfilePicture.setImageBitmap(BitmapFactory.decodeFile(picturePath));
-//            }
-//
-//            cursor.close();
-//        }
     }
 
-    public Bitmap decodeSampledBitmapFromUri (Uri selectedImage, int reqWidth, int reqHeight) throws FileNotFoundException {
+    /**
+     * Create a Bitmap from the given Uri, with a compression equals to the required width and height
+     * @param selectedImage
+     * @param reqWidth
+     * @param reqHeight
+     * @return
+     * @throws FileNotFoundException
+     */
+    public Bitmap decodeSampledBitmapFromUri(Uri selectedImage, int reqWidth, int reqHeight) throws FileNotFoundException {
 
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -173,7 +172,7 @@ public class EditProfileFragment extends Fragment {
         BitmapFactory.decodeStream(
                 getActivity().getContentResolver().openInputStream(selectedImage), null, options);
 
-        // Calculate inSampleSize
+        // Calculate inSampleSize to compress the image
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 
         // Decode bitmap with inSampleSize set
@@ -182,8 +181,7 @@ public class EditProfileFragment extends Fragment {
                 getActivity().getContentResolver().openInputStream(selectedImage), null, options);
     }
 
-    public static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image
         final int height = options.outHeight;
         final int width = options.outWidth;
@@ -205,13 +203,14 @@ public class EditProfileFragment extends Fragment {
         return inSampleSize;
     }
 
-    private class StartDatePicker extends DialogFragment implements DatePickerDialog.OnDateSetListener{
+    private class DatePicker extends DialogFragment implements DatePickerDialog.OnDateSetListener {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             DatePickerDialog dialog = new DatePickerDialog(context, this, startYear, startMonth, startDay);
             return dialog;
         }
-        public void onDateSet(DatePicker view, int year, int monthOfYear,
+
+        public void onDateSet(android.widget.DatePicker view, int year, int monthOfYear,
                               int dayOfMonth) {
             startYear = year;
             startMonth = monthOfYear;
@@ -220,13 +219,14 @@ public class EditProfileFragment extends Fragment {
         }
     }
 
-    //POST request to edit the profile
-    public class EditTask extends AsyncTask<String, Void, Boolean> {
+    /**
+     * POST request to edit the profile
+     */
+    private class EditProfileTask extends AsyncTask<String, Void, Boolean> {
 
         private JSONObject profile;
 
-        public EditTask (String firstname, String lastname, String email, String dateOfBirth, Bitmap image)
-        {
+        public EditProfileTask(String firstname, String lastname, String email, String dateOfBirth, Bitmap image) {
             super();
 
             String byte64Img = "";
@@ -263,36 +263,34 @@ public class EditProfileFragment extends Fragment {
         }
 
         @Override
-        protected Boolean doInBackground (String...url)
-        {
-            return RestService.editProfile(url[0], profile);
+        protected Boolean doInBackground(String... url) {
+            return RestService.postRequest(url[0], profile);
         }
 
         @Override
-        protected void onPostExecute (Boolean result)
-        {
+        protected void onPostExecute(Boolean result) {
             Toast.makeText(getActivity(), result ? getResources().getString(R.string.profile_edited) : getResources().getString(R.string.edited_failed), Toast.LENGTH_SHORT).show();
 
             if (result) {
-                new GetProfile().execute(SpaceCrackApplication.URL_PROFILE);
+                new ProfileTask().execute(SpaceCrackApplication.URL_PROFILE);
             }
 
             btnSave.setEnabled(true);
         }
     }
 
-    //POST request to edit the profile
-    private class GetProfile extends AsyncTask<String, Void, String> {
+    /**
+     * GET request to the profile
+     */
+    private class ProfileTask extends AsyncTask<String, Void, String> {
 
         @Override
-        protected String doInBackground (String...url)
-        {
+        protected String doInBackground(String... url) {
             return RestService.getRequest(url[0]);
         }
 
         @Override
-        protected void onPostExecute (String result)
-        {
+        protected void onPostExecute(String result) {
             if (result != null) {
                 try {
                     Gson gson = new Gson();

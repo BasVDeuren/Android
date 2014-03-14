@@ -20,6 +20,10 @@ import org.andengine.opengl.vbo.VertexBufferObjectManager;
 /**
  * Created by Dimitri on 24/02/14.
  */
+
+/**
+ * BaseScene defines the abstract methods used by the different Scenes
+ */
 public abstract class BaseScene extends Scene {
     protected Engine engine;
     protected GameActivity activity;
@@ -37,6 +41,14 @@ public abstract class BaseScene extends Scene {
         createScene();
     }
 
+    /**
+     * Create a new Sprite, used for display the game elements, and return it
+     * @param x
+     * @param y
+     * @param region
+     * @param vbom
+     * @return
+     */
     protected Sprite createSprite(float x, float y, ITextureRegion region, VertexBufferObjectManager vbom) {
         Sprite sprite = new Sprite(x, y, region, vbom)
         {
@@ -49,6 +61,16 @@ public abstract class BaseScene extends Scene {
         return sprite;
     }
 
+    /**
+     * Create a new TiledSprite, used for display the game elements, and return it
+     * The TiledSprite accepts a Sprite sheet and will display the correct image according the index
+     * @param x
+     * @param y
+     * @param region
+     * @param vbom
+     * @param index
+     * @return
+     */
     protected TiledSprite createTiledSprite(float x, float y, ITiledTextureRegion region, VertexBufferObjectManager vbom, int index) {
         TiledSprite tiledSprite = new TiledSprite(x, y, region, vbom)
         {
@@ -65,8 +87,6 @@ public abstract class BaseScene extends Scene {
     public abstract void createScene();
 
     public abstract void onBackKeyPressed();
-
-    public abstract SceneManager.SceneType getSceneType();
 
     public abstract void disposeScene();
 }

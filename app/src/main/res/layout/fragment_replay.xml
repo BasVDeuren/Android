@@ -4,27 +4,35 @@
 
     <include layout="@layout/background" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:paddingBottom="@dimen/activity_vertical_margin">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/txt_replay_title"
             android:text="@string/replays"
-            android:textSize="24sp" />
+            android:textSize="24sp"/>
 
         <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/lst_replay_games" />
+            android:id="@+id/lst_replay_games"
+            android:layout_below="@+id/txt_replay_title"/>
 
-    </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_replay_no_games"
+            android:text="@string/no_games"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:layout_below="@+id/lst_replay_games"/>
+
+    </RelativeLayout>
 
 </FrameLayout>

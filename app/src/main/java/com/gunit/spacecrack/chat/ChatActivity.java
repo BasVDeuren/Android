@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -72,10 +73,9 @@ public class ChatActivity extends ListActivity {
     @Override
     public void onStart() {
         super.onStart();
-//        if (username == null) {
-//            setupUsername();
-//        }
-        username = getString(R.string.username);
+        if (username == null) {
+            setupUsername();
+        }
 
         // Setup our view and list adapter. Ensure it scrolls to the bottom as data changes
         final ListView listView = getListView();
@@ -90,15 +90,15 @@ public class ChatActivity extends ListActivity {
             }
         });
 
-        // Finally, a little indication of connection status
+        //Check the connection
         connectedListener = ref.getRoot().child(".info/connected").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boolean connected = (Boolean)dataSnapshot.getValue();
                 if (connected) {
-                    Toast.makeText(ChatActivity.this, "Connected to Firebase", Toast.LENGTH_SHORT).show();
+                    Log.i("Firebase", "Connected to Firebase");
                 } else {
-                    Toast.makeText(ChatActivity.this, "Disconnected from Firebase", Toast.LENGTH_SHORT).show();
+                    Log.i("Firebase", "Disconnected from Firebase");
                 }
             }
 

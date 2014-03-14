@@ -20,6 +20,10 @@ import java.util.Date;
 /**
  * Created by Dimitri on 20/02/14.
  */
+
+/**
+ * Fragment to show the Profile of the user
+ */
 public class ProfileFragment extends Fragment {
 
     private ProfilePictureView fbPictureView;

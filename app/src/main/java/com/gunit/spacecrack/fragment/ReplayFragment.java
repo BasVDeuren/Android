@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -31,6 +32,10 @@ import java.util.List;
 /**
  * Created by Dimitri on 7/03/14.
  */
+
+/**
+ * Fragment to show all the games available to replay
+ */
 public class ReplayFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private ListView lstGames;
@@ -42,6 +47,8 @@ public class ReplayFragment extends Fragment implements AdapterView.OnItemClickL
 
         lstGames = (ListView) view.findViewById(R.id.lst_replay_games);
         lstGames.setOnItemClickListener(this);
+        TextView txtNoGames = (TextView) view.findViewById(R.id.txt_replay_no_games);
+        lstGames.setEmptyView(txtNoGames);
         new GetGamesTask().execute(SpaceCrackApplication.URL_GAME);
 
         return view;
@@ -56,7 +63,9 @@ public class ReplayFragment extends Fragment implements AdapterView.OnItemClickL
         startActivity(intent);
     }
 
-    //GET request to get the games
+    /**
+     * GET request to get the games
+     */
     private class GetGamesTask extends AsyncTask<String, Void, String> {
 
         @Override

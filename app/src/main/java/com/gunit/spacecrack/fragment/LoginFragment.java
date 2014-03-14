@@ -39,6 +39,10 @@ import java.util.Arrays;
 /**
  * Created by Dimitri on 20/02/14.
  */
+
+/**
+ * Fragment to handle the login
+ */
 public class LoginFragment extends Fragment implements ILoginRequest, IUserRequest {
 
     private EditText edtEmail;
@@ -87,8 +91,8 @@ public class LoginFragment extends Fragment implements ILoginRequest, IUserReque
                 if (!edtEmail.getText().toString().equals("") && !edtPassword.getText().toString().equals("")) {
                     if (SpaceCrackApplication.isValidEmail(edtEmail.getText().toString())) {
                         email = edtEmail.getText().toString();
-                        password = edtPassword.getText().toString();
-                        new LoginTask(edtEmail.getText().toString(), edtPassword.getText().toString(), loginFragment).execute();
+                        password = SpaceCrackApplication.hashPassword(edtPassword.getText().toString());
+                        new LoginTask(email, password, loginFragment).execute();
                     } else {
                         Toast.makeText(getActivity(), getString(R.string.valid_email_error), Toast.LENGTH_SHORT).show();
                     }
@@ -114,7 +118,7 @@ public class LoginFragment extends Fragment implements ILoginRequest, IUserReque
                     SpaceCrackApplication.graphUser = user;
                     facebookLogin = true;
                     email = (String) SpaceCrackApplication.graphUser.asMap().get("email");
-                    password = "facebook" + user.getId();
+                    password = SpaceCrackApplication.hashPassword("facebook" + user.getId());
                     new LoginTask(email, password, loginFragment).execute(SpaceCrackApplication.URL_LOGIN);
                 }
             }
@@ -142,7 +146,7 @@ public class LoginFragment extends Fragment implements ILoginRequest, IUserReque
             Log.i(TAG, "Login success");
             new UserTask(userCall).execute(SpaceCrackApplication.URL_USER);
         } else if (facebookLogin) {
-            new RegisterTask(SpaceCrackApplication.graphUser.getName(), "facebook" + SpaceCrackApplication.graphUser.getId(), "facebook" + SpaceCrackApplication.graphUser.getId(), (String) SpaceCrackApplication.graphUser.asMap().get("email")).execute(SpaceCrackApplication.URL_REGISTER);
+            new RegisterTask(SpaceCrackApplication.graphUser.getName(), SpaceCrackApplication.hashPassword("facebook" + SpaceCrackApplication.graphUser.getId()), SpaceCrackApplication.hashPassword("facebook" + SpaceCrackApplication.graphUser.getId()), (String) SpaceCrackApplication.graphUser.asMap().get("email")).execute(SpaceCrackApplication.URL_REGISTER);
         }
 
         Log.i(TAG, "Login failed");
@@ -192,7 +196,7 @@ public class LoginFragment extends Fragment implements ILoginRequest, IUserReque
         editor.commit();
     }
 
-    //POST request to postRequest the user
+    //POST request to register the user
     public class RegisterTask extends AsyncTask<String, Void, String> {
 
         private JSONObject newUser;
@@ -228,14 +232,14 @@ public class LoginFragment extends Fragment implements ILoginRequest, IUserReque
         protected String doInBackground (String...url)
         {
             //Register newUser
-            String accessToken = RestService.postRequest(url[0], newUser);
+            String accessToken = RestService.postRequestWithoutAccessToken(url[0], newUser);
             //If newUser has been registered, login
             if (accessToken != null) {
                 JSONObject loginUser = new JSONObject();
                 try {
                     loginUser.put("email", newUser.get("email"));
                     loginUser.put("password", newUser.get("password"));
-                    accessToken = RestService.postRequest(SpaceCrackApplication.URL_LOGIN, loginUser);
+                    accessToken = RestService.postRequestWithoutAccessToken(SpaceCrackApplication.URL_LOGIN, loginUser);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

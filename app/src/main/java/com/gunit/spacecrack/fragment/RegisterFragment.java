@@ -32,6 +32,10 @@ import org.json.JSONObject;
 /**
  * Created by Dimitri on 20/02/14.
  */
+
+/**
+ * RegisterFragment to handle the registration of an new user
+ */
 public class RegisterFragment extends Fragment implements IUserRequest {
 
     private Button btnRegister;
@@ -64,7 +68,7 @@ public class RegisterFragment extends Fragment implements IUserRequest {
                 if (!edtUsername.getText().toString().equals("") && !edtPassword.getText().toString().equals("") && !edtConfirmPassword.getText().toString().equals("") && !edtEmail.getText().toString().equals("")) {
                     if (checkPasswords(edtPassword.getText().toString(), edtConfirmPassword.getText().toString())) {
                         if (SpaceCrackApplication.isValidEmail(edtEmail.getText().toString())) {
-                            new RegisterTask(edtUsername.getText().toString(), edtPassword.getText().toString(), edtConfirmPassword.getText().toString(), edtEmail.getText().toString()).execute(SpaceCrackApplication.URL_REGISTER);
+                            new RegisterTask(edtUsername.getText().toString(), SpaceCrackApplication.hashPassword(edtPassword.getText().toString()), SpaceCrackApplication.hashPassword(edtConfirmPassword.getText().toString()), edtEmail.getText().toString()).execute(SpaceCrackApplication.URL_REGISTER);
                         } else {
                             Toast.makeText(getActivity(), getString(R.string.valid_email_error), Toast.LENGTH_SHORT).show();
                         }
@@ -85,12 +89,19 @@ public class RegisterFragment extends Fragment implements IUserRequest {
         return password.equals(confirmPassword);
     }
 
+    /**
+     * Start of the UserTask
+     */
     @Override
     public void startTask() {
         btnRegister.setEnabled(false);
         progressDialog = ProgressDialog.show(getActivity(), getString(R.string.please_wait), getString(R.string.registrating));
     }
 
+    /**
+     * Callback method from the UserTask
+     * @param result
+     */
     @Override
     public void userCallback(String result) {
         if (result != null) {
@@ -118,7 +129,9 @@ public class RegisterFragment extends Fragment implements IUserRequest {
         progressDialog.dismiss();
     }
 
-    //POST request to postRequest the user
+    /**
+     * POST request to register the user
+     */
     private class RegisterTask extends AsyncTask<String, Void, String> {
 
         private JSONObject newUser;
@@ -150,7 +163,7 @@ public class RegisterFragment extends Fragment implements IUserRequest {
         @Override
         protected String doInBackground (String...url)
         {
-            return RestService.postRequest(url[0], newUser);
+            return RestService.postRequestWithoutAccessToken(url[0], newUser);
         }
 
         @Override

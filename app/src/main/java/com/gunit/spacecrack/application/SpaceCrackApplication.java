@@ -12,6 +12,10 @@ import com.facebook.widget.WebDialog;
 import com.gunit.spacecrack.model.Profile;
 import com.gunit.spacecrack.model.User;
 
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,9 +26,13 @@ import java.util.regex.Pattern;
 /**
  * Created by Dimitri on 20/02/14.
  */
+
+/**
+ * Application class which holds several global variables and methods
+ */
 public class SpaceCrackApplication extends Application {
 
-    //Logged in User
+    // Logged in User
     public static User user;
     public static Bitmap profilePicture;
 
@@ -37,6 +45,7 @@ public class SpaceCrackApplication extends Application {
     public static String accessToken;
 
     public static Pattern emailRegex = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+    public static Pattern plainTextRegex = Pattern.compile("^[0-9A-Z]+$", Pattern.CASE_INSENSITIVE);
 
     public final static int NETWORK_TIMEOUT = 12000;
     //Localhost emulator
@@ -61,8 +70,10 @@ public class SpaceCrackApplication extends Application {
     public static final String URL_REPLAY = DOMAIN + "/api/auth/replay";
     public static final String URL_STATISTICS = DOMAIN + "/api/auth/statistics";
     public static final String URL_GAMEINVITE = DOMAIN + "/api/auth/game/invite";
+    public static final String URL_INVITATION = DOMAIN + "/api/auth/invitation";
 
     public static final String URL_FIREBASE_CHAT = "https://amber-fire-3394.firebaseio.com";
+    public static final String URL_FIREBASE_INVITES = "https://vivid-fire-9476.firebaseio.com/invites";
 
     public static void logout() {
         user = null;
@@ -83,5 +94,32 @@ public class SpaceCrackApplication extends Application {
 
     public static boolean isValidEmail (String email) {
         return emailRegex.matcher(email).matches();
+    }
+
+    public static boolean isPlainText (String text) {
+        return plainTextRegex.matcher(text).matches();
+    }
+
+    /**
+     * Hash the password with the MD5 algorithm
+     * @param password
+     * @return
+     */
+    public static String hashPassword(String password) {
+        String hashedString = null;
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+            messageDigest.update(password.getBytes(), 0, password.length());
+            byte[] hashedBytes = messageDigest.digest();
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < hashedBytes.length; i++) {
+                sb.append(Integer.toString((hashedBytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            hashedString = sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        return hashedString;
     }
 }

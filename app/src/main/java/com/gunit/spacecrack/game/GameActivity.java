@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.gunit.spacecrack.R;
@@ -19,8 +20,8 @@ import com.gunit.spacecrack.game.manager.SceneManager;
 import com.gunit.spacecrack.json.GameActivePlayerWrapper;
 import com.gunit.spacecrack.json.PlayerViewModel;
 import com.gunit.spacecrack.json.RevisionListViewModel;
+import com.gunit.spacecrack.model.Invite;
 import com.gunit.spacecrack.model.Planet;
-import com.gunit.spacecrack.model.Player;
 import com.gunit.spacecrack.model.SpaceCrackMap;
 import com.gunit.spacecrack.restservice.RestService;
 import com.gunit.spacecrack.service.SpaceCrackService;
@@ -46,10 +47,12 @@ import java.util.Map;
 /**
  * Created by Dimitri on 24/02/14.
  */
+
+/**
+ * GameActivity will handle the whole Game
+ */
 public class GameActivity extends BaseGameActivity {
 
-    private static final int WIDTH = 1600;
-    private static final int HEIGHT = 1000;
     private SmoothCamera smoothCamera;
     public static final int CAMERA_WIDTH = 930;
     public static final int CAMERA_HEIGHT = 558;
@@ -74,6 +77,7 @@ public class GameActivity extends BaseGameActivity {
     private boolean firstPLayer;
     public boolean replay;
     public int gameId;
+    private String opponentUsername;
 
     private SpaceCrackService spaceCrackService;
     private boolean boundToService = false;
@@ -92,7 +96,6 @@ public class GameActivity extends BaseGameActivity {
         //Bind to the service
         Intent intent = new Intent(this, SpaceCrackService.class);
         intent.putExtra("username", SpaceCrackApplication.user.username);
-        startService(intent);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -146,21 +149,25 @@ public class GameActivity extends BaseGameActivity {
             super.onResumeGame();
     }
 
+    /**
+     * Load the data containing the Game its state
+     */
     private void loadData() {
         gameStarted = false;
         mapLoaded = false;
         planets = new HashMap<String, Planet>();
-        new GetMap().execute(SpaceCrackApplication.URL_MAP);
+        new MapTask().execute(SpaceCrackApplication.URL_MAP);
         Intent intent = getIntent();
-        if (intent.getStringExtra("gameName") != null && intent.getIntExtra("opponent", 0) != 0) {
-            new CreateGameTask(intent.getStringExtra("gameName"), intent.getIntExtra("opponent", 0)).execute(SpaceCrackApplication.URL_GAME);
+        if (intent.getStringExtra("gameName") != null && intent.getIntExtra("opponentId", 0) != 0) {
+            opponentUsername = intent.getStringExtra("opponentName");
+            new GameTask(intent.getStringExtra("gameName"), intent.getIntExtra("opponentId", 0)).execute(SpaceCrackApplication.URL_GAME);
         } else if (intent.getIntExtra("gameId", 0) != 0 ) {
             if (intent.getBooleanExtra("replay", false)) {
                 replay = true;
                 gameId = intent.getIntExtra("gameId", 0);
-                new GetRevisions().execute(SpaceCrackApplication.URL_REPLAY + "/" + intent.getIntExtra("gameId", 0));
+                new RevisionsTask().execute(SpaceCrackApplication.URL_REPLAY + "/" + intent.getIntExtra("gameId", 0));
             } else {
-                new GetActiveGame().execute(SpaceCrackApplication.URL_ACTIVEGAME + "/" + intent.getIntExtra("gameId", 0));
+                new ActiveGameTask().execute(SpaceCrackApplication.URL_ACTIVEGAME + "/" + intent.getIntExtra("gameId", 0));
             }
         } else {
             Toast.makeText(this, getString(R.string.game_not_loaded), Toast.LENGTH_SHORT).show();
@@ -174,6 +181,10 @@ public class GameActivity extends BaseGameActivity {
         return new LimitedFPSEngine(pEngineOptions, FPS_LIMIT);
     }
 
+    /**
+     * Defines the options of the engine, such as the type of camera and screen orientation
+     * @return
+     */
     @Override
     public EngineOptions onCreateEngineOptions() {
         smoothCamera = new SmoothCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, maxVelocityX, maxVelocityY, maxZoomFactorChange);
@@ -181,10 +192,10 @@ public class GameActivity extends BaseGameActivity {
         smoothCamera.setBoundsEnabled(true);
         IResolutionPolicy resolutionPolicy = new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT);
         EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, resolutionPolicy, smoothCamera);
-        engineOptions.getAudioOptions().setNeedsMusic(true).setNeedsSound(true);
         engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);
         engineOptions.getTouchOptions().setNeedsMultiTouch(true);
 
+        //Check for MultiTouch support
         if (!MultiTouch.isSupported(this)) {
             Toast.makeText(this, getResources().getString(R.string.multitouch_support), Toast.LENGTH_SHORT).show();
             finish();
@@ -215,7 +226,7 @@ public class GameActivity extends BaseGameActivity {
 //            @Override
 //            public void onTimePassed(TimerHandler pTimerHandler) {
 //                mEngine.unregisterUpdateHandler(pTimerHandler);
-//                SceneManager.getInstance().loadMenuScene(mEngine);
+//                SceneManager.getInstance().loadGameScene(mEngine);
 //            }
 //        }));
         pOnPopulateSceneCallback.onPopulateSceneFinished();
@@ -248,6 +259,9 @@ public class GameActivity extends BaseGameActivity {
 //        return false;
 //    }
 
+    /**
+     * Override the default action of the Back button, and let the current Scene decide what to do
+     */
     @Override
     public void onBackPressed() {
         SceneManager.getInstance().getCurrentScene().onBackKeyPressed();
@@ -255,7 +269,6 @@ public class GameActivity extends BaseGameActivity {
 
     private void startGame () {
         if (mapLoaded && gameStarted) {
-//            SceneManager.getInstance().loadMenuScene(mEngine);
             mapLoaded = false;
             gameStarted = false;
             if (replay) {
@@ -268,8 +281,17 @@ public class GameActivity extends BaseGameActivity {
         }
     }
 
-    //GET request to map
-    private class GetMap extends AsyncTask<String, Void, String> {
+    private void pushInvite (String gameId, String opponentId) {
+        opponentUsername = opponentUsername.replaceAll("\\s","");
+        Invite invite = new Invite(gameId, SpaceCrackApplication.user.username, false);
+        Firebase firebase = new Firebase(SpaceCrackApplication.URL_FIREBASE_INVITES + "/" + opponentUsername + opponentId);
+        firebase.push().setValue(invite);
+    }
+
+    /**
+     * GET request to game map
+     */
+    private class MapTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground (String...url)
@@ -296,15 +318,19 @@ public class GameActivity extends BaseGameActivity {
         }
     }
 
-    //POST request
-    public class CreateGameTask extends AsyncTask<String, Void, String> {
+    /**
+     * POST request to create the game
+     */
+    private class GameTask extends AsyncTask<String, Void, String> {
 
         private JSONObject game;
+        private int opponentId;
 
-        public CreateGameTask(String gameName, int opponentId)
+        public GameTask(String gameName, int opponentId)
         {
             super();
             game = new JSONObject();
+            this.opponentId = opponentId;
             try {
                 game.put("gameName", gameName);
                 game.put("opponentProfileId", opponentId);
@@ -323,15 +349,18 @@ public class GameActivity extends BaseGameActivity {
         protected void onPostExecute (String result)
         {
             if (result != null) {
-                new GetActiveGame().execute(SpaceCrackApplication.URL_ACTIVEGAME + "/" + result);
+                pushInvite(result, String.valueOf(opponentId));
+                new ActiveGameTask().execute(SpaceCrackApplication.URL_ACTIVEGAME + "/" + result);
             } else {
-                Toast.makeText(GameActivity.this, getString(R.string.turn_ended), Toast.LENGTH_SHORT).show();
+                Toast.makeText(GameActivity.this, getString(R.string.game_not_created), Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    //GET request to the active game
-    private class GetActiveGame extends AsyncTask<String, Void, String> {
+    /**
+     * GET request to the active game
+     */
+    private class ActiveGameTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground (String...url)
@@ -343,7 +372,6 @@ public class GameActivity extends BaseGameActivity {
         protected void onPostExecute (String result)
         {
             if (result != null) {
-                Toast.makeText(GameActivity.this, "Data received", Toast.LENGTH_SHORT).show();
                 try {
                     Gson gson = new Gson();
                     Log.i("Game JSON", result);
@@ -360,11 +388,16 @@ public class GameActivity extends BaseGameActivity {
                 } catch (JsonParseException e) {
                     e.printStackTrace();
                 }
+            } else {
+                Toast.makeText(GameActivity.this, getString(R.string.game_not_found), Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    private class GetRevisions extends AsyncTask<String, Void, String> {
+    /**
+     * GET request to the Revisions
+     */
+    private class RevisionsTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground (String...url)
         {

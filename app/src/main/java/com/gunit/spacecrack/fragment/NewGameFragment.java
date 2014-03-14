@@ -1,5 +1,7 @@
 package com.gunit.spacecrack.fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -38,6 +40,9 @@ import com.gunit.spacecrack.game.GameActivity;
 import com.gunit.spacecrack.model.User;
 import com.gunit.spacecrack.restservice.RestService;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,11 +50,16 @@ import java.util.List;
 /**
  * Created by Dimitri on 28/02/14.
  */
+
+/**
+ * Displays the select screen for a new Game
+ */
 public class NewGameFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private EditText edtGameName;
     private EditText edtOpponent;
     private IconButton btnSearch;
+    private IconButton btnMail;
     private IconButton btnContact;
     private IconButton btnFacebook;
     private IconButton btnRandom;
@@ -59,10 +69,12 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
     private User selectedUser;
     private RadioGroup rdgUserType;
     private RadioButton rdbUsername;
-    private RadioButton rdbEemail;
+    private RadioButton rdbEmail;
 
     private final int CONTACT_PICKER_RESULT = 1;
     private final int RESULT_OK = -1;
+    private boolean contactPicked = false;
+    private final String TAG = "NewGameFragment";
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_new_game, container, false);
@@ -70,28 +82,23 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
         edtOpponent = (EditText) view.findViewById(R.id.edt_newgame_opponent);
 
         btnSearch = (IconButton) view.findViewById(R.id.btn_newgame_search);
-
+        btnMail = (IconButton) view.findViewById(R.id.btn_newgame_mail);
         btnContact = (IconButton) view.findViewById(R.id.btn_newgame_contact);
         btnFacebook = (IconButton) view.findViewById(R.id.btn_newgame_facebook);
         btnRandom = (IconButton) view.findViewById(R.id.btn_newgame_random);
 
         rdgUserType = (RadioGroup) view.findViewById(R.id.rdg_newgame_usertype);
         rdbUsername = (RadioButton) view.findViewById(R.id.rdb_newgame_username);
-        rdbEemail = (RadioButton) view.findViewById(R.id.rdb_newgame_email);
+        rdbEmail = (RadioButton) view.findViewById(R.id.rdb_newgame_email);
         rdgUserType.check(rdbUsername.getId());
 
         btnCreateGame = (Button) view.findViewById(R.id.btn_newgame_create);
 
         addListeners();
 
-        edtGameName.setText("Android");
-        edtOpponent.setText("test");
-        btnSearch.callOnClick();
-
         lstUsers = (ListView) view.findViewById(R.id.lst_newgame_users);
         lstUsers.setOnItemClickListener(this);
 
-//        List<String> users = getNameEmailDetails();
         return view;
     }
 
@@ -102,15 +109,48 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
                 if (edtOpponent.getText() != null) {
                     if (rdbUsername.isChecked()) {
                         new FindUserTask(true).execute(SpaceCrackApplication.URL_FIND_USERNAME + "/" + edtOpponent.getText().toString());
-                    } else if (rdbEemail.isChecked()) {
-                        new FindUserTask(true).execute(SpaceCrackApplication.URL_FIND_EMAIL + "/" + edtOpponent.getText().toString());
+                    } else if (rdbEmail.isChecked() || contactPicked) {
+                        if (SpaceCrackApplication.isValidEmail(edtOpponent.getText().toString())) {
+                            new FindUserTask(true).execute(SpaceCrackApplication.URL_FIND_EMAIL + "/" + edtOpponent.getText().toString());
+                        } else {
+                            Toast.makeText(getActivity(), R.string.valid_email_error, Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
+            }
+        });
+        btnMail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle(R.string.email)
+                        .setMessage(R.string.send_email)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (SpaceCrackApplication.isValidEmail(edtOpponent.getText().toString())) {
+                                    new InvitationTask(edtOpponent.getText().toString()).execute(SpaceCrackApplication.URL_INVITATION);
+                                } else {
+                                    Toast.makeText(getActivity(), R.string.valid_email_error, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        })
+                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                btnSearch.setVisibility(View.VISIBLE);
+                                btnMail.setVisibility(View.GONE);
+                            }
+                        });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
         btnContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnSearch.setVisibility(View.VISIBLE);
+                btnMail.setVisibility(View.GONE);
                 Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
                 contactPickerIntent.setType(CommonDataKinds.Email.CONTENT_TYPE);
                 startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
@@ -119,30 +159,56 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
         btnFacebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnSearch.setVisibility(View.VISIBLE);
+                btnMail.setVisibility(View.GONE);
                 sendRequestDialog();
             }
         });
         btnRandom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnSearch.setVisibility(View.VISIBLE);
+                btnMail.setVisibility(View.GONE);
                 new FindUserTask(false).execute(SpaceCrackApplication.URL_FIND_USERID + "/" + SpaceCrackApplication.user.userId);
             }
         });
         btnCreateGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnSearch.setVisibility(View.VISIBLE);
+                btnMail.setVisibility(View.GONE);
                 if (!edtGameName.getText().toString().equals("") && selectedUser != null) {
-                    Intent intent = new Intent(getActivity(), GameActivity.class);
-                    intent.putExtra("gameName", edtGameName.getText().toString());
-                    intent.putExtra("opponent", selectedUser.userId);
-                    startActivity(intent);
+                    if (SpaceCrackApplication.isPlainText(edtGameName.getText().toString())) {
+                        Intent intent = new Intent(getActivity(), GameActivity.class);
+                        intent.putExtra("gameName", edtGameName.getText().toString());
+                        intent.putExtra("opponentId", selectedUser.userId);
+                        intent.putExtra("opponentName", selectedUser.username);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(getActivity(), getString(R.string.symbols_not_allowed), Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(getActivity(), getResources().getText(R.string.fill_in_fields), Toast.LENGTH_SHORT).show();
                 }
             }
         });
+        rdgUserType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (rdbUsername.getId() == checkedId) {
+                    btnSearch.setVisibility(View.VISIBLE);
+                    btnMail.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
+    /**
+     * Callback method of the Contact Picker
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
@@ -162,6 +228,8 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
                         name = cursor.getString(nameId);
                         Log.i("Name", name);
                         Log.i("Email", email);
+                        edtOpponent.setText(email);
+                        contactPicked = true;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -180,27 +248,9 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
         edtOpponent.setText(selectedUser.username);
     }
 
-    //Get the friendslist
-    private void getFriends(){
-        Session activeSession = Session.getActiveSession();
-        if(activeSession.getState().isOpened()){
-            Request friendRequest = Request.newMyFriendsRequest(activeSession,
-                    new Request.GraphUserListCallback(){
-                        @Override
-                        public void onCompleted(List<GraphUser> users,
-                                                Response response) {
-                            Log.i("INFO", response.toString());
-                            SpaceCrackApplication.friends = users;
-
-                        }
-                    });
-            Bundle params = new Bundle();
-            params.putString("fields", "id,name,picture");
-            friendRequest.setParameters(params);
-            friendRequest.executeAsync();
-        }
-    }
-
+    /**
+     * Shows a request dialog from Facebook
+     */
     private void sendRequestDialog() {
         Bundle params = new Bundle();
         params.putString("message", getString(R.string.play_a_game));
@@ -243,7 +293,17 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
         requestsDialog.show();
     }
 
-    //GET request to find the users
+    public User getSelectedUser() {
+        return selectedUser;
+    }
+
+    public List getUsers() {
+        return users;
+    }
+
+    /**
+     * GET request to find the users
+     */
     private class FindUserTask extends AsyncTask<String, Void, String> {
 
         private boolean multiple;
@@ -291,16 +351,74 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
                         users.remove(SpaceCrackApplication.user);
                         UserAdapter userAdapter = new UserAdapter(getActivity(), users);
                         lstUsers.setAdapter(userAdapter);
+                        Log.i(TAG, "Users retrieved");
                     } else {
                         selectedUser = gson.fromJson(result, User.class);
                         edtOpponent.setText(selectedUser.username);
+                        Log.i(TAG, "Random user selected");
                     }
                 } catch (JsonParseException e) {
                     e.printStackTrace();
                 }
             } else {
                 Toast.makeText(getActivity(), getResources().getText(R.string.user_not_found), Toast.LENGTH_SHORT).show();
+                if (rdbEmail.isChecked() || contactPicked) {
+                    btnSearch.setVisibility(View.GONE);
+                    btnMail.setVisibility(View.VISIBLE);
+                }
+                contactPicked = false;
             }
+        }
+    }
+
+    /**
+     * POST request to send an email
+     */
+    private class InvitationTask extends AsyncTask<String, Void, Boolean> {
+
+        private JSONObject user;
+
+        public InvitationTask (String email) {
+            try {
+                user = new JSONObject();
+                user.put("emailAddress", email);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            btnSearch.setEnabled(false);
+            btnMail.setEnabled(false);
+            btnContact.setEnabled(false);
+            btnFacebook.setEnabled(false);
+            btnRandom.setEnabled(false);
+        }
+
+        @Override
+        protected Boolean doInBackground (String...url)
+        {
+            return RestService.postRequest(url[0], user);
+        }
+
+        @Override
+        protected void onPostExecute (Boolean result)
+        {
+            btnSearch.setEnabled(true);
+            btnMail.setEnabled(true);
+            btnContact.setEnabled(true);
+            btnFacebook.setEnabled(true);
+            btnRandom.setEnabled(true);
+
+            if (result) {
+                Toast.makeText(getActivity(), getString(R.string.email_sent), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getActivity(), getText(R.string.email_sent_error), Toast.LENGTH_SHORT).show();
+            }
+            btnSearch.setVisibility(View.VISIBLE);
+            btnMail.setVisibility(View.GONE);
         }
     }
 

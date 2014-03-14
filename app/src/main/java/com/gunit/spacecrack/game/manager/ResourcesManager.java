@@ -1,13 +1,8 @@
 package com.gunit.spacecrack.game.manager;
 
-import android.graphics.Bitmap;
 import android.graphics.Color;
 
 import com.gunit.spacecrack.game.GameActivity;
-import com.gunit.spacecrack.game.pool.PlanetPool;
-import com.gunit.spacecrack.game.pool.ShipPool;
-import com.gunit.spacecrack.game.sprite.PlanetSprite;
-import com.gunit.spacecrack.game.sprite.ShipSprite;
 
 import org.andengine.engine.Engine;
 import org.andengine.engine.camera.SmoothCamera;
@@ -29,6 +24,10 @@ import org.andengine.util.debug.Debug;
 /**
  * Created by Dimitri on 24/02/14.
  */
+
+/**
+ * ResourceManager will take care of loading in all the Textures, Fonts, etc.
+ */
 public class ResourcesManager {
 
     //Singleton
@@ -41,14 +40,6 @@ public class ResourcesManager {
 
     //Font
     public Font font;
-
-    //Splash screen
-
-    //Menu screen
-    public ITextureRegion menuBackgroundRegion;
-    public ITextureRegion playRegion;
-    public ITextureRegion optionsRegion;
-    private BuildableBitmapTextureAtlas menuTextureAtlas;
 
     //Game screen
     public ITextureRegion gameBackgroundRegion;
@@ -87,7 +78,7 @@ public class ResourcesManager {
             FontFactory.setAssetBasePath("font/");
             final ITexture mainFontTexture = new BitmapTextureAtlas(gameActivity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 
-            font = FontFactory.createStrokeFromAsset(gameActivity.getFontManager(), mainFontTexture, gameActivity.getAssets(), "font.ttf", 30, true, Color.RED, 2, Color.BLACK);
+            font = FontFactory.createStrokeFromAsset(gameActivity.getFontManager(), mainFontTexture, gameActivity.getAssets(), "roboto.ttf", 30, true, Color.RED, 1, Color.BLACK);
             font.load();
         }
     }
@@ -99,38 +90,8 @@ public class ResourcesManager {
         }
     }
 
-    public void loadSplashScreenResources()
-    {
-
-    }
-
-    public void loadMenuResources() {
-        getInstance().loadMenuGraphics();
-    }
-
     public void loadGameResources() {
         loadGameGraphics();
-        loadGameAudio();
-    }
-
-    private void loadMenuGraphics() {
-        //Set the path to assets/gfx/
-        BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
-        menuTextureAtlas = new BuildableBitmapTextureAtlas(gameActivity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
-        menuBackgroundRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, gameActivity, "spacebackground.jpg");
-        BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
-        playRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, gameActivity, "play.png");
-        optionsRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, gameActivity, "options.png");
-
-        try
-        {
-            menuTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
-            menuTextureAtlas.load();
-        }
-        catch (final ITextureAtlasBuilder.TextureAtlasBuilderException e)
-        {
-            Debug.e(e);
-        }
     }
 
     private void loadGameGraphics() {
@@ -148,6 +109,7 @@ public class ResourcesManager {
         monkeyRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "monkey_winner.png");
         facebookRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "fb_icon.png");
         facebookPressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "fb_icon_pressed.png");
+        quitRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "quit.png");
         cancelRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "cancel.png");
 
         try {
@@ -159,32 +121,10 @@ public class ResourcesManager {
 
     }
 
-
-
-    private void loadGameAudio() {
-
-    }
-
-
-
-    public void unloadSplashScreenResources()
-    {
-
-    }
-
-//    public void loadMenuTextures() {
-//        menuTextureAtlas.load();
-//    }
-
-    public void unloadMenuResources() {
-        menuTextureAtlas.unload();
-        menuTextureAtlas = null;
-    }
-
-
     public void unloadGameResources() {
         gameTextureAtlas.unload();
         gameTextureAtlas = null;
+        unloadFonts();
     }
 
 }

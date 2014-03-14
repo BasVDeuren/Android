@@ -105,13 +105,12 @@
 
         </LinearLayout>
 
-
         <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="50dp"
             android:id="@+id/lst_newgame_users"
-            android:layout_toRightOf="@+id/llt_newgame_settings"/>
+            android:layout_toRightOf="@+id/llt_newgame_settings"
+            android:background="@color/black_overlay" />
 
     </RelativeLayout>
 

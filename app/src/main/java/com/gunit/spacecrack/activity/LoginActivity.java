@@ -10,6 +10,9 @@ import com.gunit.spacecrack.R;
 import com.gunit.spacecrack.application.SpaceCrackApplication;
 import com.gunit.spacecrack.fragment.LoginFragment;
 
+/**
+ * LoginActivity used for Login and Register
+ */
 public class LoginActivity extends Activity {
 
     @Override
@@ -24,7 +27,12 @@ public class LoginActivity extends Activity {
         }
     }
 
-    //Handle the result from the Facebook Login Dialog
+    /**
+     * Handle the result from the Facebook Login Dialog
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

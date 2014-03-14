@@ -21,6 +21,10 @@ import org.andengine.entity.text.Text;
 /**
  * Created by Dimitri on 7/03/14.
  */
+
+/**
+ * Fragment to show the Statistics
+ */
 public class StatisticsFragment extends Fragment {
 
     private TextView txtWinRatio;

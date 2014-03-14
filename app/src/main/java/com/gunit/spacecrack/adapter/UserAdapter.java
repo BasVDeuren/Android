@@ -20,6 +20,10 @@ import java.util.List;
 /**
  * Created by Dimitri on 3/03/14.
  */
+
+/**
+ * Adapter for ListViews to display all the users
+ */
 public class UserAdapter extends BaseAdapter {
 
     private Context context;

@@ -10,6 +10,10 @@ import org.andengine.util.color.Color;
 /**
  * Created by Dimitri on 24/02/14.
  */
+
+/**
+ * LoadingScene used while loading the resources for the Game
+ */
 public class LoadingScene extends BaseScene {
 
     @Override
@@ -20,14 +24,12 @@ public class LoadingScene extends BaseScene {
         attachChild(new Text(400, 240, resourcesManager.font, "Loading...", vbom));
     }
 
+    /**
+     * Do nothing
+     */
     @Override
     public void onBackKeyPressed() {
         return;
-    }
-
-    @Override
-    public SceneManager.SceneType getSceneType() {
-        return SceneManager.SceneType.SCENE_LOADING;
     }
 
     @Override
