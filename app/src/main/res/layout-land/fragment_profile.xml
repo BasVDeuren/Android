@@ -50,7 +50,7 @@
                 android:layout_height="@dimen/default_size"
                 android:orientation="vertical"
                 android:id="@+id/llt_profile_info"
-                android:background="@color/black_background"
+                android:background="@color/black_overlay"
                 android:paddingTop="@dimen/activity_vertical_margin"
                 android:paddingLeft="@dimen/activity_horizontal_margin">
 
