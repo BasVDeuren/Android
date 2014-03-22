@@ -1,6 +1,7 @@
 package com.gunit.spacecrack.model;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,8 +11,8 @@ public class Player {
     public int playerId;
     public String playerName;
     public Profile profile;
-    public List<Colony> colonies;
-    public List<Ship> ships;
+    public List<Colony> colonies = new ArrayList<Colony>();
+    public List<Ship> ships = new ArrayList<Ship>();
     public int commandPoints;
     public boolean turnEnded;
 }

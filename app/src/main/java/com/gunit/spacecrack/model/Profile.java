@@ -1,9 +1,10 @@
 package com.gunit.spacecrack.model;
 
-import java.util.Date;
-
 /**
  * Created by Dimitri on 20/02/14.
+ */
+/**
+ * All models use public fields because this increases performance.
  */
 public class Profile {
     public int profileId;

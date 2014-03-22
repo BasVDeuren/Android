@@ -31,7 +31,7 @@
     <string name="female">Vrouw</string>
     <string name="fill_in_fields">Vul al de velden in</string>
     <string name="first_name">Voornaam</string>
-    <string name="game_not_created">Spel kon niet aangemaakt worden</string>
+    <string name="game_not_created">Het spel kon niet aangemaakt worden</string>
     <string name="game_not_found">Geen spellen gevonden</string>
     <string name="game_not_loaded">Spel kon niet geladen worden</string>
     <string name="gender">Geslacht</string>
@@ -63,7 +63,7 @@
     <string name="lobby">Lobby</string>
     <string name="login">Aanmelden</string>
     <string name="login_fail">Aanmelden mislukt</string>
-    <string name="loggin_in">Aanmelden</string>
+    <string name="logging_in">Aanmelden</string>
     <string name="login_succes">Aanmelden gelukt</string>
     <string name="logout">Afmelden</string>
     <string name="lost_all_planets">Alle planeten verloren</string>
@@ -101,7 +101,7 @@
     <string name="recent">Recent</string>
     <string name="repeat_password">Herhaal wachtwoord</string>
     <string name="register">Registreren</string>
-    <string name="registrating">Registreren</string>
+    <string name="registering">Registreren</string>
     <string name="register_fail">Registratie mislukt</string>
     <string name="register_succes">Registratie gelukt</string>
     <string name="replays">Herhalingen</string>
@@ -125,11 +125,17 @@
     <string name="user_not_found">Gebruiker kon niet gevonden worden</string>
     <string name="username">Gebruikersnaam</string>
     <string name="valid_email_error">Vul een geldig email adres in</string>
-    <string name="victory">Victory!</string>
+    <string name="victory">Gewonnen!</string>
     <string name="welcome">Welkom!</string>
     <string name="win_ratio">Win verhouding</string>
     <string name="you_lost">Je bent verloren</string>
     <string name="you_won">Je bent gewonnen!</string>
     <string name="your_turn">Uw beurt</string>
+    <string name="verify">Bevestigen</string>
+    <string name="invalid_verification_token">Ongeldige bevestigingscode!</string>
+    <string name="unexpected_error">Er is een onverwachte fout gebeurd!</string>
+    <string name="invalid_registration_fieldcontents">Uw registratie is geweigerd, er waren ongeldige velden.</string>
+    <string name="username_or_email_conflict">De gebruikersnaam of email is reeds in gebruik.</string>
+    <string name="verification_code">Bevestigingscode</string>
 
 </resources>

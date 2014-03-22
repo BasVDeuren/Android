@@ -44,7 +44,9 @@ public class SpaceCrackApplication extends Application {
     public static final String DOMAIN = "http://" + IP_ADDRESS + ":8080";
     public static final String URL_LOGIN = DOMAIN + "/api/accesstokens";
     public static final String URL_REGISTER = DOMAIN + "/api/user";
+    public static final String URL_FBREGISTER = DOMAIN + "/api/fbuser";
     public static final String URL_USER = DOMAIN + "/api/auth/user";
+    public static final String URL_VERIFY = DOMAIN + "/api/verifiedUser";
     public static final String URL_PROFILE = DOMAIN + "/api/auth/profile";
     public static final String URL_MAP = DOMAIN + "/api/map";
     public static final String URL_GAME = DOMAIN + "/api/auth/game";
@@ -57,6 +59,7 @@ public class SpaceCrackApplication extends Application {
     public static final String URL_STATISTICS = DOMAIN + "/api/auth/statistics";
     public static final String URL_GAMEINVITE = DOMAIN + "/api/auth/game/invite";
     public static final String URL_INVITATION = DOMAIN + "/api/auth/invitation";
+
 
     public static final String URL_FIREBASE_CHAT = "https://amber-fire-3394.firebaseio.com";
     public static final String URL_FIREBASE_INVITES = "https://vivid-fire-9476.firebaseio.com/invites";

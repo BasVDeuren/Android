@@ -22,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -96,6 +97,30 @@ public class RestService {
         }
         httpClient.getConnectionManager().shutdown();
         return accessToken;
+    }
+
+    public static Integer postRegisterUser(String url, JSONObject user) {
+        HttpClient httpClient = getHttpClient(false);
+        HttpPost httpPost = getHttpPost(url, user.toString());
+
+        int statusCode = 0;
+        try {
+            // Execute HTTP Post Request
+            HttpResponse response = httpClient.execute(httpPost);
+
+            //Check the Status code of the response
+            statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                Log.i(TAG, "POST Request succeeded");
+            } else {
+                Log.i(TAG, "POST Request failed");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        httpClient.getConnectionManager().shutdown();
+        return statusCode;
     }
 
     public static String postGame(String url, JSONObject user) {
@@ -228,6 +253,26 @@ public class RestService {
         return result;
     }
 
+    public static int postVerificationToken(String url ,String verificationTokenJson) {
+        HttpClient httpClient = getHttpClient(true);
+        HttpPost httpPost = getHttpPost(url, verificationTokenJson);
+
+        int statusCode = 0;
+        try {
+            HttpResponse response = httpClient.execute(httpPost);
+            statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                Log.i(TAG, "POST VerificationToken Request succeeded");
+            } else {
+                Log.i(TAG, "POST VerificationToken Request failed");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        httpClient.getConnectionManager().shutdown();
+        return statusCode;
+    }
+
     private static DefaultHttpClient getHttpClient(boolean addCookie) {
         HttpParams httpParams = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(httpParams, SpaceCrackApplication.NETWORK_TIMEOUT);
@@ -262,4 +307,7 @@ public class RestService {
         }
         return httpPost;
     }
+
+
+
 }

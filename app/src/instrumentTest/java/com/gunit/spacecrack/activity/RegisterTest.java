@@ -2,11 +2,8 @@ package com.gunit.spacecrack.activity;
 
 import android.app.Fragment;
 import android.test.ActivityInstrumentationTestCase2;
-import android.widget.ImageView;
 
 import com.gunit.spacecrack.R;
-import com.gunit.spacecrack.activity.HomeActivity;
-import com.gunit.spacecrack.activity.ProfileActivity;
 import com.robotium.solo.Solo;
 
 /**
@@ -39,8 +36,9 @@ public class RegisterTest extends ActivityInstrumentationTestCase2<LoginActivity
         solo.enterText(2, "robotium");
         solo.enterText(3, "robotium@gmail.com");
         solo.clickOnButton(solo.getString(R.string.register));
-        solo.waitForActivity(HomeActivity.class);
-        solo.assertCurrentActivity("Current activity should be HomeActivity", HomeActivity.class);
+        solo.waitForFragmentByTag("verify");
+        Fragment verificationFragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("Verify");
+        assertTrue("Verification fragment should be visible", verificationFragment.isVisible());
     }
 
     public void testRegisterFailed() throws Exception {

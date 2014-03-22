@@ -62,7 +62,7 @@
     <string name="loading">Loading</string>
     <string name="lobby">Lobby</string>
     <string name="login">Login</string>
-    <string name="loggin_in">Loggin in</string>
+    <string name="logging_in">Logging in</string>
     <string name="login_fail">Login failed</string>
     <string name="login_succes">Login succeeded</string>
     <string name="logout">Log out</string>
@@ -101,9 +101,9 @@
     <string name="recent">Recent</string>
     <string name="repeat_password">Repeat password</string>
     <string name="register">Register</string>
-    <string name="registrating">Registrating</string>
+    <string name="registering">Registering</string>
     <string name="register_fail">Registration failed</string>
-    <string name="register_succes">Registration succeeded</string>
+    <string name="register_succes">Registration succeeded, a verification code has been sent to your e-mail address</string>
     <string name="replays">Replays</string>
     <string name="retrieving_games">Retrieving games</string>
     <string name="save">Save</string>
@@ -136,5 +136,11 @@
     <string name="title_activity_contacts">ContactsActivity</string>
     <string name="title_activity_aidl">AidlActivity</string>
     <string name="title_activity_settings">SettingsActivity</string>
+    <string name="verify">verify</string>
+    <string name="invalid_verification_token">Invalid verification token!</string>
+    <string name="unexpected_error">An unexpected error occurred!</string>
+    <string name="invalid_registration_fieldcontents">Your registration was refused, some fields were invalid.</string>
+    <string name="username_or_email_conflict">The username or e-mail is already in use.</string>
+    <string name="verification_code">Verification code</string>
 
 </resources>
