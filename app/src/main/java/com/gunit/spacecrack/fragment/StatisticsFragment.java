@@ -1,5 +1,6 @@
 package com.gunit.spacecrack.fragment;
 
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -28,6 +29,7 @@ public class StatisticsFragment extends Fragment {
     private TextView txtAmountGames;
     private TextView txtAmountColonies;
     private TextView txtAmountShips;
+    private ProgressDialog progressDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,6 +46,15 @@ public class StatisticsFragment extends Fragment {
     }
 
     private class GetStatistics extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = ProgressDialog.show(getActivity(), getString(R.string.please_wait), getString(R.string.get_statistics));
+            progressDialog.setCancelable(true);
+            progressDialog.show();
+        }
+
         @Override
         protected String doInBackground (String...url)
         {
@@ -58,7 +69,7 @@ public class StatisticsFragment extends Fragment {
                     Gson gson = new Gson();
                     StatisticsViewModel statisticsViewModel = gson.fromJson(result, StatisticsViewModel.class);
                     if (statisticsViewModel != null) {
-                        txtWinRatio.setText(String.valueOf(statisticsViewModel.winRatio));
+                        txtWinRatio.setText(String.valueOf(statisticsViewModel.winRatio * 100) + "%");
                         txtAmountGames.setText(String.valueOf(statisticsViewModel.amountOfGames));
                         txtAmountColonies.setText(String.valueOf(statisticsViewModel.averageAmountOfColoniesPerWin));
                         txtAmountShips.setText(String.valueOf(statisticsViewModel.averageAmountOfShipsPerWin));
@@ -67,6 +78,7 @@ public class StatisticsFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
+            progressDialog.dismiss();
         }
     }
 }

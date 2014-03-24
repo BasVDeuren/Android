@@ -36,12 +36,14 @@ public class SpaceCrackApplication extends Application {
 
     public final static int NETWORK_TIMEOUT = 12000;
     //Localhost emulator
-    public final static String IP_ADDRESS = "10.0.2.2";
+//    public final static String IP_ADDRESS = "10.0.2.2";
     //Network (IP address pc)
 //    public static final String IP_ADDRESS = "192.168.0.143";
 //    public final static String IP_ADDRESS = "192.168.56.1";
+    public final static String IP_ADDRESS = "spacecrack-groepg.rhcloud.com";
 
-    public static final String DOMAIN = "http://" + IP_ADDRESS + ":8080";
+//    public static final String DOMAIN = "http://" + IP_ADDRESS + ":8080";
+    public static final String DOMAIN = "http://" + IP_ADDRESS;
     public static final String URL_LOGIN = DOMAIN + "/api/accesstokens";
     public static final String URL_REGISTER = DOMAIN + "/api/user";
     public static final String URL_FBREGISTER = DOMAIN + "/api/fbuser";

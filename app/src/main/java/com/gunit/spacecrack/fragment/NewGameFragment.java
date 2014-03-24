@@ -21,6 +21,7 @@ import android.widget.IconButton;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.FacebookException;
@@ -67,6 +68,7 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
     private RadioGroup rdgUserType;
     private RadioButton rdbUsername;
     private RadioButton rdbEmail;
+    private TextView txtNoUsers;
 
     private final int CONTACT_PICKER_RESULT = 1;
     private final int RESULT_OK = -1;
@@ -89,12 +91,15 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
         rdbEmail = (RadioButton) view.findViewById(R.id.rdb_newgame_email);
         rdgUserType.check(rdbUsername.getId());
 
+        txtNoUsers = (TextView) view.findViewById(R.id.txt_newgame_no_users);
+
         btnCreateGame = (Button) view.findViewById(R.id.btn_newgame_create);
 
         addListeners();
 
         lstUsers = (ListView) view.findViewById(R.id.lst_newgame_users);
         lstUsers.setOnItemClickListener(this);
+        lstUsers.setEmptyView(txtNoUsers);
 
         return view;
     }
@@ -249,45 +254,19 @@ public class NewGameFragment extends Fragment implements AdapterView.OnItemClick
      * Shows a request dialog from Facebook
      */
     private void sendRequestDialog() {
-        Bundle params = new Bundle();
-        params.putString("message", getString(R.string.play_a_game));
+        if (Session.getActiveSession() != null) {
+            Bundle params = new Bundle();
+            params.putString("message", getString(R.string.play_a_game));
 
-        WebDialog requestsDialog = (
-                new WebDialog.RequestsDialogBuilder(getActivity(),
-                        Session.getActiveSession(),
-                        params))
-                .setOnCompleteListener(new WebDialog.OnCompleteListener() {
-
-                    @Override
-                    public void onComplete(Bundle values,
-                                           FacebookException error) {
-                        if (error != null) {
-                            if (error instanceof FacebookOperationCanceledException) {
-                                Toast.makeText(getActivity().getApplicationContext(),
-                                        "Request cancelled",
-                                        Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(getActivity().getApplicationContext(),
-                                        "Network Error",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            final String requestId = values.getString("request");
-                            if (requestId != null) {
-                                Toast.makeText(getActivity().getApplicationContext(),
-                                        "Request sent",
-                                        Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(getActivity().getApplicationContext(),
-                                        "Request cancelled",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-
-                })
-                .build();
-        requestsDialog.show();
+            WebDialog requestsDialog = (
+                    new WebDialog.RequestsDialogBuilder(getActivity(),
+                            Session.getActiveSession(),
+                            params))
+                    .build();
+            requestsDialog.show();
+        } else {
+            Toast.makeText(getActivity(), getString(R.string.login_facebook), Toast.LENGTH_SHORT).show();
+        }
     }
 
     public User getSelectedUser() {

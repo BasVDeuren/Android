@@ -14,7 +14,7 @@ public class Chat {
     @SuppressWarnings("unused")
     private Chat() { }
 
-    Chat(String body, String from) {
+    public Chat(String body, String from) {
         this.body = body;
         this.from = from;
     }

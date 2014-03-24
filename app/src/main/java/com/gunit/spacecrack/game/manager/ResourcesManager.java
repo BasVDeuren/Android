@@ -16,6 +16,7 @@ import org.andengine.opengl.texture.atlas.bitmap.BuildableBitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.source.IBitmapTextureAtlasSource;
 import org.andengine.opengl.texture.atlas.buildable.builder.BlackPawnTextureAtlasBuilder;
 import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder;
+import org.andengine.opengl.texture.bitmap.BitmapTexture;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
@@ -50,7 +51,9 @@ public class ResourcesManager {
     public ITextureRegion miniSpaceshipPlayer1Region;
     public ITextureRegion miniSpaceshipPLayer2Region;
     public ITextureRegion chatRegion;
+    public ITextureRegion chatPressedRegion;
     public ITextureRegion turnRegion;
+    public ITextureRegion turnPressedRegion;
     public ITextureRegion monkeyRegion;
     public ITextureRegion facebookRegion;
     public ITextureRegion facebookPressedRegion;
@@ -78,7 +81,7 @@ public class ResourcesManager {
             FontFactory.setAssetBasePath("font/");
             final ITexture mainFontTexture = new BitmapTextureAtlas(gameActivity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 
-            font = FontFactory.createStrokeFromAsset(gameActivity.getFontManager(), mainFontTexture, gameActivity.getAssets(), "roboto.ttf", 30, true, Color.RED, 1, Color.BLACK);
+            font = FontFactory.createStrokeFromAsset(gameActivity.getFontManager(), mainFontTexture, gameActivity.getAssets(), "roboto.ttf", 30, true, Color.WHITE, 2, Color.BLACK);
             font.load();
         }
     }
@@ -105,7 +108,9 @@ public class ResourcesManager {
         colonyFlagRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, gameActivity, "playerflag.png", 2, 1);
         castleRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, gameActivity, "castle.png", 2, 1);
         chatRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "chat.png");
+        chatPressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "chat_pressed.png");
         turnRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "turn.png");
+        turnPressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "turn_pressed.png");
         monkeyRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "monkey_winner.png");
         facebookRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "fb_icon.png");
         facebookPressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, gameActivity, "fb_icon_pressed.png");

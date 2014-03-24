@@ -13,8 +13,14 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:paddingBottom="@dimen/activity_vertical_margin"
-        android:gravity="center"
         android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/new_game"
+            android:textAlignment="viewStart"
+            android:textSize="24sp" />
 
         <EditText
             android:layout_width="match_parent"
@@ -101,13 +107,23 @@
         <ListView
             android:layout_width="match_parent"
             android:layout_height="@dimen/default_size"
-            android:id="@+id/lst_newgame_users" />
+            android:id="@+id/lst_newgame_users"
+            android:background="@color/black_overlay" />
 
-        <Button
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/default_size"
+            android:padding="@dimen/activity_vertical_margin"
+            android:id="@+id/txt_newgame_no_users"
+            android:text="@string/no_users"
+            android:background="@color/black_overlay" />
+
+        <IconButton
             android:layout_width="@dimen/default_size"
             android:layout_height="wrap_content"
             android:id="@+id/btn_newgame_create"
-            android:text="@string/create_game" />
+            android:text="{fa-play}"
+            android:layout_gravity="center" />
 
     </LinearLayout>
 

@@ -53,32 +53,32 @@
         android:layout_toRightOf="@+id/llt_home_profile"
         android:gravity="center">
 
-        <Button
+        <IconButton
             android:layout_width="@dimen/default_size"
             android:layout_height="wrap_content"
             android:id="@+id/btn_home_newgame"
-            android:text="@string/new_game"
+            android:text="@string/new_game_icon"
             android:enabled="true"/>
 
-        <Button
+        <IconButton
             android:layout_width="@dimen/default_size"
             android:layout_height="wrap_content"
-            android:id="@+id/btn_home_activegames"
-            android:text="@string/lobby"
+            android:id="@+id/btn_home_lobby"
+            android:text="@string/lobby_icon"
             android:enabled="true"/>
 
-        <Button
+        <IconButton
             android:layout_width="@dimen/default_size"
             android:layout_height="wrap_content"
             android:id="@+id/btn_home_statistics"
-            android:text="@string/statistics"
+            android:text="@string/statistics_icon"
             android:enabled="true"/>
 
-        <Button
+        <IconButton
             android:layout_width="@dimen/default_size"
             android:layout_height="wrap_content"
             android:id="@+id/btn_home_replay"
-            android:text="@string/replays"
+            android:text="@string/replays_icon"
             android:enabled="true"/>
 
     </LinearLayout>
@@ -88,39 +88,34 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:id="@+id/btn_home_help"
-        android:text="{fa-info-circle}"
+        android:id="@+id/btn_home_settings"
+        android:text="{fa-cog}"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"/>
 
     <IconButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:id="@+id/btn_home_share"
-        android:text="{fa-share}"
-        android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/btn_home_help"/>
-
-    <IconButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:id="@+id/btn_home_settings"
-        android:text="{fa-cog}"
-        android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/btn_home_share"/>
-
-    <IconButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_horizontal_margin"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:id="@+id/btn_home_logout"
         android:text="{fa-sign-out}"
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@+id/btn_home_settings"/>
+
+    <IconButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:id="@+id/btn_home_help"
+        android:text="{fa-info-circle}"
+        android:layout_above="@+id/btn_home_settings"/>
+
+    <IconButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_home_share"
+        android:text="{fa-share}"
+        android:layout_toRightOf="@+id/btn_home_help"
+        android:layout_above="@id/btn_home_logout"/>
 
 </RelativeLayout>

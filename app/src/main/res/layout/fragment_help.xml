@@ -12,7 +12,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin"
@@ -20,18 +20,18 @@
             android:background="@color/black_overlay"
             android:orientation="vertical">
 
-            <TextView
+            <IconTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/help"
-                android:textSize="24sp" />
+                android:textSize="@dimen/text_large" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:text="@string/object"
-                android:textSize="20sp" />
+                android:textSize="@dimen/text_mid" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -61,26 +61,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_double_horizontal_margin"
-                android:text="@string/help_move_ship"/>
+                android:text="@string/help_move_ship_commandpointscost"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_double_horizontal_margin"
-                android:text="@string/help_build_ship"/>
+                android:text="@string/help_move_ship_commandpointscost"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:text="@string/help_colonize_and_colonizecost"/>
+                android:layout_marginLeft="@dimen/activity_double_horizontal_margin"
+                android:text="@string/help_build_ship_commandpointscost"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:text="@string/moves"
-                android:textSize="20sp" />
+                android:textSize="@dimen/text_mid" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -121,13 +121,12 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:text="@string/help_when_to_use_commandpoints"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:text="@string/help_win_condition"/>
 
         </LinearLayout>

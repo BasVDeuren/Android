@@ -65,7 +65,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
 
     private Scene gameScene;
     private HUD gameHUD;
-    private Text txtCommand;
+    private Text txtCommandPlayer1;
+    private Text txtCommandPlayer2;
+    private Text txtStatePlayer1;
+    private Text txtStatePlayer2;
     private PinchZoomDetector pinchZoomDetector;
     private final float MIN_ZOOM_FACTOR = 1f;
     private final float MAX_ZOOM_FACTOR = 3f;
@@ -238,11 +241,19 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
     private void createHUD() {
         gameHUD = new HUD();
 
-        txtCommand = new Text(20, GameActivity.CAMERA_HEIGHT - 110, resourcesManager.font, "Commandpoints: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
-        txtCommand.setHorizontalAlign(HorizontalAlign.LEFT);
-        txtCommand.setText("Commandpoints: " + activity.player.commandPoints);
-        gameHUD.attachChild(txtCommand);
-        ButtonSprite btnChat = new ButtonSprite(20, GameActivity.CAMERA_HEIGHT - 70, resourcesManager.chatRegion, vbom)
+        txtCommandPlayer1 = new Text(20, 20, resourcesManager.font, "Commandpoints: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
+        txtCommandPlayer1.setText("Commandpoints: " + activity.player.commandPoints);
+        gameHUD.attachChild(txtCommandPlayer1);
+        txtCommandPlayer2 = new Text(0, 0, resourcesManager.font, "Commandpoints: 0123456789", new TextOptions(HorizontalAlign.RIGHT), vbom);
+        txtCommandPlayer2.setPosition(GameActivity.CAMERA_WIDTH - txtCommandPlayer2.getWidth() - 20, 20);
+        txtCommandPlayer2.setText("Commandpoints: " + activity.player.commandPoints);
+        gameHUD.attachChild(txtCommandPlayer2);
+        txtStatePlayer1 = new Text(20, 50, resourcesManager.font, "State: busy", new TextOptions(HorizontalAlign.LEFT), vbom);
+        gameHUD.attachChild(txtStatePlayer1);
+        txtStatePlayer2 = new Text(0, 0, resourcesManager.font, "State: busy", new TextOptions(HorizontalAlign.LEFT), vbom);
+        txtStatePlayer2.setPosition(GameActivity.CAMERA_WIDTH - txtStatePlayer2.getWidth() - 20, 50);
+        gameHUD.attachChild(txtStatePlayer2);
+        ButtonSprite btnChat = new ButtonSprite(20, GameActivity.CAMERA_HEIGHT - 70, resourcesManager.chatRegion, resourcesManager.chatPressedRegion,vbom)
         {
             @Override
             public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
@@ -257,7 +268,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         };
         gameHUD.registerTouchArea(btnChat);
         gameHUD.attachChild(btnChat);
-        btnEndTurn = new ButtonSprite(90, GameActivity.CAMERA_HEIGHT - 70, resourcesManager.turnRegion, vbom)
+        btnEndTurn = new ButtonSprite(90, GameActivity.CAMERA_HEIGHT - 70, resourcesManager.turnRegion, resourcesManager.turnPressedRegion,vbom)
         {
             @Override
             public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
@@ -310,7 +321,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         drawColonies(game.player2, 1);
         drawShips(game.player1, 0);
         drawShips(game.player2, 1);
-        updateCommandPoints();
+        updateHud();
         if (!activity.player.turnEnded && !btnEndTurn.isVisible()) {
             btnEndTurn.setVisible(true);
         }
@@ -549,9 +560,22 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         });
     }
 
-    private void updateCommandPoints()
+    private void updateHud()
     {
-        txtCommand.setText(activity.getString(R.string.commandpoints) + ": " + activity.player.commandPoints);
+        txtCommandPlayer1.setText(activity.getString(R.string.commandpoints) + ": " + activity.gameActivePlayerWrapper.game.player1.commandPoints);
+        txtCommandPlayer2.setText(activity.getString(R.string.commandpoints) + ": " + activity.gameActivePlayerWrapper.game.player2.commandPoints);
+        txtCommandPlayer2.setPosition(GameActivity.CAMERA_WIDTH - txtCommandPlayer2.getWidth() - 20, 20);
+        if (activity.gameActivePlayerWrapper.game.player1.turnEnded) {
+            txtStatePlayer1.setText(activity.getString(R.string.ended));
+        } else {
+            txtStatePlayer1.setText(activity.getString(R.string.busy));
+        }
+        if (activity.gameActivePlayerWrapper.game.player2.turnEnded) {
+            txtStatePlayer2.setText(activity.getString(R.string.ended));
+        } else {
+            txtStatePlayer2.setText(activity.getString(R.string.busy));
+        }
+        txtStatePlayer2.setPosition(GameActivity.CAMERA_WIDTH - txtStatePlayer2.getWidth() - 20, 50);
     }
 
     /**
@@ -606,7 +630,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
                                 params.putString("caption", activity.getString(R.string.victory));
                                 params.putString("description", activity.getString(R.string.captured_all_planets));
                             }
-                            params.putString("picture", "http://www.italieinbedrijf.nl/wp-content/uploads/2012/12/Lamborghini-Logo.jpg");
+                            params.putString("picture", "http://lunar.lostgarden.com/uploaded_images/SpaceCrack2D-Mockup2-716382.jpg");
 
                             WebDialog feedDialog = (new WebDialog.FeedDialogBuilder(activity,
                                     Session.getActiveSession(), params))
@@ -626,6 +650,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Pinch
         }
 
         ButtonSprite quit = new ButtonSprite(((endScreen.getWidth() / 2) + 25), (endScreen.getHeight() / 2 + 30), resourcesManager.quitRegion, vbom);
+        if (Session.getActiveSession() == null) {
+            quit.setPosition(((endScreen.getWidth() / 2) - 25), (endScreen.getHeight() / 2 + 30));
+        }
+
         quit.setOnClickListener(new ButtonSprite.OnClickListener() {
             @Override
             public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX, float pTouchAreaLocalY) {

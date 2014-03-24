@@ -135,8 +135,8 @@ public class LoginFragment extends Fragment implements ILoginRequest, IUserReque
 
     @Override
     public void loginCallback(String result) {
-        if (!facebookLogin) {
-            Toast.makeText(getActivity(), result != null ? getString(R.string.login_succes) : getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
+        if (!facebookLogin && result == null) {
+            Toast.makeText(getActivity(), getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
         }
 
         saveLoginCredentials(result, email, password);
@@ -247,13 +247,28 @@ public class LoginFragment extends Fragment implements ILoginRequest, IUserReque
                     accessToken = facebookLoginAndReadProfileData();
                     break;
                 case 409:
-                    Toast.makeText(getActivity(), getResources().getString(R.string.username_or_email_conflict), Toast.LENGTH_SHORT).show();
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity(), getResources().getString(R.string.username_or_email_conflict), Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     break;
                 case 406:
-                    Toast.makeText(getActivity(), getResources().getString(R.string.invalid_registration_fieldcontents), Toast.LENGTH_SHORT).show();
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity(), getResources().getString(R.string.invalid_registration_fieldcontents), Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     break;
                 default:
-                    Toast.makeText(getActivity(), getResources().getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity(), getResources().getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
+                        }
+                    });
             }
             return accessToken;
         }

@@ -1,7 +1,11 @@
 package com.gunit.spacecrack.json;
 
 /**
- * Created by Tim on 20/03/14.
+ * Created by Dimitri on 27/02/14.
+ */
+
+/**
+ * Wrapper for GameActivePlayer
  */
 public class GameActivePlayerWrapper {
     public GameViewModel game;

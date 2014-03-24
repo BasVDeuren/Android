@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/txt_lobby_title"
-        android:textSize="20sp" />
+        android:textSize="@dimen/text_mid" />
 
     <IconTextView
         android:layout_width="wrap_content"
@@ -19,7 +19,7 @@
         android:layout_centerVertical="true"
         android:id="@+id/img_lobby_leftarrow"
         android:text="{fa-chevron-left}"
-        android:textSize="20sp"/>
+        android:textSize="@dimen/text_mid"/>
 
     <ListView
         android:layout_width="match_parent"
@@ -43,7 +43,7 @@
         android:layout_centerVertical="true"
         android:id="@+id/img_lobby_rightarrow"
         android:text="{fa-chevron-right}"
-        android:textSize="20sp"/>
+        android:textSize="@dimen/text_mid"/>
 
 </RelativeLayout>
 

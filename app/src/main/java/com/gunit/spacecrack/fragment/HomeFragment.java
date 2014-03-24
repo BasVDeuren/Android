@@ -37,10 +37,10 @@ public class HomeFragment extends Fragment {
     private ImageView imgProfilePicture;
     private TextView txtName;
     private LinearLayout lltProfile;
-    private Button btnNewGame;
-    private Button btnActiveGames;
-    private Button btnStatistics;
-    private Button btnReplay;
+    private IconButton btnNewGame;
+    private IconButton btnLobby;
+    private IconButton btnStatistics;
+    private IconButton btnReplay;
     private IconButton btnHelp;
     private IconButton btnLogout;
     private IconButton btnSettings;
@@ -61,10 +61,10 @@ public class HomeFragment extends Fragment {
         txtName = (TextView) view.findViewById(R.id.txt_home_welcome);
         lltProfile = (LinearLayout) view.findViewById(R.id.llt_home_profile);
 
-        btnNewGame = (Button) view.findViewById(R.id.btn_home_newgame);
-        btnActiveGames = (Button) view.findViewById(R.id.btn_home_activegames);
-        btnStatistics = (Button) view.findViewById(R.id.btn_home_statistics);
-        btnReplay = (Button) view.findViewById(R.id.btn_home_replay);
+        btnNewGame = (IconButton) view.findViewById(R.id.btn_home_newgame);
+        btnLobby = (IconButton) view.findViewById(R.id.btn_home_lobby);
+        btnStatistics = (IconButton) view.findViewById(R.id.btn_home_statistics);
+        btnReplay = (IconButton) view.findViewById(R.id.btn_home_replay);
         btnHelp = (IconButton) view.findViewById(R.id.btn_home_help);
         btnShare = (IconButton) view.findViewById(R.id.btn_home_share);
         btnSettings = (IconButton) view.findViewById(R.id.btn_home_settings);
@@ -117,7 +117,7 @@ public class HomeFragment extends Fragment {
                         .commit();
             }
         });
-        btnActiveGames.setOnClickListener(new View.OnClickListener() {
+        btnLobby.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().getSupportFragmentManager().beginTransaction()
@@ -150,7 +150,7 @@ public class HomeFragment extends Fragment {
                 Intent intent = new Intent(android.content.Intent.ACTION_SEND);
                 intent.setType("text/plain");
                 intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
-                intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.incredible_strategy_game));
+                intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.incredible_strategy_game) + "\nhttp://spacecrack-groepg.rhcloud.com");
                 startActivity(Intent.createChooser(intent, getString(R.string.share_via)));
             }
         });

@@ -50,7 +50,7 @@ public class EditProfileFragment extends Fragment {
     private IconButton btnSave;
     private Bitmap btnNewPicture;
 
-    private int galleryResult = -1;
+    private int galleryResult = 1;
     private String picturePath;
 
     private Context context;
@@ -250,7 +250,11 @@ public class EditProfileFragment extends Fragment {
                 profile.put("lastname", lastname);
                 profile.put("email", email);
                 profile.put("dayOfBirth", dateOfBirth);
-                profile.put("image", "data:image/png;base64," + byte64Img);
+                if (byte64Img.equals("")) {
+                    profile.put("image", byte64Img);
+                } else {
+                    profile.put("image", "data:image/png;base64," + byte64Img);
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }

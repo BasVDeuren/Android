@@ -197,11 +197,11 @@ public class ReplayScene extends BaseScene implements IOnSceneTouchListener, Pin
     }
 
     private void drawRevisions() {
-        TimerHandler timerHandler = new TimerHandler(2f, true, new ITimerCallback() {
+        TimerHandler timerHandler = new TimerHandler(1f, true, new ITimerCallback() {
             int counter = 0;
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
-                if (counter < activity.revisions.size() - 1) {
+                if (counter < activity.revisions.size()) {
                     new GetGameRevision().execute(SpaceCrackApplication.URL_REPLAY + "/" + activity.gameId + "/" + activity.revisions.get(counter));
                 }
                 counter++;
@@ -296,12 +296,7 @@ public class ReplayScene extends BaseScene implements IOnSceneTouchListener, Pin
 
         Sprite monkey = new Sprite(((endScreen.getWidth() - resourcesManager.monkeyRegion.getWidth())/2),  endScreen.getHeight() / 2 - 60, resourcesManager.monkeyRegion, vbom);
         monkey.setScale(1.5f);
-        Text endStatus;
-        if (game.loserPlayerId == activity.player.playerId) {
-            endStatus = new Text(0, 0, resourcesManager.font, activity.getText(R.string.you_lost), vbom);
-        } else {
-            endStatus = new Text(0, 0, resourcesManager.font, activity.getText(R.string.you_won), vbom);
-        }
+        Text endStatus = new Text(0, 0, resourcesManager.font, activity.getText(R.string.app_name), vbom);
         ButtonSprite quit = new ButtonSprite(((endScreen.getWidth() / 2) - 25), (endScreen.getHeight() / 2 + 30), resourcesManager.quitRegion, vbom);
         quit.setOnClickListener(new ButtonSprite.OnClickListener() {
             @Override

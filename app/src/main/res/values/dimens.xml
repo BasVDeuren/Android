@@ -8,6 +8,6 @@
     <dimen name="button_width">150dp</dimen>
     <dimen name="default_size">200dp</dimen>
 
-
     <dimen name="text_large">24sp</dimen>
+    <dimen name="text_mid">20sp</dimen>
 </resources>

@@ -169,9 +169,11 @@ public class SpaceCrackService extends Service {
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     try {
                         notifications = sharedPreferences.getBoolean("pref_notifications", true);
-                        Log.i("Chat", dataSnapshot.getValue().toString());
-                        Chat chat = gson.fromJson(dataSnapshot.getValue().toString(), Chat.class);
-                        Log.i("Chat object", chat.getFrom());
+//                        Log.i("Chat", dataSnapshot.getValue().toString());
+//                        Chat chat = gson.fromJson(dataSnapshot.getValue().toString(), Chat.class);
+//                        Log.i("Chat object", chat.getFrom());
+                        Object value = dataSnapshot.getValue();
+                        Chat chat = new Chat((String)((Map)value).get("body"), (String)((Map)value).get("from"));
                         if (notifications && !getRunningActivity().contains(CHAT_ACTIVITY)) {
                             showNotification(chat.getFrom(), chat.getBody(), CHAT_NOTIFICATION, null, null);
                         }

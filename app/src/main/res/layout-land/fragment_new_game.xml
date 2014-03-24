@@ -6,20 +6,28 @@
 
     <include layout="@layout/background" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:paddingBottom="@dimen/activity_vertical_margin"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:id="@+id/llt_newgame_settings"
             android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/new_game"
+                android:textAlignment="viewStart"
+                android:textSize="24sp" />
 
             <EditText
                 android:layout_width="match_parent"
@@ -48,6 +56,14 @@
                     android:layout_weight="1"
                     android:id="@+id/btn_newgame_search"
                     android:text="{fa-search}" />
+
+                <IconButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/btn_newgame_mail"
+                    android:text="{fa-envelope}"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -96,11 +112,12 @@
 
                 </LinearLayout>
 
-            <Button
+            <IconButton
                 android:layout_width="@dimen/default_size"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/activity_vertical_margin"
                 android:id="@+id/btn_newgame_create"
-                android:text="@string/create_game"
+                android:text="{fa-play}"
                 android:layout_gravity="bottom|center_horizontal"/>
 
         </LinearLayout>
@@ -108,10 +125,19 @@
         <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:id="@+id/lst_newgame_users"
-            android:layout_toRightOf="@+id/llt_newgame_settings"
             android:background="@color/black_overlay" />
 
-    </RelativeLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/activity_vertical_margin"
+            android:layout_weight="1"
+            android:id="@+id/txt_newgame_no_users"
+            android:text="@string/no_users"
+            android:background="@color/black_overlay"/>
+
+    </LinearLayout>
 
 </FrameLayout>

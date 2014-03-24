@@ -43,13 +43,13 @@ public class SplashScreenActivity extends Activity implements ILoginRequest, IUs
         setContentView(R.layout.activity_splash_screen);
 
         //Check the network connection
-        final ConnectivityManager conMgr =  (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
-        if (activeNetwork != null && activeNetwork.isConnected()) {
-            sharedPreferences = getSharedPreferences("Login", 0);
-            startApp();
-        } else {
-            Toast.makeText(SplashScreenActivity.this, getResources().getString(R.string.no_connection), Toast.LENGTH_LONG).show();
+            final ConnectivityManager conMgr =  (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
+            if (activeNetwork != null && activeNetwork.isConnected()) {
+                sharedPreferences = getSharedPreferences("Login", 0);
+                startApp();
+            } else {
+                Toast.makeText(SplashScreenActivity.this, getResources().getString(R.string.no_connection), Toast.LENGTH_LONG).show();
             System.exit(0);
             finish();
         }

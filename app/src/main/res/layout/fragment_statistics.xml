@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/background"/>
+    <include layout="@layout/background" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,56 +19,87 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/statistics"
-            android:textSize="24sp" />
+            android:textSize="@dimen/text_large" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="@string/win_ratio"
-            android:textStyle="bold"/>
-        
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/txt_statistics_winratio"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/amount_of_games"
-            android:textStyle="bold"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/spaceship"
+                android:id="@+id/img_statistics_ship" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/txt_statistics_amountgames"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/activity_vertical_margin"
+                android:orientation="vertical"
+                android:background="@color/black_overlay">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/average_colonies"
-            android:textStyle="bold"/>
+                    <IconTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ico_statistics_winratio"
+                        android:text="@string/win_ratio"
+                        android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/txt_statistics_averagecolonies"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
+                        android:id="@+id/txt_statistics_winratio"
+                        android:text="@string/not_available" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/average_ships"
-            android:textStyle="bold"/>
+                    <IconTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ico_statistics_amountgames"
+                        android:text="@string/amount_of_games"
+                        android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/txt_statistics_averageships"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
+                        android:id="@+id/txt_statistics_amountgames"
+                        android:text="@string/not_available" />
+
+                    <IconTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ico_statistics_averagecolonies"
+                        android:text="@string/average_colonies"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
+                        android:id="@+id/txt_statistics_averagecolonies"
+                        android:text="@string/not_available" />
+
+                    <IconTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ico_statistics_averageships"
+                        android:text="@string/average_ships"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
+                        android:id="@+id/txt_statistics_averageships"
+                        android:text="@string/not_available" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 

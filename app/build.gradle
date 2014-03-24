@@ -26,8 +26,6 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-core:2.1.4'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.1.4'
     compile 'com.firebase.client:firebase-client-jvm:1.0.7@jar'
-    //    compile 'com.firebase:firebase-client:1.0.12@jar'
-    //    compile files('libs/firebase-client-jvm-1.0.8.jar')
     compile 'com.firebase:tubesock:0.0.6@jar'
     compile 'com.joanzapata.android:android-iconify:1.0.3@jar'
 }
